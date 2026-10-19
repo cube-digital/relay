@@ -31,4 +31,4 @@ Plan-level fields: `slug` (kebab-case), `suite` (full test command, run once per
 
 1. Run `relay lanes <plan>`. Fix every ✗ error. Treat each ! warning as a question: fix it or say in the task why it stands.
 2. Look at the lanes: if one lane holds most tasks, the files are too entangled; consider splitting a module or accept fewer parallel lanes.
-3. Hand the human the plan path and the lane/wave summary, then use the run-lanes skill (or dispatch the conductor agent) when they say go.
+3. Run `relay forecast <plan>` and hand the human the plan path, the lane/wave summary and the forecast: how many agents start, how many worktrees, how much of the 5-hour window and how long. Say plainly when the rates are placeholders. Then use the run-lanes skill (or dispatch the conductor agent) when they say go; for a run longer than one window, suggest `relay marathon <plan> --hours N` from their terminal.

@@ -18,6 +18,7 @@ It builds on [superpowers](https://github.com/obra/superpowers) by Jesse Vincent
   - [5. The usage budget](#5-the-usage-budget)
   - [6. Testing like QA](#6-testing-like-qa)
   - [7. Claude Code and Codex together](#7-claude-code-and-codex-together)
+  - [8. Forecast, then run for hours](#8-forecast-then-run-for-hours)
 - [Workflows, step by step](#workflows-step-by-step)
 - [Installation](#installation)
 - [What's inside](#whats-inside)
@@ -401,6 +402,46 @@ sequenceDiagram
     C->>L: resume lane-b with the finding
 ```
 
+### 8. Forecast, then run for hours
+
+After the plan, before anyone says go, `relay forecast` says what the run will take. Agents, worktrees and parallelism are exact, computed from the plan. Usage and time come from your own past runs once you have any; until then relay uses placeholder rates and says so on every line that depends on them.
+
+```text
+$ relay forecast docs/relay/plans/2026-10-19-password-reset.md
+forecast for password-reset: 6 tasks · 3 lanes · 2 wave(s)
+agents       ~11 starts (3 reviewer, 2 implementer, 2 test-author, 1 conductor, 1 architect,
+             1 implementer-fast, 1 implementer-deep), plus ~1.8 fix round(s) on resumed agents
+parallel     up to 2 lane(s) at once (plan allows 2, cap 4)
+worktrees    3 (2 lane slot(s) reused across waves + 1 integration)
+usage        ~31.7% of a 5h window in total — PLACEHOLDER rates, not your data: run a plan, then `relay calibrate`
+windows      ~1 five-hour window(s) at the 85% stop line
+time         ~2h 3m of work
+  wave 1: ~11.1% · ~41m · window 1
+  wave 2: ~20.6% · ~1h 22m · window 1
+```
+
+**How it learns.** Every ledger line is stamped with the usage reading at that moment, for example `[5h 23.4% · 7d 41%]`. When a wave merges, the difference between the wave's start stamp and its merge stamp is one sample: this much of the window for this much work. `relay calibrate <plan>` collects the samples into `~/.relay/calibration.json`, and the next forecast uses them. A wave during which the window reset is dropped, never guessed. After two or three plans the numbers are yours.
+
+**The 5-hour limit is a quota. Relay crosses it; nothing dodges it.** Optimizing tokens fits more work into each window and leaves the window itself in place. A long plan passes through several windows, and `relay marathon` makes that happen without you:
+
+```mermaid
+flowchart LR
+    start(["relay marathon plan.md --hours 20"]) --> leg["leg N<br/>a fresh headless session on Sonnet<br/>continues the plan from the ledger"]
+    leg --> q{"how did the leg end?"}
+    q -- "plan complete" --> done(["stop: done<br/>relay calibrate"])
+    q -- "budget critical<br/>or usage limit" --> wait["wait for the<br/>window reset"]
+    wait --> deadline{"before the<br/>deadline?"}
+    deadline -- yes --> leg
+    deadline -- no --> stop1(["stop: deadline"])
+    q -- "progress, no marker<br/>(ran out of turns)" --> leg
+    q -- "BLOCKED" --> stop2(["stop: needs a human"])
+    q -- "no progress<br/>twice in a row" --> stop3(["stop: stalled"])
+```
+
+Each leg is a short `claude -p` session with an empty context, so a 20-hour run never carries a 20-hour conversation: the state lives in the ledger, the lane branches and the worktrees. Legs run with `--permission-mode auto --permission-prompts none`, the documented pattern for unattended work: a classifier approves routine actions, and anything that would need a person is refused, so the run never hangs on a prompt. At the end you get the same thing as after an interactive run: one integration branch, the test counts, and every ruling the agents made.
+
+What a marathon can and cannot promise: any plan, whatever its size, keeps advancing until it is done, with as much work as possible in each window. What changes with complexity is the number of windows. The real ceiling is the weekly limit; `relay forecast` warns when a plan does not fit in what is left of it, and the way past that ceiling is a second quota (Codex, or paid extra usage), not a trick.
+
 ## Workflows, step by step
 
 The examples below show what you type and what relay does. Agent output is shortened.
@@ -499,40 +540,144 @@ The review lands in a file, the conductor reads its verdicts, and the fix loop c
 
 The same skills work in Codex. Invoke them by name, for example `$plan-with-tiers` and `$run-lanes`, or just describe what you want. The conductor spawns `relay-implementer`, `relay-reviewer` and the other agents installed by `relay setup codex`, always naming the model and reasoning effort. Each lane's dispatch starts with the absolute path of its worktree.
 
+### Workflow 7: run for 20 hours while you sleep
+
+You have a large plan, say 30 tasks in 5 waves, and you want it done by morning.
+
+**1. Read the forecast.**
+
+```bash
+relay forecast docs/relay/plans/2026-10-19-big-feature.md
+```
+
+If it says the plan does not fit the weekly limit, split the plan or let Codex take the reviews. If the time estimate is longer than your night, that is fine: the marathon stops at the deadline with the ledger showing where it got to.
+
+**2. Dry run, then start.**
+
+```bash
+relay marathon docs/relay/plans/2026-10-19-big-feature.md --hours 20 --dry-run   # shows the exact command
+relay marathon docs/relay/plans/2026-10-19-big-feature.md --hours 20
+```
+
+Run it under `tmux`, `screen` or `nohup` so it survives a closed terminal. The main checkout must be clean; the marathon refuses to start on uncommitted changes.
+
+**3. What happens overnight.**
+
+```text
+22:04 marathon start: big-feature, 20h, deadline 18:04, model sonnet, permission auto
+22:04 leg 1: starting
+01:31 leg 1: paused — budget critical (api-equivalent $14.20) [5h 86% · 7d 38%]
+01:31 waiting until 03:02 (+90s) for the window to reset: budget critical
+03:04 leg 2: starting
+06:48 leg 2: progress — leg ended with progress; continuing
+06:48 leg 3: starting
+07:40 leg 3: done — merged (api-equivalent $3.10) [5h 41% · 7d 52%]
+07:40 marathon stop: plan complete
+```
+
+Leg 1 worked until the window was nearly spent, merged what was clean and wrote a handoff. The marathon waited for the reset and started leg 2 with an empty context, which picked up from the ledger. Leg 2 ran out of its turn budget mid-wave, so leg 3 continued at once. Each leg's session id, cost and usage reading are in `.relay/runs/big-feature/marathon.json`.
+
+**4. In the morning.** Review `relay/big-feature/integration` like a pull request, read `relay ledger <plan> --rulings`, and run `relay calibrate <plan>` so the next forecast is based on this run.
+
 ## Installation
 
-Relay needs **git** and **Node 20 or newer**.
+You need a recent **Claude Code** (run `claude update`), **git**, and **Node 20 or newer**. Relay's hooks and its `relay` command run on Node.
 
 ### Claude Code
+
+**1. Add the marketplace and install the plugin.** Inside Claude Code:
 
 ```text
 /plugin marketplace add cube-digital/relay
 /plugin install relay@relay
 ```
 
-Then, inside each repository where you want to use lanes:
+The same from a terminal:
 
 ```bash
-relay setup claude --write-project
+claude plugin marketplace add cube-digital/relay
+claude plugin install relay@relay
 ```
 
-This adds two settings to `.claude/settings.json` that a plugin cannot set for itself:
+**2. Restart Claude Code** (or run `/reload-plugins`), then run `/plugin`. You should see relay in the list and the line `1 mod active · relay`. The mod is the part that routes models and reads your usage budget. Relay is tested on Claude Code 2.1.303; on an older version the mod may not load, and everything else (skills, agents, hooks) still works without it.
 
-- `worktree.baseRef: "head"`, so lane worktrees branch from your current branch (by default they would start from `origin`'s main branch);
-- `subagentPromptCacheTtl: "1h"`, so a lane keeps its prompt cache while it waits for a review (the default is five minutes).
+**3. Set up each repository once.** Relay relies on two settings that a plugin is not allowed to set for itself. Open Claude Code inside the repository and ask:
 
-To check the install, run `/plugin` and look for `1 mod active · relay`, then run `relay budget` after your first message in a session. The mod needs a recent Claude Code; relay is tested on 2.1.303. Without the mod, the skills, agents and hooks still work, only without automatic routing and budget readings.
+> Run `relay setup claude --write-project`.
+
+The `relay` command ships inside the plugin, so Claude can run it but your own terminal cannot. If you prefer to do it by hand, add this to the repository's `.claude/settings.json`:
+
+```json
+{
+  "worktree": { "baseRef": "head" },
+  "subagentPromptCacheTtl": "1h"
+}
+```
+
+The first setting makes lane worktrees branch from your current branch (by default they would start from `origin`'s main branch). The second keeps a lane's prompt cache warm for an hour while it waits for a review (the default is five minutes).
+
+**4. Try it.** In the same session:
+
+> Run `relay budget`.
+
+After your first message in a session it prints your 5-hour and weekly usage. Then describe a feature and say "plan this with relay".
+
+#### For a whole team
+
+Install with project scope from inside the repository:
+
+```bash
+claude plugin install relay@relay --scope project
+```
+
+This records relay in the repository's `.claude/settings.json`. Commit that file, and everyone who opens the repository in Claude Code is offered the same plugin. Commit the two settings from step 3 at the same time.
+
+#### Updating and removing
+
+```bash
+claude plugin marketplace update relay      # fetch the latest version
+claude plugin update relay@relay            # install it, then restart Claude Code
+claude plugin uninstall relay@relay         # remove relay
+```
 
 ### Codex
 
+**1. Install the skills** from the marketplace:
+
 ```bash
-codex plugin marketplace add cube-digital/relay        # the skills
-git clone https://github.com/cube-digital/relay ~/relay
-cd ~/relay && npm link                                  # puts `relay` on your PATH
-relay setup codex /path/to/your/project                 # agents, hooks, model defaults
+codex plugin marketplace add cube-digital/relay
 ```
 
-`relay setup codex` writes three things into the project's `.codex/` folder: one agent file per role with its model and reasoning effort, a `hooks.json` with relay's hooks, and an `[agents]` default so a helper started without a model never inherits the most expensive one. Open Codex in the project and trust the hooks with `/hooks`.
+Then open Codex, run `/plugins` and enable relay.
+
+**2. Install the `relay` command.** Codex plugins cannot ship a command-line tool, so clone the repository and link it:
+
+```bash
+git clone https://github.com/cube-digital/relay ~/relay
+cd ~/relay && npm link
+```
+
+**3. Set up each project once:**
+
+```bash
+relay setup codex /path/to/your/project
+```
+
+This writes three things into the project's `.codex/` folder: one agent file per role with its model and reasoning effort, a `hooks.json` with relay's hooks, and an `[agents]` default so a helper started without a model never inherits the most expensive one.
+
+**4. Trust the hooks.** Open Codex in the project and approve relay's hooks with `/hooks`. Codex does not run project hooks until you do.
+
+### Trying relay without installing it
+
+To try a local copy (or your own fork) for one session:
+
+```bash
+git clone https://github.com/cube-digital/relay ~/relay
+cd /path/to/your/project
+claude --plugin-dir ~/relay
+```
+
+Nothing is installed; the next session starts without relay.
 
 ## What's inside
 
@@ -545,7 +690,7 @@ relay setup codex /path/to/your/project                 # agents, hooks, model d
 | `run-lanes` | Executing a plan: waves, lanes, reviews, fix loops, merges, the final review. |
 | `qa-mindset` | Writing, running or reviewing tests. |
 | `handoff` | The budget turns critical, the context gets long, or work moves to a new session. |
-| `relay-setup` | Installing relay or checking why routing or lanes misbehave. |
+| `relay-setup` | Installing relay, long unattended runs, or checking why routing or lanes misbehave. |
 
 ### Agents
 
@@ -577,6 +722,9 @@ All hooks fail open: if one crashes, the tool call goes ahead as if relay were n
 
 ```text
 relay lanes <plan> [--write]                  validate a plan, show lanes and waves, write briefs
+relay forecast <plan>                         agents, worktrees, usage windows and hours the run will take
+relay marathon <plan> --hours N [--dry-run]   run the plan unattended across usage windows
+relay calibrate <plan> | --show               learn real usage and time rates from a finished run
 relay worktrees sync <plan> --wave N          create or reuse lane worktrees from the integration head
 relay worktrees pack <plan> <lane> [--from]   review package for a lane, or for a fix
 relay worktrees pack <plan> --final           package of the whole branch for the final review
@@ -654,6 +802,7 @@ Still to confirm on a real install:
 Next:
 
 - a budget bar above the prompt in Claude Code;
+- Codex taking reviews during a marathon's waits, so the other window is not idle;
 - reading the Codex budget through a documented interface;
 - diff-scoped mutation testing as one `relay` command;
 - cost measurements on real plans, with and without relay.
@@ -669,6 +818,10 @@ claude plugin validate . && claude plugin test .
 ```
 
 Edit `roles/` and `config/routing.json`, then run `relay build`. The files in `agents/` and `codex/` are generated. [AGENTS.md](AGENTS.md) has the rules for agents working on relay itself, and [docs/design.md](docs/design.md) the research and sources behind each decision.
+
+### Releasing
+
+Bump `version` in `.claude-plugin/plugin.json`, `.codex-plugin/plugin.json` and `package.json` together. Claude Code keeps users on the version they installed until this number changes, so a release without a version bump never reaches anyone. `claude plugin tag` creates a matching `relay--v<version>` git tag after checking that the manifests agree.
 
 ## Credits
 

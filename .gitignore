@@ -14,8 +14,9 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+# lib/ is relay source, not a build dir (un-ignored below)
 lib64/
+!lib/
 parts/
 sdist/
 var/

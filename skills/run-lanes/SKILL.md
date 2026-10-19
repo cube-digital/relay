@@ -12,7 +12,7 @@ The ledger is your memory: `relay ledger <plan> "<line>"` after every event. Aft
 
 1. `relay budget`. If critical, stop and say so.
 2. `relay lanes <plan> --write`. If it reports errors, the plan goes back to the plan-with-tiers skill.
-3. Read the plan once. Ledger: `start: <n> tasks, <lanes> lanes, <waves> waves`.
+3. Read the plan once. Ledger: `start: <n> tasks, <lanes> lanes, <waves> waves` (this exact line; `relay calibrate` reads it).
 
 ## 1. Each wave
 
@@ -32,13 +32,17 @@ The ledger is your memory: `relay ledger <plan> "<line>"` after every event. Aft
    - Each round: `relay worktrees pack <plan> <lane> --from <head the last review saw>` and a scoped re-review.
    - After round 5, adjudicate each open finding yourself: park it (`Ruling: ...`) or, if later work builds on it, rule the smallest change and carry it into the next wave's dispatches.
 6. **Merge the wave** when every lane is clean or parked: `relay worktrees merge <plan> --wave N --suite`. The full suite runs here once. A conflict or a red suite: resume the responsible lane with the exact failure, then merge again.
-7. Ledger `wave N: merged @ <sha>, suite <pass/fail>`. `relay budget`; then the next wave.
+7. Ledger `wave N: merged @ <sha>, suite <pass/fail>` (this exact shape; it is a calibration sample). `relay budget`; then the next wave.
 
 ## 2. Finish
 
 1. `relay worktrees pack <plan> --final`; dispatch the architect for the final review with the package, the ledger's deferred minors and rulings, and the plan's Review Focus.
 2. Findings → one fix dispatch with the whole list, one scoped re-review, adjudicate the rest. No second wave of fixes.
-3. Report to the human: integration branch `relay/<slug>/integration`, waves, per-lane status, tests added/removed, and every line of `relay ledger <plan> --rulings`. Then `relay worktrees clean <plan>`. Merging into their branch is the human's call.
+3. Ledger `plan: complete (relay/<slug>/integration @ <sha>)`, then `relay calibrate <plan>` so the next forecast uses this run's real rates. Report to the human: the integration branch, waves, per-lane status, tests added/removed, and every line of `relay ledger <plan> --rulings`. Then `relay worktrees clean <plan>`. Merging into their branch is the human's call.
+
+## Unattended runs
+
+Inside `relay marathon` nobody can answer questions. Rule and continue on everything but the four reasons under **Stop**; at critical budget finish in-flight lanes, merge, write the handoff and end your turn. End your final message with one line, `RELAY_LEG: DONE | PAUSED | BLOCKED — <reason>`, so the marathon knows whether to wait for the next window, start the next leg, or hand the problem to the human.
 
 ## Budget during the run
 
