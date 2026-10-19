@@ -227,3 +227,7 @@ node_modules/
 .claude-plugin/types/
 .DS_Store
 *.log
+
+# LaTeX build files (docs/whitepaper)
+*.aux
+*.out

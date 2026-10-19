@@ -6,6 +6,8 @@ Relay is a plugin for **Claude Code** and **Codex** that keeps long coding sessi
 
 It builds on [superpowers](https://github.com/obra/superpowers) by Jesse Vincent, which showed that agents work far better when they plan, test and review in a fixed rhythm. Relay keeps that rhythm and adds what a Pro or Max subscription makes painful: cost, time and limits.
 
+**One-page whitepaper:** [relay-whitepaper.pdf](docs/whitepaper/relay-whitepaper.pdf) covers the problem, the mechanism, and the statistical model behind the forecast (fix rounds as independent per-lane Bernoullis with the exact usage distribution, ratio-estimator calibration, the window walk), plus what is not proven yet.
+
 ## Contents
 
 - [The problem](#the-problem)
@@ -413,14 +415,15 @@ agents       ~11 starts (3 reviewer, 2 implementer, 2 test-author, 1 conductor, 
              1 implementer-fast, 1 implementer-deep), plus ~1.8 fix round(s) on resumed agents
 parallel     up to 2 lane(s) at once (plan allows 2, cap 4)
 worktrees    3 (2 lane slot(s) reused across waves + 1 integration)
-usage        ~31.7% of a 5h window in total — PLACEHOLDER rates, not your data: run a plan, then `relay calibrate`
-windows      ~1 five-hour window(s) at the 85% stop line
-time         ~2h 3m of work
+usage        ~31.7% of a 5h window ± 2.9% from fix rounds — 24.6 units of work + 7.1 expected in fix rounds,
+             at 1.00% per unit — PLACEHOLDER rate, not your data: run a plan, then `relay calibrate`
+windows      ~1 five-hour window(s) at the 85% stop line — from placeholder rates
+time         ~2h 3m of work — from placeholder rates
   wave 1: ~11.1% · ~41m · window 1
   wave 2: ~20.6% · ~1h 22m · window 1
 ```
 
-**How it learns.** Every ledger line is stamped with the usage reading at that moment, for example `[5h 23.4% · 7d 41%]`. When a wave merges, the difference between the wave's start stamp and its merge stamp is one sample: this much of the window for this much work. `/relay:calibrate <plan>` collects the samples into `~/.relay/calibration.json`, and the next forecast uses them; run-lanes does this on its own at the end of a run. A wave during which the window reset is dropped, never guessed. After two or three plans the numbers are yours.
+**How it learns.** Every ledger line is stamped with the usage reading at that moment and the time the 5-hour window resets, for example `[5h 23.4% resets 16:30 · 7d 41%]`. When a wave merges, the difference between the wave's start stamp and its merge stamp is one sample: this much of the window for this much expected work, reviews and fix rounds included. `/relay:calibrate <plan>` collects the samples into `~/.relay/calibration.json`, and the next forecast uses them; run-lanes does this on its own at the end of a run. A wave during which the window reset is dropped, never guessed. After two or three plans the numbers are yours.
 
 **The 5-hour limit is a quota. Relay crosses it; nothing dodges it.** Optimizing tokens fits more work into each window and leaves the window itself in place. A long plan passes through several windows, and `/relay:marathon` makes that happen without you:
 

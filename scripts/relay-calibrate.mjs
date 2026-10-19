@@ -12,9 +12,10 @@ import { planLanes } from './relay-lanes.mjs';
 
 export function describeCalibration(cal) {
   const s = summarize(cal);
-  if (!s.n) return 'uncalibrated: no samples yet (run a plan, then `relay calibrate <plan>`)';
-  const pct = s.pctPerUnit === undefined ? 'no usage samples' : `${s.pctPerUnit.toFixed(2)}% of the 5h window per unit` + (s.pct7dPerUnit === undefined ? '' : `, ${s.pct7dPerUnit.toFixed(3)}% of the week per unit`);
-  return `calibrated from ${s.n} wave(s) across ${s.runs} run(s): ${pct}, ${s.minutesPerUnit.toFixed(1)} min per critical-path unit (last ${s.lastAt?.slice(0, 10)})`;
+  const old = s.ignored ? ` (${s.ignored} sample(s) from an older relay ignored: they used other units)` : '';
+  if (!s.n) return `uncalibrated: no samples yet (run a plan, then \`relay calibrate <plan>\`)${old}`;
+  const pct = s.pctPerUnit === undefined ? 'no usage readings yet, usage stays a placeholder' : `${s.pctPerUnit.toFixed(2)}% of the 5h window per unit from ${s.n5h} wave(s)` + (s.pct7dPerUnit === undefined ? '' : `, ${s.pct7dPerUnit.toFixed(3)}% of the week per unit`);
+  return `calibrated from ${s.n} wave(s) across ${s.runs} run(s): ${pct}; ${s.minutesPerUnit.toFixed(1)} min per unit of critical path (last ${s.lastAt?.slice(0, 10)})${old}`;
 }
 
 export function main(argv) {

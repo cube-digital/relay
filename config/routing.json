@@ -42,11 +42,12 @@
     "maxParallelLanes": 4
   },
   "forecast": {
-    "$comment": "Placeholder rates until `relay calibrate` has real samples: pctPerUnit is % of the 5-hour window per weight unit, minutesPerUnit wall-clock minutes per unit. A task's weight = tierWeight[tier] × riskFactor[risk].",
+    "$comment": "Placeholder rates until `relay calibrate` has real samples: pctPerUnit is % of the 5-hour window per weight unit, minutesPerUnit wall-clock minutes per unit. A task's weight = tierWeight[tier] × riskFactor[risk]; a lane's expected weight adds a fix round with probability fixRoundProbability[riskiest task] that re-works fixRoundCost of the lane.",
     "tierWeight": { "cheap": 1, "mid": 3, "strong": 7 },
     "riskFactor": { "low": 0.8, "medium": 1.0, "high": 1.4 },
     "defaults": { "pctPerUnit": 1.0, "minutesPerUnit": 4 },
     "fixRoundProbability": { "low": 0.2, "medium": 0.5, "high": 0.8 },
+    "fixRoundCost": 0.35,
     "windowHours": 5
   }
 }

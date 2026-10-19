@@ -4,15 +4,17 @@
 // "Lane b: fix round 2/5 (1 addressed, 1 open: ...)", "Ruling: <what> — <why> — <cost if wrong>",
 // "wave 2: merged @ 1a2b3c4, suite pass".
 // Every line is stamped with the time and, when a fresh reading exists, the usage
-// windows: "[5h 23.4% · 7d 41%]". relay calibrate turns those stamps into forecasts.
+// windows: "[5h 23.4% resets 16:30 · 7d 41%]" (UTC). relay calibrate turns those stamps into forecasts.
 
 import { appendFileSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { parseArgs } from '../lib/args.mjs';
 import { isStale, readSnapshot } from '../lib/budget.mjs';
 import { parsePlan } from '../lib/plan.mjs';
-import { loadRouting } from '../lib/routing.mjs';
 import { runDir } from './relay-lanes.mjs';
+
+// A stamp is a measurement: only a reading from the last few minutes is written.
+export const STAMP_FRESH_MINUTES = 20;
 
 export function ledgerPath(planPath) {
   const plan = parsePlan(readFileSync(planPath, 'utf8'));
@@ -22,12 +24,17 @@ export function ledgerPath(planPath) {
 export function usageStamp(snapshot, staleAfterMinutes, now = Date.now()) {
   if (!snapshot || isStale(snapshot, staleAfterMinutes, now)) return '';
   const parts = [];
-  if (snapshot.fiveHour) parts.push(`5h ${snapshot.fiveHour.percentUsed}%`);
+  if (snapshot.fiveHour) {
+    // the reset time (UTC, like the line's own time) lets calibration drop waves that cross it
+    const reset = Date.parse(snapshot.fiveHour.resetsAt ?? '');
+    const hhmm = Number.isFinite(reset) ? ` resets ${new Date(reset).toISOString().slice(11, 16)}` : '';
+    parts.push(`5h ${snapshot.fiveHour.percentUsed}%${hhmm}`);
+  }
   if (snapshot.sevenDay) parts.push(`7d ${snapshot.sevenDay.percentUsed}%`);
   return parts.length ? ` [${parts.join(' · ')}]` : '';
 }
 
-export function formatLine(text, { now = new Date(), snapshot, staleAfterMinutes = 360 } = {}) {
+export function formatLine(text, { now = new Date(), snapshot, staleAfterMinutes = STAMP_FRESH_MINUTES } = {}) {
   const when = now.toISOString().slice(0, 16).replace('T', ' ');
   return `- ${when}${usageStamp(snapshot, staleAfterMinutes, now.getTime())} ${text}\n`;
 }
@@ -38,7 +45,7 @@ export function appendLedger(planPath, text) {
   const path = join(dir, 'ledger.md');
   mkdirSync(dir, { recursive: true });
   if (!existsSync(path)) appendFileSync(path, `# relay ledger — plan: ${resolve(planPath)}\n`);
-  const line = formatLine(text, { snapshot: readSnapshot(), staleAfterMinutes: loadRouting().budget.staleAfterMinutes });
+  const line = formatLine(text, { snapshot: readSnapshot() });
   appendFileSync(path, line);
   return line;
 }
