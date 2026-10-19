@@ -29,6 +29,10 @@ Why relay is built the way it is, with the sources checked in October 2026. Fact
 - Subagent worktrees (`isolation: worktree`) branch from the default branch unless `worktree.baseRef: "head"`; worktrees with changes persist until a periodic sweep; worktrees made outside Claude Code are not swept. [worktrees](https://code.claude.com/docs/en/worktrees)
 - Plugin agents ignore `hooks`, `mcpServers` and `permissionMode` frontmatter. [sub-agents](https://code.claude.com/docs/en/sub-agents)
 - Skill descriptions are always in context (1% of the window in total, 1,536 characters each); a skill's body stays in context once invoked; after compaction each re-attached skill keeps its first 5,000 tokens within a 25,000 budget. [skills](https://code.claude.com/docs/en/skills)
+- `disable-model-invocation: true` keeps a skill or command out of the model's listing ("Description not in context, full skill loads when invoked") while it stays in the `/` menu; relay's `/relay:*` commands use it, in `commands/` so the shared `skills/` tree stays portable. `${CLAUDE_PLUGIN_ROOT}` is substituted in command content (checked on 2.1.303). [skills](https://code.claude.com/docs/en/skills), [plugin components](https://code.claude.com/docs/en/plugins/components#path-variables-and-persistent-data)
+- Plugin `bin/` is on the PATH of the Bash tool's shell, not the user's terminal. [plugin components](https://code.claude.com/docs/en/plugins/components#executables)
+- Background Bash tasks keep running after Claude's final response but are cleaned up when Claude Code exits, including processes detached with `setsid`; so a marathon started from the chat lives as long as the session, and one meant to outlive it runs in its own terminal. [interactive mode](https://code.claude.com/docs/en/interactive-mode#background-bash-commands)
+- A `claude -p` started from inside a Claude Code session ran under the parent's session id on 2.1.303 (observed, not documented); every marathon leg passes its own `--session-id`.
 
 ## 4. Testing evidence
 

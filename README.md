@@ -404,10 +404,10 @@ sequenceDiagram
 
 ### 8. Forecast, then run for hours
 
-After the plan, before anyone says go, `relay forecast` says what the run will take. Agents, worktrees and parallelism are exact, computed from the plan. Usage and time come from your own past runs once you have any; until then relay uses placeholder rates and says so on every line that depends on them.
+After the plan, before anyone says go, `/relay:forecast` says what the run will take (the plan-with-tiers skill also runs it for you before it hands the plan over). Agents, worktrees and parallelism are exact, computed from the plan. Usage and time come from your own past runs once you have any; until then relay uses placeholder rates and says so on every line that depends on them.
 
 ```text
-$ relay forecast docs/relay/plans/2026-10-19-password-reset.md
+> /relay:forecast docs/relay/plans/2026-10-19-password-reset.md
 forecast for password-reset: 6 tasks · 3 lanes · 2 wave(s)
 agents       ~11 starts (3 reviewer, 2 implementer, 2 test-author, 1 conductor, 1 architect,
              1 implementer-fast, 1 implementer-deep), plus ~1.8 fix round(s) on resumed agents
@@ -420,13 +420,13 @@ time         ~2h 3m of work
   wave 2: ~20.6% · ~1h 22m · window 1
 ```
 
-**How it learns.** Every ledger line is stamped with the usage reading at that moment, for example `[5h 23.4% · 7d 41%]`. When a wave merges, the difference between the wave's start stamp and its merge stamp is one sample: this much of the window for this much work. `relay calibrate <plan>` collects the samples into `~/.relay/calibration.json`, and the next forecast uses them. A wave during which the window reset is dropped, never guessed. After two or three plans the numbers are yours.
+**How it learns.** Every ledger line is stamped with the usage reading at that moment, for example `[5h 23.4% · 7d 41%]`. When a wave merges, the difference between the wave's start stamp and its merge stamp is one sample: this much of the window for this much work. `/relay:calibrate <plan>` collects the samples into `~/.relay/calibration.json`, and the next forecast uses them; run-lanes does this on its own at the end of a run. A wave during which the window reset is dropped, never guessed. After two or three plans the numbers are yours.
 
-**The 5-hour limit is a quota. Relay crosses it; nothing dodges it.** Optimizing tokens fits more work into each window and leaves the window itself in place. A long plan passes through several windows, and `relay marathon` makes that happen without you:
+**The 5-hour limit is a quota. Relay crosses it; nothing dodges it.** Optimizing tokens fits more work into each window and leaves the window itself in place. A long plan passes through several windows, and `/relay:marathon` makes that happen without you:
 
 ```mermaid
 flowchart LR
-    start(["relay marathon plan.md --hours 20"]) --> leg["leg N<br/>a fresh headless session on Sonnet<br/>continues the plan from the ledger"]
+    start(["/relay:marathon plan.md 20"]) --> leg["leg N<br/>a fresh headless session on Sonnet<br/>continues the plan from the ledger"]
     leg --> q{"how did the leg end?"}
     q -- "plan complete" --> done(["stop: done<br/>relay calibrate"])
     q -- "budget critical<br/>or usage limit" --> wait["wait for the<br/>window reset"]
@@ -439,6 +439,8 @@ flowchart LR
 ```
 
 Each leg is a short `claude -p` session with an empty context, so a 20-hour run never carries a 20-hour conversation: the state lives in the ledger, the lane branches and the worktrees. Legs run with `--permission-mode auto --permission-prompts none`, the documented pattern for unattended work: a classifier approves routine actions, and anything that would need a person is refused, so the run never hangs on a prompt. At the end you get the same thing as after an interactive run: one integration branch, the test counts, and every ruling the agents made.
+
+**Where a marathon runs.** `/relay:marathon plan.md 20` starts it from the chat as a background task of the session. You can keep working in the same session; `/relay:marathon status` shows the current leg or how long until the window resets, and `/relay:marathon stop` ends it after the current leg (`stop now` ends that leg too). A background task lives as long as the session, so keep Claude Code open and the computer awake. If the session closes anyway, the same command continues from the ledger. On macOS, `/relay:marathon plan.md 20 terminal` opens the run in its own Terminal window instead, and it keeps going after you close Claude Code.
 
 What a marathon can and cannot promise: any plan, whatever its size, keeps advancing until it is done, with as much work as possible in each window. What changes with complexity is the number of windows. The real ceiling is the weekly limit; `relay forecast` warns when a plan does not fit in what is left of it, and the way past that ceiling is a second quota (Codex, or paid extra usage), not a trick.
 
@@ -542,26 +544,41 @@ The same skills work in Codex. Invoke them by name, for example `$plan-with-tier
 
 ### Workflow 7: run for 20 hours while you sleep
 
-You have a large plan, say 30 tasks in 5 waves, and you want it done by morning.
+You have a large plan, say 30 tasks in 5 waves, and you want it done by morning. Everything happens in the Claude Code chat.
 
 **1. Read the forecast.**
 
-```bash
-relay forecast docs/relay/plans/2026-10-19-big-feature.md
+```text
+/relay:forecast docs/relay/plans/2026-10-19-big-feature.md
 ```
 
 If it says the plan does not fit the weekly limit, split the plan or let Codex take the reviews. If the time estimate is longer than your night, that is fine: the marathon stops at the deadline with the ledger showing where it got to.
 
-**2. Dry run, then start.**
+**2. Start it.**
 
-```bash
-relay marathon docs/relay/plans/2026-10-19-big-feature.md --hours 20 --dry-run   # shows the exact command
-relay marathon docs/relay/plans/2026-10-19-big-feature.md --hours 20
+```text
+/relay:marathon docs/relay/plans/2026-10-19-big-feature.md 20
 ```
 
-Run it under `tmux`, `screen` or `nohup` so it survives a closed terminal. The main checkout must be clean; the marathon refuses to start on uncommitted changes.
+Claude does a dry run first: it shows the forecast and refuses if the main checkout has uncommitted changes or the plan has errors. Then it starts the marathon as a background task and tells you where it runs. Leave Claude Code open and the computer awake (on a laptop: plugged in, lid open or sleep disabled). Add `terminal` at the end, on macOS, to run it in its own Terminal window instead.
 
-**3. What happens overnight.**
+**3. Look in whenever you like.**
+
+```text
+/relay:marathon status
+```
+
+```text
+marathon big-feature: running · pid 48211 · waiting for the usage window until 2026-10-20 03:02 (1h 31m from now)
+deadline 2026-10-20 18:04 (16h 33m left) · model sonnet · permission auto
+legs 1: paused · api-equivalent $14.20
+last  leg 1 paused: budget critical [5h 86% · 7d 38%]
+ledger
+  - 2026-10-20 01:12 [5h 71% · 7d 35%] wave 2: merged @ 9c41e0a, suite pass
+  - 2026-10-20 01:30 [5h 86% · 7d 38%] handoff: wave 3 lanes a, b in flight at critical; next leg resumes them
+```
+
+The full log, one line per event, is in `.relay/runs/big-feature/marathon.log`:
 
 ```text
 22:04 marathon start: big-feature, 20h, deadline 18:04, model sonnet, permission auto
@@ -575,9 +592,11 @@ Run it under `tmux`, `screen` or `nohup` so it survives a closed terminal. The m
 07:40 marathon stop: plan complete
 ```
 
-Leg 1 worked until the window was nearly spent, merged what was clean and wrote a handoff. The marathon waited for the reset and started leg 2 with an empty context, which picked up from the ledger. Leg 2 ran out of its turn budget mid-wave, so leg 3 continued at once. Each leg's session id, cost and usage reading are in `.relay/runs/big-feature/marathon.json`.
+Leg 1 worked until the window was nearly spent, merged what was clean and wrote a handoff. The marathon waited for the reset and started leg 2 with an empty context, which picked up from the ledger. Leg 2 ran out of its turn budget mid-wave, so leg 3 continued at once. Each leg is its own headless session with its own session id, recorded with its cost and usage reading in `.relay/runs/big-feature/marathon.json`.
 
-**4. In the morning.** Review `relay/big-feature/integration` like a pull request, read `relay ledger <plan> --rulings`, and run `relay calibrate <plan>` so the next forecast is based on this run.
+**4. In the morning.** When the background task ends, Claude reports the outcome, the waves merged, what is left and the rulings worth a look, and calibrates the forecast from this run. Review `relay/big-feature/integration` like a pull request.
+
+**From a terminal instead.** With the `relay` command installed in your shell (see [In your own terminal](#in-your-own-terminal)), `relay marathon <plan> --hours 20` does the same under `tmux` or `screen`, and `--status` and `--stop` work the same way.
 
 ## Installation
 
@@ -605,7 +624,7 @@ claude plugin install relay@relay
 
 > Run `relay setup claude --write-project`.
 
-The `relay` command ships inside the plugin, so Claude can run it but your own terminal cannot. If you prefer to do it by hand, add this to the repository's `.claude/settings.json`:
+The `relay` command ships inside the plugin: Claude runs it for you, and the `/relay:` commands below wrap the parts you use yourself. If you prefer to do it by hand, add this to the repository's `.claude/settings.json`:
 
 ```json
 {
@@ -618,7 +637,9 @@ The first setting makes lane worktrees branch from your current branch (by defau
 
 **4. Try it.** In the same session:
 
-> Run `relay budget`.
+```text
+/relay:budget
+```
 
 After your first message in a session it prints your 5-hour and weekly usage. Then describe a feature and say "plan this with relay".
 
@@ -638,6 +659,15 @@ This records relay in the repository's `.claude/settings.json`. Commit that file
 claude plugin marketplace update relay      # fetch the latest version
 claude plugin update relay@relay            # install it, then restart Claude Code
 claude plugin uninstall relay@relay         # remove relay
+```
+
+#### In your own terminal
+
+Optional. Everything works from the chat; install the command in your shell only to run marathons under `tmux`, in CI, or by hand:
+
+```bash
+npm install -g github:cube-digital/relay
+relay --help
 ```
 
 ### Codex
@@ -680,6 +710,21 @@ claude --plugin-dir ~/relay
 Nothing is installed; the next session starts without relay.
 
 ## What's inside
+
+### Commands in Claude Code
+
+Type `/relay` in Claude Code to see them. They run only when you call them, so they cost no context until then.
+
+| Command | What it does |
+|---|---|
+| `/relay:forecast [plan]` | Agents, worktrees, parallel lanes, usage windows and hours for a plan, before you run it. |
+| `/relay:lanes [plan]` | The blueprint: which tasks share a lane and which lanes run in parallel, wave by wave. |
+| `/relay:marathon <plan> <hours> [terminal]` | Runs the plan unattended across usage windows, as a background task or in its own Terminal window. |
+| `/relay:marathon status \| stop [now]` | Where a marathon is (leg, wait, last outcome, ledger tail), or end it. |
+| `/relay:calibrate [plan]` | Learns your account's real usage and speed from a finished run; without a plan, shows the current calibration. |
+| `/relay:budget` | The 5-hour and weekly level relay routes by: normal, tight or critical. |
+
+Without a plan argument, they use the newest plan in `docs/relay/plans/`. Planning and running a plan need no command: describe the work and say "plan this with relay", then "run it".
 
 ### Skills
 
@@ -724,6 +769,7 @@ All hooks fail open: if one crashes, the tool call goes ahead as if relay were n
 relay lanes <plan> [--write]                  validate a plan, show lanes and waves, write briefs
 relay forecast <plan>                         agents, worktrees, usage windows and hours the run will take
 relay marathon <plan> --hours N [--dry-run]   run the plan unattended across usage windows
+relay marathon <plan> --status | --stop [--now]  where a marathon is, or end it
 relay calibrate <plan> | --show               learn real usage and time rates from a finished run
 relay worktrees sync <plan> --wave N          create or reuse lane worktrees from the integration head
 relay worktrees pack <plan> <lane> [--from]   review package for a lane, or for a fix
@@ -737,7 +783,7 @@ relay build [--check]                         regenerate agents and hooks for bo
 relay setup claude | codex                    settings a plugin cannot set for itself
 ```
 
-Mechanical work runs in this command and costs no tokens: checking plans, grouping lanes, managing worktrees, building review packages.
+Claude runs these for you; the commands above are the ones worth calling yourself. Mechanical work runs in this command and costs no tokens: checking plans, grouping lanes, managing worktrees, building review packages.
 
 ## Configuration
 

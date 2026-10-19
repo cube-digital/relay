@@ -14,6 +14,10 @@ Ask before writing any settings file; show the human what will change.
    - `subagentPromptCacheTtl: "1h"`: keeps a lane's cache warm while its review runs.
 3. Self-check: `relay budget` (after one reply in a session it shows the 5h/7d reading), `relay lanes skills/plan-with-tiers/template.md`.
 
+## Long runs
+
+`/relay:marathon <plan> <hours>` runs a plan across usage windows: short headless sessions on Sonnet, each continuing from the ledger, with a wait for the window reset between them. It starts as a background task of the session (keep Claude Code open, computer awake); on macOS, `terminal` runs it in its own Terminal window. `/relay:marathon status` and `stop` control it. Legs use `--permission-mode auto --permission-prompts none`; add `--allowed-tools "Bash(pnpm test *)"` for commands the classifier keeps refusing. Without a `claude` command on PATH it uses the Claude Code that started it, or `RELAY_CLAUDE_BIN`.
+
 ## Codex
 
 1. Install the skills: `codex plugin marketplace add cube-digital/relay`, then enable relay in `/plugins`.

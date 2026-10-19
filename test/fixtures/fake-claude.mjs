@@ -12,8 +12,11 @@ const n = existsSync(counterPath) ? Number(readFileSync(counterPath, 'utf8')) : 
 writeFileSync(counterPath, String(n + 1));
 const step = scenario.steps[Math.min(n, scenario.steps.length - 1)];
 
-// record the exact argv so tests can assert on flags
+// record the exact argv so tests can assert on flags, and the pid so tests can
+// check that a stopped marathon did not leave this process running
 appendFileSync(process.env.FAKE_CLAUDE_SCENARIO + '.argv', JSON.stringify(process.argv.slice(2)) + '\n');
+writeFileSync(process.env.FAKE_CLAUDE_SCENARIO + '.pid', String(process.pid));
+if (step.sleepMs) await new Promise((r) => setTimeout(r, step.sleepMs));
 
 for (const line of step.ledger ?? []) {
   mkdirSync(dirname(scenario.ledger), { recursive: true });
