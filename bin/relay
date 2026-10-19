@@ -1,0 +1,24 @@
+#!/usr/bin/env node
+// relay — deterministic helpers for the relay skills. Mechanical work runs here,
+// not in a model: plan validation, lane partitioning, worktree pools, review
+// packages, the ledger, protected tests and the budget reading.
+
+const COMMANDS = {
+  build: ['../scripts/build.mjs', 'regenerate agents/, codex/ and the mod routing from roles/ + config/routing.json'],
+  lanes: ['../scripts/relay-lanes.mjs', 'validate a plan and show its lanes and waves (--write: briefs + lanes.json)'],
+  worktrees: ['../scripts/relay-worktrees.mjs', 'sync | merge | pack | status | clean the lane worktree pool'],
+  ledger: ['../scripts/relay-ledger.mjs', 'append to or print a plan\'s ledger (--rulings: only Ruling lines)'],
+  protect: ['../scripts/relay-protect.mjs', 'add | remove | list protected acceptance tests'],
+  budget: ['../scripts/relay-budget.mjs', 'print the 5h/7d budget level (--json, --codex, --exit-code)'],
+  setup: ['../scripts/relay-setup.mjs', 'claude [--write-project] | codex <project-dir>'],
+};
+
+const [cmd, ...rest] = process.argv.slice(2);
+if (!cmd || cmd === '-h' || cmd === '--help' || !COMMANDS[cmd]) {
+  console.log('usage: relay <command> [args]\n');
+  for (const [name, [, help]] of Object.entries(COMMANDS)) console.log(`  ${name.padEnd(10)} ${help}`);
+  process.exit(cmd && !COMMANDS[cmd] && cmd !== '-h' && cmd !== '--help' ? 64 : 0);
+}
+const mod = await import(new URL(COMMANDS[cmd][0], import.meta.url));
+const code = await mod.main(rest);
+process.exit(typeof code === 'number' ? code : 0);

@@ -218,3 +218,11 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# relay
+node_modules/
+.relay/
+.claude/worktrees/
+.claude-plugin/types/
+.DS_Store
+*.log

@@ -1,0 +1,33 @@
+{
+  "name": "relay",
+  "version": "0.1.0",
+  "description": "Budget-aware orchestration: tiered model routing, worktree lanes, and lean QA for agent-written tests.",
+  "author": {
+    "name": "cube-digital"
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "orchestration",
+    "subagents",
+    "worktrees",
+    "model-routing",
+    "qa"
+  ],
+  "skills": "./skills/",
+  "hooks": {},
+  "interface": {
+    "displayName": "Relay",
+    "shortDescription": "Tiered model routing, worktree lanes and lean QA for coding agents",
+    "longDescription": "Plan with per-task model tiers, run plans as parallel worktree lanes, keep usage inside the 5-hour window, and test like QA: few tests that catch real bugs.",
+    "developerName": "cube-digital",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/cube-digital/relay"
+  },
+  "homepage": "https://github.com/cube-digital/relay",
+  "repository": "https://github.com/cube-digital/relay"
+}

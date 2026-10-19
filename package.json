@@ -1,0 +1,19 @@
+{
+  "name": "relay",
+  "version": "0.1.0",
+  "description": "Budget-aware orchestration for Claude Code and Codex: tiered model routing, worktree lanes, and a QA mindset for agent-written tests.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "private": true,
+  "bin": {
+    "relay": "bin/relay"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/build.mjs --check",
+    "test": "node --test test/*.test.mjs"
+  }
+}

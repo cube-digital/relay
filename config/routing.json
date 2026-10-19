@@ -1,0 +1,44 @@
+{
+  "$comment": "Single source of truth for model routing and budget policy. Edit, then run `relay build` (regenerates agents/, codex/agents/ and the routing block in hooks/register.ts).",
+  "tiers": {
+    "cheap": {
+      "claude": { "model": "haiku", "effort": "low" },
+      "codex": { "model": "gpt-6-luna", "effort": "low" }
+    },
+    "mid": {
+      "claude": { "model": "sonnet", "effort": "medium" },
+      "codex": { "model": "gpt-6.1-sol", "effort": "medium" }
+    },
+    "strong": {
+      "claude": { "model": "opus", "effort": "high" },
+      "codex": { "model": "gpt-6-astra", "effort": "high" }
+    }
+  },
+  "defaultSubagentTier": "mid",
+  "unrouted": {
+    "$comment": "Claude built-in agents that would otherwise inherit the session model (often Opus). Other plugins' agents keep their own frontmatter.",
+    "general-purpose": "mid",
+    "claude": "mid",
+    "Plan": "mid",
+    "Explore": "cheap"
+  },
+  "budget": {
+    "fiveHour": { "tight": 60, "critical": 85 },
+    "sevenDay": { "tight": 80, "critical": 95 },
+    "staleAfterMinutes": 360,
+    "tight": {
+      "capStrongTo": "mid",
+      "exempt": ["architect"]
+    },
+    "critical": {
+      "capStrongTo": "mid",
+      "exempt": [],
+      "denyNewSpawns": ["implementer", "implementer-fast", "implementer-deep", "test-author"],
+      "hide": ["implementer-deep"]
+    }
+  },
+  "lanes": {
+    "maxLaneTasks": 6,
+    "maxParallelLanes": 4
+  }
+}

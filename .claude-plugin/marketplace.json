@@ -1,0 +1,14 @@
+{
+  "name": "relay",
+  "description": "Relay: budget-aware orchestration for Claude Code and Codex.",
+  "owner": {
+    "name": "cube-digital"
+  },
+  "plugins": [
+    {
+      "name": "relay",
+      "source": "./",
+      "description": "Budget-aware orchestration: tiered model routing, worktree lanes, and lean QA for agent-written tests."
+    }
+  ]
+}
