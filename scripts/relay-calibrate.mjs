@@ -13,8 +13,8 @@ import { planLanes } from './relay-lanes.mjs';
 export function describeCalibration(cal) {
   const s = summarize(cal);
   if (!s.n) return 'uncalibrated: no samples yet (run a plan, then `relay calibrate <plan>`)';
-  const pct = s.pctPerUnit === undefined ? 'no usage samples' : `${s.pctPerUnit.toFixed(2)}% of the 5h window per unit`;
-  return `calibrated from ${s.n} wave(s) across ${s.runs} run(s): ${pct}, ${s.minutesPerUnit.toFixed(1)} min per unit (last ${s.lastAt?.slice(0, 10)})`;
+  const pct = s.pctPerUnit === undefined ? 'no usage samples' : `${s.pctPerUnit.toFixed(2)}% of the 5h window per unit` + (s.pct7dPerUnit === undefined ? '' : `, ${s.pct7dPerUnit.toFixed(3)}% of the week per unit`);
+  return `calibrated from ${s.n} wave(s) across ${s.runs} run(s): ${pct}, ${s.minutesPerUnit.toFixed(1)} min per critical-path unit (last ${s.lastAt?.slice(0, 10)})`;
 }
 
 export function main(argv) {
@@ -37,7 +37,8 @@ export function main(argv) {
     return 1;
   }
   const taskById = Object.fromEntries(res.plan.tasks.map((t) => [t.id, t]));
-  const { samples, skipped } = waveSamples(readFileSync(path, 'utf8'), res.lanes, res.plan.slug, loadRouting().forecast, taskById);
+  const routing = loadRouting();
+  const { samples, skipped } = waveSamples(readFileSync(path, 'utf8'), res.lanes, res.plan.slug, routing.forecast, taskById, routing.lanes.maxParallelLanes);
   const cal = readCalibration();
   const existing = new Set(cal.samples.map((x) => `${x.slug}#${x.wave}#${x.at}`));
   const fresh = samples.filter((x) => !existing.has(`${x.slug}#${x.wave}#${x.at}`));
