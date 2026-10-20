@@ -21,6 +21,7 @@ It builds on [superpowers](https://github.com/obra/superpowers) by Jesse Vincent
   - [6. Testing like QA](#6-testing-like-qa)
   - [7. Claude Code and Codex together](#7-claude-code-and-codex-together)
   - [8. Forecast, then run for hours](#8-forecast-then-run-for-hours)
+  - [9. The board: what is done, at a glance](#9-the-board-what-is-done-at-a-glance)
 - [Workflows, step by step](#workflows-step-by-step)
 - [Installation](#installation)
 - [What's inside](#whats-inside)
@@ -447,17 +448,37 @@ Each leg is a short `claude -p` session with an empty context, so a 20-hour run 
 
 What a marathon can and cannot promise: any plan, whatever its size, keeps advancing until it is done, with as much work as possible in each window. What changes with complexity is the number of windows. The real ceiling is the weekly limit; `relay forecast` warns when a plan does not fit in what is left of it, and the way past that ceiling is a second quota (Codex, or paid extra usage), not a trick.
 
+### 9. The board: what is done, at a glance
+
+Once a plan exists, every task has a traffic light: **grey** planned, **yellow** in progress, **green** done, **red** blocked. Within a busy lane, the tasks waiting for the one before them are hollow grey (queued).
+
+![The relay board in a browser: three waves of lanes, each task with a traffic light, details of the selected task on the right](docs/images/board.png)
+
+The lights are computed, not reported by an agent. A task turns green when its own commit (`T3: ...`) is on its lane branch, and stays green once merged into the integration branch; the tests a test-author writes for it do not count. A lane turns red when its latest ledger line says BLOCKED or its wave's suite failed. Every `relay ledger` and `relay worktrees` call refreshes the board, so it moves as the run moves.
+
+Three places show it:
+
+- **`/relay:board`** prints it in the chat and opens the roadmap page in your browser, which reloads itself while the run goes. Click a task for its files, behaviors, test budget and done check; filter by light.
+- **A band above the prompt** in Claude Code, while a run is going: one dot per task and the count of green ones, with a button that opens the pane.
+- **`/relay-board`** opens the whole board in a pane beside the chat.
+
+From a terminal: `relay board <plan> --html --open`.
+
 ## Workflows, step by step
 
 The examples below show what you type and what relay does. Agent output is shortened.
 
 ### Workflow 1: a new feature, end to end
 
-**1. Describe the feature.** Point relay at a spec, or describe the feature and agree on it first.
+**1. Describe the feature.** Give relay a spec, or just say what you want:
 
-> Plan the billing export in docs/specs/billing-export.md with relay.
+```text
+/relay:plan CSV export of invoices for the billing page, plus a rounding helper
+```
 
-**2. The architect writes the plan** (on Opus) to `docs/relay/plans/2026-10-19-billing-export.md`, runs `relay lanes` on it, fixes anything it reports, and shows you the lanes and waves:
+Relay scouts the code, asks at most three questions that change the plan (here: which currencies, and whether totals round per line or per invoice), and writes a one-page spec with the behaviors that will become tests.
+
+**2. The architect writes the plan** (on Opus) to `docs/relay/plans/2026-10-19-billing-export.md`, runs `relay lanes` on it, fixes anything it reports, and you get one line per task, the lanes and waves, and the forecast:
 
 ```text
 plan billing-export: 6 tasks → 4 lanes in 2 wave(s)
@@ -473,9 +494,11 @@ Read the plan. This is the cheapest moment to change your mind.
 
 **3. Say go.**
 
-> Run the plan.
+```text
+/relay:run
+```
 
-The conductor (Sonnet) takes over and works without stopping to check in:
+The conductor (Sonnet) takes over in the background and works without stopping to check in; `/relay:status` shows where it is:
 
 ```text
 relay budget                         → budget: normal — 5h 18%, 7d 22%
@@ -720,6 +743,11 @@ Type `/relay` in Claude Code to see them. They run only when you call them, so t
 
 | Command | What it does |
 |---|---|
+| `/relay:plan <what to build \| spec>` | From an idea to a plan: scouts the code, asks at most three questions, writes a short spec, has the architect write the plan, then shows the tasks, lanes and forecast. Writes no code. |
+| `/relay:run [plan]` | Runs the plan now: the conductor works through the waves in the background while you keep using the session. |
+| `/relay:status [plan]` | Where a run is: waves, lanes, fix rounds, rulings, budget, and the marathon if one is running. |
+| `/relay:board [plan]` | The roadmap as traffic lights, in the chat and as a page in your browser that follows the run. |
+| `/relay-board` | The same board in a pane beside the chat; a band above the prompt shows it while a run is going. |
 | `/relay:forecast [plan]` | Agents, worktrees, parallel lanes, usage windows and hours for a plan, before you run it. |
 | `/relay:lanes [plan]` | The blueprint: which tasks share a lane and which lanes run in parallel, wave by wave. |
 | `/relay:marathon <plan> <hours> [terminal]` | Runs the plan unattended across usage windows, as a background task or in its own Terminal window. |
@@ -727,7 +755,7 @@ Type `/relay` in Claude Code to see them. They run only when you call them, so t
 | `/relay:calibrate [plan]` | Learns your account's real usage and speed from a finished run; without a plan, shows the current calibration. |
 | `/relay:budget` | The 5-hour and weekly level relay routes by: normal, tight or critical. |
 
-Without a plan argument, they use the newest plan in `docs/relay/plans/`. Planning and running a plan need no command: describe the work and say "plan this with relay", then "run it".
+Without a plan argument, they use the newest plan in `docs/relay/plans/`. The usual path is `/relay:plan` → read the plan → `/relay:run` (or `/relay:marathon` when it spans more than one window) → `/relay:status` while it runs. Plain words work too: "plan this with relay", then "run it".
 
 ### Skills
 
@@ -762,7 +790,7 @@ Every worker writes its full report to a file and returns at most eight lines: a
 | `session-start` | Claude Code, Codex | Loads the `using-relay` rules and the current budget level into every new session. |
 | `retest-guard` | Claude Code, Codex | Refuses a test command on code that has not changed since its last run. |
 | `protect-tests` | Claude Code, Codex | Refuses edits, from editors or the shell, to protected acceptance tests. |
-| mod (`hooks/register.ts`) | Claude Code | Model routing, budget readings, budget caps, and putting `lane-*` agents into their worktrees. |
+| mod (`hooks/register.ts`) | Claude Code | Model routing, budget readings, budget caps, putting `lane-*` agents into their worktrees, and the board's band and pane. |
 
 All hooks fail open: if one crashes, the tool call goes ahead as if relay were not installed.
 
@@ -771,6 +799,7 @@ All hooks fail open: if one crashes, the tool call goes ahead as if relay were n
 ```text
 relay lanes <plan> [--write]                  validate a plan, show lanes and waves, write briefs
 relay forecast <plan>                         agents, worktrees, usage windows and hours the run will take
+relay board <plan> [--html] [--open]          traffic lights for every task, lane and wave; the roadmap page
 relay marathon <plan> --hours N [--dry-run]   run the plan unattended across usage windows
 relay marathon <plan> --status | --stop [--now]  where a marathon is, or end it
 relay calibrate <plan> | --show               learn real usage and time rates from a finished run
@@ -839,11 +868,15 @@ For a mechanical task, the architect can write the exact code into the plan. The
 
 ## Status and roadmap
 
-Version **0.1**. The `relay` command, the hooks and the Claude Code mod have automated tests: 34 for the command and hooks against real git repositories, and 8 for the mod inside Claude Code's own test kit. The plugin passes `claude plugin validate`.
+Version **0.1**. The `relay` command, the hooks and the Claude Code mod have automated tests: 63 for the command and hooks against real git repositories, and 10 for the mod inside Claude Code's own test kit. The plugin passes `claude plugin validate`.
+
+A first pilot (October 20, Claude Code 2.1.303) ran a 3-task plan from `/relay:plan` to a merged, reviewed integration branch: lane agents landed in their worktrees by name, each role ran on its planned model, and the run produced its first calibration sample. One sample is not a rate; more pilots are the next step.
 
 Still to confirm on a real install:
 
-- [ ] An agent started as `lane-a` lands in its lane's worktree and stays there when resumed. [spikes/worktree-lanes.md](spikes/worktree-lanes.md) walks through the check in about 30 minutes.
+- [x] An agent started as `lane-a` lands in its lane's worktree ([spikes/worktree-lanes.md](spikes/worktree-lanes.md)).
+- [ ] A resumed lane agent (fix rounds 1–3) stays in its worktree.
+- [ ] The board's band and pane draw in a live Claude Code session (they pass Claude Code's test kit on the terminal and desktop surfaces).
 - [ ] Codex accepts the generated hooks file as written.
 - [ ] The Codex model names in `config/routing.json` match the current ones (they change often).
 - [ ] `relay budget --codex` reads Codex's usage window; it relies on an undocumented file.

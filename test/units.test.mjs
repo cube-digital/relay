@@ -7,6 +7,7 @@ import { shellWritesTo } from '../lib/guards.mjs';
 import { commandOf, editedPaths } from '../lib/hookio.mjs';
 import { isTestCommand } from '../lib/fingerprint.mjs';
 import { loadRouting } from '../lib/routing.mjs';
+import { section, taskSections } from '../lib/plan.mjs';
 
 const budget = loadRouting().budget;
 
@@ -79,4 +80,18 @@ test('running a protected test is allowed, writing to it from the shell is not',
   assert.equal(shellWritesTo(`echo "" > ${p}`, p), true);
   assert.equal(shellWritesTo(`git checkout -- ${p}`, p), true);
   assert.equal(shellWritesTo('sed -i s/a/b/ src/other.ts', p), false);
+});
+
+test('a task section that quotes markdown keeps its quoted headings', () => {
+  const plan = [
+    '# P', '', '## Global Constraints', '', '- ESM', '', '```md', '## not a section', '```', '', '## Tasks', '',
+    '### T1: README', 'Append exactly:', '', '````md', '## API', '', '### `slugify(text)`', '', '```js', "slugify('a')", '```', '````', '', 'Then stop.', '',
+    '### T2: Next', 'Body two.', '',
+    '```relay-plan', '{"slug":"p","suite":"true","tasks":[]}', '```', '',
+  ].join('\n');
+  const s = taskSections(plan);
+  assert.match(s.T1, /## API[\s\S]*### `slugify\(text\)`[\s\S]*Then stop\./);
+  assert.doesNotMatch(s.T1, /T2/);
+  assert.equal(s.T2, '### T2: Next\nBody two.');
+  assert.equal(section(plan, 'Global Constraints'), '- ESM\n\n```md\n## not a section\n```');
 });

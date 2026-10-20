@@ -20,6 +20,7 @@ import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from
 import { dirname, join, resolve } from 'node:path';
 import { parseArgs } from '../lib/args.mjs';
 import { ensureExcluded, git, mainRoot } from '../lib/git.mjs';
+import { refreshBoard } from './relay-board.mjs';
 import { describeSegments, planLanes, renderBrief, runDir } from './relay-lanes.mjs';
 
 const LOCKFILES = ['package-lock.json', 'pnpm-lock.yaml', 'yarn.lock', 'bun.lockb', 'bun.lock', 'poetry.lock', 'uv.lock', 'requirements.txt', 'Pipfile.lock', 'Cargo.lock', 'go.sum', 'Gemfile.lock', 'composer.lock'];
@@ -302,8 +303,16 @@ export function main(argv) {
       return 64;
     }
     const ctx = { ...context(planPath), planPath };
-    if (cmd === 'sync') return sync(ctx, Number(args.wave ?? 1)) ? 0 : 1;
-    if (cmd === 'merge') return merge(ctx, Number(args.wave ?? 1), { suite: Boolean(args.suite) });
+    if (cmd === 'sync') {
+      const ok = sync(ctx, Number(args.wave ?? 1));
+      refreshBoard(planPath);
+      return ok ? 0 : 1;
+    }
+    if (cmd === 'merge') {
+      const code = merge(ctx, Number(args.wave ?? 1), { suite: Boolean(args.suite) });
+      refreshBoard(planPath);
+      return code;
+    }
     if (cmd === 'pack') return pack(ctx, args._[1], { from: args.from, final: Boolean(args.final) }) ? 0 : 1;
     if (cmd === 'clean') return clean(ctx);
   } catch (err) {

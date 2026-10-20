@@ -11,6 +11,7 @@ import { join, resolve } from 'node:path';
 import { parseArgs } from '../lib/args.mjs';
 import { isStale, readSnapshot } from '../lib/budget.mjs';
 import { parsePlan } from '../lib/plan.mjs';
+import { refreshBoard } from './relay-board.mjs';
 import { runDir } from './relay-lanes.mjs';
 
 // A stamp is a measurement: only a reading from the last few minutes is written.
@@ -47,6 +48,7 @@ export function appendLedger(planPath, text) {
   if (!existsSync(path)) appendFileSync(path, `# relay ledger — plan: ${resolve(planPath)}\n`);
   const line = formatLine(text, { snapshot: readSnapshot() });
   appendFileSync(path, line);
+  refreshBoard(planPath);
   return line;
 }
 

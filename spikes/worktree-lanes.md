@@ -41,8 +41,8 @@ Pass if the second run is in the same worktree as the first. (Docs do not say; t
 
 | Mechanism | Claude Code version | Works? | Notes |
 |---|---|---|---|
-| A. name → cwd (mod) | | | |
-| A. resume keeps cwd | | | |
+| A. name → cwd (mod) | 2.1.303 | yes | 2026-10-20 pilot (3-task plan): `lane-a` and `lane-a-tests` ran in `relay-slugify-1`, `lane-b` in `relay-slugify-2`; commits landed on their lane branches. Models routed as planned: implementer-fast on Haiku, reviewers and test-author on Sonnet, architect on Opus. |
+| A. resume keeps cwd | | not yet exercised | the pilot needed no fix round |
 | B. EnterWorktree in subagent | | | |
 | C. isolation + resume | | | |
 

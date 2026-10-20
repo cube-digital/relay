@@ -34,6 +34,7 @@ import { forecast, formatForecast } from '../lib/forecast.mjs';
 import { ensureExcluded, git, mainRoot } from '../lib/git.mjs';
 import { classifyLeg, decideNext, legPrompt, parseClaudeJson } from '../lib/marathon.mjs';
 import { loadRouting, RELAY_ROOT } from '../lib/routing.mjs';
+import { refreshBoard } from './relay-board.mjs';
 import { ledgerPath } from './relay-ledger.mjs';
 import { planLanes, runDir } from './relay-lanes.mjs';
 
@@ -263,7 +264,10 @@ export async function main(argv) {
   state.pid = process.pid;
   delete state.endedAt;
   delete state.stopReason;
-  const save = () => writeFileSync(statePath, JSON.stringify(state, null, 2) + '\n');
+  const save = () => {
+    writeFileSync(statePath, JSON.stringify(state, null, 2) + '\n');
+    refreshBoard(planPath);
+  };
   const finish = (reason, phase = 'stopped') => {
     state.endedAt = new Date().toISOString();
     state.stopReason = reason;
