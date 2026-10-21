@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync, mkdirSync, readFileSync } from 'node:fs';
+import { cpSync, mkdtempSync, writeFileSync, mkdirSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { checkSkills, claudeAgent, codexAgent, injectModRouting, main } from '../scripts/build.mjs';
+import { checkFlow, checkSkills, claudeAgent, codexAgent, injectModRouting, main } from '../scripts/build.mjs';
 import { loadRouting } from '../lib/routing.mjs';
 import { ROOT, runCli } from './helpers.mjs';
 
@@ -55,4 +55,18 @@ test('every hook script referenced by hooks.json exists', () => {
   for (const m of hooks.matchAll(/hooks\/([\w-]+\.mjs)/g)) {
     assert.doesNotThrow(() => readFileSync(join(ROOT, 'hooks', m[1])), m[1]);
   }
+});
+
+test('build --check fails when config/flow.json names a role or skill that does not exist', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'relay-flow-'));
+  for (const d of ['agents', 'bin', 'codex', 'config', 'hooks', 'roles', 'skills']) cpSync(join(ROOT, d), join(dir, d), { recursive: true });
+  assert.equal(main(['--check'], dir), 0);
+  const flowPath = join(dir, 'config', 'flow.json');
+  const flow = JSON.parse(readFileSync(flowPath, 'utf8'));
+  flow.flows[0].steps.push({ id: 'ghost', agent: 'no-such-role', skills: ['no-such-skill'] });
+  writeFileSync(flowPath, JSON.stringify(flow));
+  const problems = checkFlow(dir).join('\n');
+  assert.match(problems, /agent "no-such-role" is not a role/);
+  assert.match(problems, /skill "no-such-skill" is not a folder/);
+  assert.equal(main(['--check'], dir), 1);
 });

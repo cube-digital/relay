@@ -5,6 +5,7 @@
 //                                    → codex/config.snippet.toml, codex/hooks.json
 //                                    → routing block in hooks/register.ts (Claude mod)
 // Also checks that every skill is portable (frontmatter: name + description only).
+// Also validates config/flow.json: every agent, skill and cli it names must exist.
 // `--check` writes nothing and fails if any generated file is out of date.
 
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -150,6 +151,57 @@ export function checkSkills(root = RELAY_ROOT) {
   return problems;
 }
 
+// The subcommands bin/relay dispatches, read from its COMMANDS table.
+export function cliSubcommands(root = RELAY_ROOT) {
+  const text = readFileSync(join(root, 'bin', 'relay'), 'utf8');
+  return [...text.matchAll(/^\s+([a-z][a-z-]*): \['\.\.\/scripts\//gm)].map((m) => m[1]);
+}
+
+// config/flow.json is descriptive for now, but every name in it must resolve.
+export function checkFlow(root = RELAY_ROOT) {
+  const file = join(root, 'config', 'flow.json');
+  if (!existsSync(file)) return [];
+  let flow;
+  try {
+    flow = JSON.parse(readFileSync(file, 'utf8'));
+  } catch {
+    return ['config/flow.json: not valid JSON'];
+  }
+  if (!Array.isArray(flow?.flows)) return ['config/flow.json: "flows" must be an array'];
+  const roles = new Set(readdirSync(join(root, 'roles')).filter((f) => f.endsWith('.md')).map((f) => f.replace(/\.md$/, '')));
+  const skills = new Set(readdirSync(join(root, 'skills')).filter((d) => existsSync(join(root, 'skills', d, 'SKILL.md'))));
+  const clis = new Set(cliSubcommands(root));
+  const problems = [];
+  for (const f of flow.flows) {
+    const at = `config/flow.json: flow "${f?.id}"`;
+    const ids = new Set();
+    const visit = (steps) => {
+      if (!Array.isArray(steps)) {
+        problems.push(`${at}: "steps" must be an array`);
+        return;
+      }
+      for (const s of steps) {
+        const where = `${at}, step "${s?.id}"`;
+        if (!s?.id) problems.push(`${at}: a step has no id`);
+        else if (ids.has(s.id)) problems.push(`${where}: duplicate id`);
+        else ids.add(s.id);
+        if (['agent', 'cli', 'steps'].filter((k) => s?.[k] !== undefined).length !== 1) problems.push(`${where}: needs exactly one of agent, cli or steps`);
+        for (const k of ['agent', 'coordinator']) {
+          if (s?.[k] !== undefined && !roles.has(s[k])) problems.push(`${where}: ${k} "${s[k]}" is not a role in roles/`);
+        }
+        if (s?.skills !== undefined && !Array.isArray(s.skills)) problems.push(`${where}: "skills" must be an array`);
+        for (const sk of Array.isArray(s?.skills) ? s.skills : []) {
+          if (!skills.has(sk)) problems.push(`${where}: skill "${sk}" is not a folder in skills/`);
+        }
+        if (s?.cli !== undefined && !clis.has(s.cli)) problems.push(`${where}: cli "${s.cli}" is not a relay subcommand`);
+        if (s?.steps !== undefined) visit(s.steps);
+      }
+    };
+    visit(f?.steps);
+  }
+  return problems;
+}
+
 export function outputs(root = RELAY_ROOT) {
   const routing = loadRouting(root);
   const roles = loadRoles(root);
@@ -167,7 +219,7 @@ export function outputs(root = RELAY_ROOT) {
 
 export function main(args = process.argv.slice(2), root = RELAY_ROOT) {
   const check = args.includes('--check');
-  const problems = checkSkills(root);
+  const problems = [...checkSkills(root), ...checkFlow(root)];
   const stale = [];
   for (const [rel, content] of outputs(root)) {
     const abs = join(root, rel);

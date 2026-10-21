@@ -1,0 +1,27 @@
+{
+  "$comment": "Relay's pipeline, step by step. Descriptive for now: run-lanes is still the procedure the conductor follows. relay build checks every name.",
+  "flows": [
+    {
+      "id": "feature",
+      "label": "From an idea to a reviewed integration branch",
+      "steps": [
+        { "id": "find", "agent": "scout" },
+        { "id": "plan", "agent": "architect", "skills": ["plan-with-tiers"] },
+        { "id": "check", "cli": "lanes" },
+        {
+          "id": "waves", "repeat": "each wave, its lanes in parallel", "coordinator": "conductor", "skills": ["run-lanes"],
+          "steps": [
+            { "id": "tests-first", "agent": "test-author", "when": "lane risk medium or high with a test budget" },
+            { "id": "implement", "agent": "implementer", "tier": "from the task" },
+            { "id": "review", "agent": "reviewer", "skills": ["qa-mindset"] },
+            { "id": "fix", "agent": "implementer", "when": "review findings, rounds 1-3, same agent" },
+            { "id": "escalate", "agent": "implementer-deep", "when": "rounds 4-5" },
+            { "id": "merge", "cli": "worktrees" }
+          ]
+        },
+        { "id": "final-review", "agent": "architect" },
+        { "id": "learn", "cli": "calibrate" }
+      ]
+    }
+  ]
+}
