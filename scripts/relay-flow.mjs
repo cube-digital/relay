@@ -10,7 +10,7 @@ import { effectivePiece, fillPlaceholders, LANE_POINTS, loadFlowSet, piecesAt, P
 import { RELAY_ROOT } from '../lib/routing.mjs';
 import { checkFlow } from './build.mjs';
 import { planLanes, runDir } from './relay-lanes.mjs';
-import { appendLedger } from './relay-ledger.mjs';
+import { appendLedger, ledgerPath } from './relay-ledger.mjs';
 import { main as protect } from './relay-protect.mjs';
 
 const USAGE = `usage:
@@ -211,9 +211,19 @@ function at(argv) {
   }
 
   if (planPath) {
+    // a re-run does not repeat a skip line already ledgered since the last "start:" line
+    let sinceStart = [];
+    try {
+      const ledger = ledgerPath(planPath);
+      const lines = existsSync(ledger) ? readFileSync(ledger, 'utf8').split('\n') : [];
+      const at = lines.map((l) => / start: /.test(l)).lastIndexOf(true);
+      sinceStart = lines.slice(at + 1);
+    } catch {}
     for (const s of skipped.filter((x) => x.kind === 'requires')) {
       const path = /^requires (.*) missing$/.exec(s.reason)?.[1] ?? s.reason;
-      appendLedger(planPath, `piece ${s.piece}${laneVar ? ` lane ${laneVar}` : ''}: skipped (requires ${path} missing)`);
+      const text = `piece ${s.piece}${laneVar ? ` lane ${laneVar}` : ''}: skipped (requires ${path} missing)`;
+      if (sinceStart.some((l) => l.endsWith(` ${text}`))) continue;
+      appendLedger(planPath, text);
     }
   }
 

@@ -70,6 +70,8 @@ test('flow at resolves applicable pieces with stable agents and briefs, and ledg
   assert.deepEqual(fin.skipped.map((s) => [s.piece, s.kind]), [['requirements-check', 'requires']]);
   assert.match(fin.skipped[0].reason, /requires docs\/relay\/requirements\/demo\.md missing/);
   assert.match(ledger(), /piece requirements-check: skipped \(requires docs\/relay\/requirements\/demo\.md missing\)/);
+  cli('at', plan, 'final', '--json');
+  assert.equal(ledger().match(/piece requirements-check: skipped/g).length, 1, 'a re-run does not repeat the skip line');
 
   assert.equal(cli('at', plan, 'nowhere').code, 64);
 });

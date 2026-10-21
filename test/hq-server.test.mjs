@@ -79,13 +79,18 @@ test('/api/open refuses paths outside the registered repositories (outside, syml
   }
 });
 
+const restore = (key, value) => {
+  if (value === undefined) delete process.env[key];
+  else process.env[key] = value;
+};
+
 test('the routines API lists instances with their next run, Run now runs the check, and a new passive finding reaches Home', async () => {
   const home = mkdtempSync(join(tmpdir(), 'relay-hq-routines-'));
   const bin = join(home, 'bin');
   mkdirSync(bin);
   symlinkSync(process.execPath, join(bin, 'node'));
   symlinkSync(execFileSync('which', ['git'], { encoding: 'utf8' }).trim(), join(bin, 'git'));
-  const savedPath = process.env.PATH;
+  const saved = { PATH: process.env.PATH, RELAY_HOME: process.env.RELAY_HOME };
   process.env.RELAY_HOME = home;
   process.env.PATH = bin;
   const token = 'ab'.repeat(32);
@@ -118,6 +123,8 @@ test('the routines API lists instances with their next run, Run now runs the che
       launch = await get(`/api/launches/${launchId}`);
     } while (launch.status === 'running' && Date.now() < deadline);
     assert.equal(launch.status, 'done');
+    assert.equal(launch.harness, 'relay');
+    assert.equal(launch.model, null);
 
     const detail = await get(`/api/routines/${id}`);
     assert.equal(detail.runs.length, 1);
@@ -126,7 +133,8 @@ test('the routines API lists instances with their next run, Run now runs the che
     const attention = (await get('/api/home')).attention.filter((a) => a.kind === 'routine');
     assert.deepEqual(attention.map((a) => a.text), ['gh is not installed']);
   } finally {
-    process.env.PATH = savedPath;
+    process.env.PATH = saved.PATH;
+    restore('RELAY_HOME', saved.RELAY_HOME);
     server?.close();
   }
 });
@@ -140,7 +148,7 @@ test('HQ routine enable/disable on Codex touch only relay-* folders, and dismiss
   const autos = join(home, '.codex', 'automations');
   mkdirSync(join(autos, 'user-own'), { recursive: true });
   writeFileSync(join(autos, 'user-own', 'automation.toml'), 'name = "mine"\n');
-  const saved = { PATH: process.env.PATH, HOME: process.env.HOME };
+  const saved = { PATH: process.env.PATH, HOME: process.env.HOME, RELAY_HOME: process.env.RELAY_HOME };
   process.env.RELAY_HOME = join(home, 'relay');
   process.env.HOME = home;
   process.env.PATH = bin;
@@ -181,6 +189,7 @@ test('HQ routine enable/disable on Codex touch only relay-* folders, and dismiss
   } finally {
     process.env.PATH = saved.PATH;
     process.env.HOME = saved.HOME;
+    restore('RELAY_HOME', saved.RELAY_HOME);
     server?.close();
   }
 });

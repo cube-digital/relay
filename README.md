@@ -485,6 +485,17 @@ A run passes six points around the chassis (the plan, then each lane, then each 
 | business-analyst | Business Analyst | BA | planner | strong | cyan |
 | platform-engineer | Platform Engineer | PE | builder | mid | green |
 
+The two newest roles each own pieces:
+
+- **Business Analyst:**
+  - `requirements`, before the plan: turns the spec and `docs/requirements/*` into `docs/relay/requirements/<slug>.md`, with requirements R1…Rn and Given / When / Then acceptance criteria;
+  - `requirements-check`, at the end: marks each R met, partial or missing, with evidence.
+- **Platform Engineer:**
+  - builds the tasks the architect marks `"role": "platform-engineer"` (infra, CI/CD, deploy, configuration, observability);
+  - `platform-review`, after a lane that touches infra: checks rollout and rollback, secrets, migrations, and logs, metrics and health checks. It is read-only, and `relay flow done` blocks it if it commits.
+
+Each role file in `roles/` has a profile (Understands, Receives, Delivers, Never) that is part of the agent's prompt. `relay role new` and `relay piece new` scaffold new ones, and `relay flow add` places a piece in a flow.
+
 The mod's team pane, `/relay-team`, shows who is working on which lane, on which model, with how many tokens. In HQ, the **Team** and **Flows** tabs of the Brain show the same roster and the flows with their pieces.
 
 ## Workflows, step by step
@@ -935,7 +946,7 @@ Type `/relay` in Claude Code to see them. They run only when you call them, so t
 | `/relay:marathon status \| stop [now]` | Where a marathon is (leg, wait, last outcome, ledger tail), or end it. |
 | `/relay:calibrate [plan]` | Learns your account's real usage and speed from a finished run; without a plan, shows the current calibration. |
 | `/relay:budget` | The 5-hour and weekly level relay routes by: normal, tight or critical. |
-| `/relay:hq` | Opens relay HQ in your browser: what is waiting on you across every project, running plans, each plan's board down to the task, launches on Claude Code or Codex, and the Brain (connectors, API keys, skills, agents, how relay is wired). Looking costs no tokens. |
+| `/relay:hq` | Opens relay HQ in your browser: what is waiting on you across every project, running plans, each plan's board down to the task, launches on Claude Code or Codex, your routines, and the Brain (connectors, API keys, skills, the team, flows and their pieces). Looking costs no tokens. |
 | `/relay:connectors` | Records which MCP connectors this session reaches, including claude.ai account connectors, for HQ's Brain. |
 
 Without a plan argument, they use the newest plan in `docs/relay/plans/`. The usual path is `/relay:plan` → read the plan → `/relay:run` (or `/relay:marathon` when it spans more than one window) → `/relay:status` while it runs. Plain words work too: "plan this with relay", then "run it".
