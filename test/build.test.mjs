@@ -3,7 +3,7 @@ import { cpSync, mkdtempSync, writeFileSync, mkdirSync, readFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { checkFlow, checkSkills, claudeAgent, codexAgent, injectModRouting, main } from '../scripts/build.mjs';
+import { checkFlow, checkRoles, checkSkills, claudeAgent, codexAgent, injectModRouting, main } from '../scripts/build.mjs';
 import { loadRouting } from '../lib/routing.mjs';
 import { ROOT, runCli } from './helpers.mjs';
 
@@ -57,16 +57,21 @@ test('every hook script referenced by hooks.json exists', () => {
   }
 });
 
-test('build --check fails when config/flow.json names a role or skill that does not exist', () => {
+test('build --check fails for a piece with an unknown role, a piece placed outside its slots, and a role without its profile', () => {
   const dir = mkdtempSync(join(tmpdir(), 'relay-flow-'));
-  for (const d of ['agents', 'bin', 'codex', 'config', 'hooks', 'roles', 'skills']) cpSync(join(ROOT, d), join(dir, d), { recursive: true });
+  for (const d of ['agents', 'bin', 'codex', 'config', 'flows', 'hooks', 'pieces', 'roles', 'skills']) cpSync(join(ROOT, d), join(dir, d), { recursive: true });
   assert.equal(main(['--check'], dir), 0);
-  const flowPath = join(dir, 'config', 'flow.json');
-  const flow = JSON.parse(readFileSync(flowPath, 'utf8'));
-  flow.flows[0].steps.push({ id: 'ghost', agent: 'no-such-role', skills: ['no-such-skill'] });
-  writeFileSync(flowPath, JSON.stringify(flow));
-  const problems = checkFlow(dir).join('\n');
-  assert.match(problems, /agent "no-such-role" is not a role/);
-  assert.match(problems, /skill "no-such-skill" is not a folder/);
+  const ghost = JSON.parse(readFileSync(join(dir, 'pieces', 'platform-review.json'), 'utf8'));
+  writeFileSync(join(dir, 'pieces', 'ghost.json'), JSON.stringify({ ...ghost, id: 'ghost', role: 'no-such-role' }));
+  const featurePath = join(dir, 'flows', 'feature.json');
+  const feature = JSON.parse(readFileSync(featurePath, 'utf8'));
+  feature.slots['lane.after'].push('requirements');
+  writeFileSync(featurePath, JSON.stringify(feature));
+  const scoutPath = join(dir, 'roles', 'scout.md');
+  writeFileSync(scoutPath, readFileSync(scoutPath, 'utf8').replace(/## Never\n[^\n]*\n/, ''));
+  const flowProblems = checkFlow(dir).join('\n');
+  assert.match(flowProblems, /pieces\/ghost\.json: role "no-such-role" is not a role/);
+  assert.match(flowProblems, /flows\/feature\.json: piece "requirements" cannot sit at lane\.after/);
+  assert.match(checkRoles(dir).join('\n'), /roles\/scout\.md: profile section "## Never"/);
   assert.equal(main(['--check'], dir), 1);
 });

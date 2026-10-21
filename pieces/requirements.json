@@ -1,0 +1,12 @@
+{
+  "id": "requirements",
+  "title": "Requirements",
+  "role": "business-analyst",
+  "slots": ["plan.before"],
+  "skills": [],
+  "requires": [],
+  "brief": "From the spec, and any documents under docs/requirements/, write docs/relay/requirements/{slug}.md: requirements R1…Rn, each with actor, need and acceptance criteria (Given / When / Then); what is out of scope; open questions, each with the assumption taken. Write only that file; commit nothing.",
+  "output": "docs/relay/requirements/{slug}.md",
+  "gate": "blocking",
+  "readonly": false
+}

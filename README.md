@@ -22,6 +22,7 @@ It builds on [superpowers](https://github.com/obra/superpowers) by Jesse Vincent
   - [7. Claude Code and Codex together](#7-claude-code-and-codex-together)
   - [8. Forecast, then run for hours](#8-forecast-then-run-for-hours)
   - [9. The board: what is done, at a glance](#9-the-board-what-is-done-at-a-glance)
+  - [10. Flows, pieces and the team](#10-flows-pieces-and-the-team)
 - [Workflows, step by step](#workflows-step-by-step)
 - [relay HQ: how to use it](#relay-hq-how-to-use-it)
 - [Installation](#installation)
@@ -465,6 +466,27 @@ Three places show it:
 
 From a terminal: `relay board <plan> --html --open`.
 
+### 10. Flows, pieces and the team
+
+A run passes six points around the chassis (the plan, then each lane, then each wave, then the final review): `plan.before`, `plan.after`, `lane.before`, `lane.after`, `wave.after`, `final`. Extra work hangs off those points as **pieces**: a piece is one file in `pieces/` naming its role, its brief, its output and when it applies. A **flow** is one file in `flows/` that places pieces at points. `feature` is the default; `bugfix` is the other. A task can set `role` and `tags` in the plan, so a piece can apply only to the tasks that match.
+
+`relay flow at <plan> <point>` lists the pieces that apply at a point, and `relay flow done` records each result in the ledger. `relay flow list` and `relay flow show <flow>` read the flows.
+
+| Role | Title | Avatar | Kind | Tier | Colour |
+|---|---|---|---|---|---|
+| scout | Code Scout | SC | finder | cheap | cyan |
+| architect | Software Architect | AR | planner | strong | red |
+| conductor | Delivery Lead | DL | coordinator | mid | pink |
+| implementer-fast | Engineer | EN | builder | cheap | green |
+| implementer | Software Engineer | SE | builder | mid | blue |
+| implementer-deep | Senior Engineer | SR | builder | strong | purple |
+| test-author | Test Engineer | TE | builder | mid | yellow |
+| reviewer | Code Reviewer | CR | reviewer | mid | orange |
+| business-analyst | Business Analyst | BA | planner | strong | cyan |
+| platform-engineer | Platform Engineer | PE | builder | mid | green |
+
+The mod's team pane, `/relay-team`, shows who is working on which lane, on which model, with how many tokens. In HQ, the **Team** and **Flows** tabs of the Brain show the same roster and the flows with their pieces.
+
 ## Workflows, step by step
 
 The examples below show what you type and what relay does. Agent output is shortened.
@@ -729,8 +751,8 @@ Marathon is Claude Code only for now.
 | **Connectors** | One widget per connector, with its source, tool count, status and harness. Filters: All, Claude, Codex, Needs action. Below: API connections (services used through a key, such as Exa, Parallel or OpenAI) and the CLIs on your PATH. |
 | **API keys** | Every key a connector or skill needs: set, missing, or written into a file. Values are never shown. |
 | **Skills** | Every skill relay, Claude Code and Codex can load, with its description, what references it and, for Claude, how often it was used. |
-| **Agents** | relay's roles with their tier and model on both tools, their tools and where they are generated from, plus your other agents. |
-| **How relay is wired** | relay's pipeline step by step (from `config/flow.json`), what is generated from what (and whether it is in sync), and which command uses which skill and agent. |
+| **Team** | relay's roles with their tier and model on both tools, their profile, their tools and where they are generated from, plus your other agents. |
+| **Flows** | relay's flows and the pieces at each point (from `flows/` and `pieces/`), what is generated from what (and whether it is in sync), and which command uses which skill and agent. |
 
 **Where connectors come from:**
 - **Read from disk, always current:**
@@ -925,6 +947,8 @@ Without a plan argument, they use the newest plan in `docs/relay/plans/`. The us
 | `reviewer` | mid | Read-only. Reviews a lane per task against the spec, and audits its tests. |
 | `architect` | strong | Writes the plan and does the final review of the branch. |
 | `conductor` | mid | Runs a whole plan, so coordination happens on Sonnet. |
+| `business-analyst` | strong | Turns a goal into a requirements document before the plan is written. |
+| `platform-engineer` | mid | Builds infrastructure and deployment work in its lane. |
 
 Every worker writes its full report to a file and returns at most eight lines: a status (`DONE`, `DONE_WITH_CONCERNS`, `NEEDS_CONTEXT` or `BLOCKED`), its commits, its test counts, the report path and any concern. The conductor's context stays small however long the run.
 
@@ -935,7 +959,7 @@ Every worker writes its full report to a file and returns at most eight lines: a
 | `session-start` | Claude Code, Codex | Loads the `using-relay` rules and the current budget level into every new session. |
 | `retest-guard` | Claude Code, Codex | Refuses a test command on code that has not changed since its last run. |
 | `protect-tests` | Claude Code, Codex | Refuses edits, from editors or the shell, to protected acceptance tests. |
-| mod (`hooks/register.ts`) | Claude Code | Model routing, budget readings, budget caps, putting `lane-*` agents into their worktrees, and the board's band and pane. |
+| mod (`hooks/register.ts`) | Claude Code | Model routing, budget readings, budget caps, putting `lane-*` agents into their worktrees, the board's band and pane, and `/relay-team`. |
 
 All hooks fail open: if one crashes, the tool call goes ahead as if relay were not installed.
 
@@ -943,6 +967,12 @@ All hooks fail open: if one crashes, the tool call goes ahead as if relay were n
 
 ```text
 relay lanes <plan> [--write]                  validate a plan, show lanes and waves, write briefs
+relay flow list | show <flow>                 the flows relay runs, and the pieces in each
+relay flow at <plan> <point> [--lane <id>]    the pieces that apply at a point, with their briefs
+relay flow done <plan> <piece> --status S --report R  record a piece's result in the ledger
+relay flow add | remove <flow> <piece>        place a piece at a point, or take it out
+relay piece new <id> --role <role> --slot <point>  scaffold a piece
+relay role new <name> --kind K --tier T --title "T"  scaffold a role
 relay forecast <plan>                         agents, worktrees, usage windows and hours the run will take
 relay board <plan> [--html] [--open]          traffic lights for every task, lane and wave; the roadmap page
 relay hq [--port N] [--no-open]               the command centre in your browser; reuses a running server

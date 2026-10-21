@@ -20,12 +20,15 @@ For every task write a `### <id>: <title>` section (what to build, interfaces, e
 | `code` | `"complete"` when the section contains the full code to write; otherwise `"prose"`. |
 | `risk` | `low`: internal, easy to revert. `medium`: user-visible behavior. `high`: money, data loss, security, concurrency, migrations. |
 | `files` | Every path the task creates or changes, including tests, lockfiles, migrations, route and index files. Lanes are computed from overlaps, so a missing file causes merge conflicts. |
+| `role` | Optional. `platform-engineer` on infra, CI/CD, deploy, configuration and observability tasks. Builder roles only; the role's tier decides the model, so set `tier` to match. |
+| `tags` | Optional free labels (`infra`, `api`, `ui`) that pieces' `when` reads. |
 | `deps` | Task ids that must land first. Only real dependencies. |
 | `behaviors` | The observable behaviors this task adds or changes, one short line each, from the spec. |
 | `tests` | Budget of NEW tests (qa-mindset): low risk 0–1, medium one per behavior, high one per behavior plus boundaries or one property test. 0 is right when existing tests or the type checker cover it. |
 | `done` | The narrowest command that proves the task: the related tests, a typecheck of the touched package. Never the full suite. |
 
-Plan-level fields: `slug` (kebab-case), `suite` (full test command, run once per wave by the CLI), `setup` (dependency install for a fresh worktree, optional).
+Plan-level fields: `flow` (the flow you were given: `feature`, `bugfix`, or another file in `flows/`), `slug` (kebab-case), `suite` (full test command, run once per wave by the CLI), `setup` (dependency install for a fresh worktree, optional).
+When a requirements document exists (`docs/relay/requirements/<slug>.md`), start each behavior with the requirement it serves: `R2: amounts render with two decimals`.
 
 ## Before handing over
 

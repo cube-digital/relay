@@ -33,7 +33,7 @@
     "critical": {
       "capStrongTo": "mid",
       "exempt": [],
-      "denyNewSpawns": ["implementer", "implementer-fast", "implementer-deep", "test-author"],
+      "denyNewSpawns": ["implementer", "implementer-fast", "implementer-deep", "test-author", "platform-engineer"],
       "hide": ["implementer-deep"]
     }
   },

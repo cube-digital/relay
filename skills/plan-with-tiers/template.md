@@ -31,6 +31,7 @@ export type ExportRow = { id: string; amountCents: number; currency: 'EUR' | 'US
 ```relay-plan
 {
   "slug": "csv-export",
+  "flow": "feature",
   "suite": "pnpm test",
   "setup": "pnpm install --frozen-lockfile",
   "tasks": [
@@ -50,6 +51,7 @@ export type ExportRow = { id: string; amountCents: number; currency: 'EUR' | 'US
     {
       "id": "T3", "title": "Export endpoint", "tier": "mid", "code": "prose", "risk": "high",
       "files": ["src/routes/export.ts", "src/routes/index.ts", "test/export.e2e.test.ts"], "deps": ["T2"],
+      "tags": ["api"],
       "behaviors": ["returns the user's rows as CSV", "401 without a session"],
       "tests": 2,
       "done": "pnpm vitest run test/export.e2e.test.ts"

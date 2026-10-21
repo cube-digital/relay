@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import { brainConnectors, brainKeys } from '../lib/hq/brain.mjs';
-import { listSkills } from '../lib/hq/catalog.mjs';
+import { listSkills, listTeam, wiring } from '../lib/hq/catalog.mjs';
 import { ROOT } from './helpers.mjs';
 
 const pick = ({ harness, source, kind, status }) => ({ harness, source, kind, status });
@@ -56,4 +56,18 @@ test('connectors and keys: source, harness and status from every file, and no se
 
   const out = JSON.stringify({ connectors, keys });
   for (const secret of SECRETS) assert.ok(!out.includes(secret), `secret ${secret} leaked`);
+
+  const ba = listTeam({ home, relayRoot: ROOT }).team.find((m) => m.name === 'business-analyst');
+  assert.equal(ba.title, 'Business Analyst');
+  assert.equal(ba.avatar, 'BA');
+  assert.equal(ba.kind, 'planner');
+  assert.equal(ba.tier, 'strong');
+  assert.ok(ba.profile.Never);
+  const wired = wiring({ relayRoot: ROOT });
+  const feature = wired.flows.find((f) => f.id === 'feature');
+  assert.deepEqual(
+    (({ piece, role, avatar, gate }) => ({ piece, role, avatar, gate }))(feature.slots['lane.after'][0]),
+    { piece: 'platform-review', role: 'platform-engineer', avatar: 'PE', gate: 'blocking' },
+  );
+  assert.deepEqual(wired.problems, []);
 });

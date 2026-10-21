@@ -1,0 +1,10 @@
+{
+  "id": "feature",
+  "title": "Feature",
+  "slots": {
+    "plan.before": ["requirements"],
+    "lane.before": ["acceptance-tests"],
+    "lane.after": ["platform-review"],
+    "final": ["requirements-check"]
+  }
+}
