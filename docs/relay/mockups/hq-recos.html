@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>relay HQ · recos (mockup)</title>
+<style>
+:root{--bg:#090909;--panel:#0f0f0f;--line:#222;--line2:#2c2c2c;--ink:#efece6;--ink2:#a19c93;--mute:#6f6b64;--ac:#7cc8ff;--ac2:#a8dbff;--acbg:#0f1a24;--acline:#24445e;--red:#ff5c5c}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 600px at 50% 0%,#0f1216 0%,#090909 60%);color:var(--ink);font:13px/1.45 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;padding:22px}
+.win{max-width:1320px;margin:0 auto;border:1px solid var(--line2);border-radius:14px;background:#0b0b0b;overflow:hidden}
+.bar{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.b{font:600 12px/1 Inter,sans-serif;color:var(--ink2);border:1px solid var(--line2);border-radius:8px;padding:8px 11px;background:#0e0e0e;display:inline-flex;gap:7px;align-items:center}
+.b.on{color:var(--ink);background:#161b20;border-color:#2d3a46}
+.b.ac{color:#061018;background:var(--ac);border-color:var(--ac);font-weight:700}
+.n{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:9px;background:var(--ac);color:#061018;font:700 10px/1 ui-monospace,Menlo,monospace;padding:0 5px}
+.search{margin-left:auto;width:260px;color:var(--mute)}
+.body{display:grid;grid-template-columns:230px minmax(0,1fr)}
+.side{border-right:1px solid var(--line);padding:14px 12px;display:flex;flex-direction:column;gap:4px}
+.nav{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;color:var(--ink2);font-weight:600}
+.nav.on{background:#14181c;border:1px solid #2a3540;color:var(--ink)}
+.nav .ico{width:26px;height:26px;border-radius:7px;border:1px solid var(--line2);display:grid;place-items:center;font-size:13px;color:var(--ink2)}
+.nav .n{margin-left:auto;background:#262b31;color:var(--ink)}
+.nav.on .n{background:var(--ac);color:#061018}
+.cap{font:600 10px/1 ui-monospace,Menlo,monospace;letter-spacing:.2em;color:var(--mute);margin:14px 10px 4px}
+.main{padding:18px 22px}
+.head{display:flex;align-items:center;gap:14px}
+.logo{width:34px;height:34px;border:2px solid var(--ac);border-radius:8px;transform:rotate(30deg)}
+.title{font-size:28px;letter-spacing:.14em;font-weight:800}
+.title span{font-weight:400;color:var(--ink2)}
+.mascots{margin-left:auto;display:flex;gap:10px}
+.stats{display:flex;gap:16px;margin:8px 0 18px 48px;color:var(--ink2);font-size:12px;flex-wrap:wrap}
+.stats b{color:var(--ink)}
+.stats i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#5b6670;margin-right:6px;vertical-align:1px;font-style:normal}
+.stats i.ac{background:var(--ac)}
+h2{display:flex;align-items:center;gap:10px;font-size:22px;margin:4px 0 14px}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.card{border:1px solid var(--line2);border-left:3px solid #3a444e;border-radius:12px;background:#0d0d0d;overflow:hidden;display:flex;flex-direction:column}
+.card.hi{border-left-color:var(--ac)}
+.card.bad{border-left-color:var(--red)}
+.top{position:relative;height:120px;background:radial-gradient(circle at 1px 1px,#1d1d1d 1px,transparent 1px) 0 0/12px 12px,#0f0f0f;display:grid;place-items:center}
+.cat{position:absolute;left:12px;top:10px;font:700 10px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;color:var(--ink2)}
+.cat i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ac);margin-right:6px;vertical-align:1px}
+.card.bad .cat i{background:var(--red)}
+.rank{position:absolute;right:12px;top:8px;font:700 10px/1 ui-monospace,Menlo,monospace;border:1px solid var(--line2);border-radius:5px;padding:4px 6px;color:var(--ink2)}
+.glyph{font-size:40px;color:var(--ink)}
+.cb{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1}
+.cb h3{margin:0;font-size:16px}
+.cb p{margin:0;color:var(--ink2);font-size:12.5px}
+.cb p b{color:var(--ink)}
+.hl{background:#14222e;color:var(--ac2);border-radius:3px;padding:0 3px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font:600 10px/1 ui-monospace,Menlo,monospace;border:1px solid var(--line2);border-radius:6px;padding:5px 7px;color:var(--ink2)}
+.chip.lvl b{color:var(--ink)}
+.chip.ac{border-color:var(--acline);color:var(--ac)}
+.chip.code{background:#121212;color:var(--ink)}
+.acts{display:flex;gap:6px;margin-top:auto;padding-top:6px}
+.acts .b{padding:7px 10px;font-size:12px}
+.cart{position:fixed;right:34px;bottom:28px;width:360px;border:1px solid #2d3a46;border-radius:12px;background:#0d1217;box-shadow:0 18px 40px rgba(0,0,0,.5);padding:14px}
+.cart h4{margin:0 0 8px;font-size:13px;letter-spacing:.16em;text-transform:uppercase}
+.cart .row{display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid #18212a;font-size:12.5px}
+.cart .row small{margin-left:auto;color:var(--mute);font:600 10px/1 ui-monospace,Menlo,monospace}
+.cart .how{color:var(--ink2);font-size:12px;margin:8px 0}
+.cart pre{margin:0 0 10px;background:#090c10;border:1px solid #1d2731;border-radius:8px;padding:8px;font:11px/1.5 ui-monospace,Menlo,monospace;color:var(--ink2);white-space:pre-wrap}
+</style></head><body>
+<div class="win">
+  <div class="bar">
+    <span class="b">← Home</span>
+    <span class="b search">⌕ Search (/)</span>
+    <span class="b on">▦ Cards</span><span class="b">☰ List</span>
+    <span class="b">Cart <span class="n">2</span></span>
+    <span class="b ac">Apply 2</span>
+  </div>
+  <div class="body">
+    <div class="side">
+      <div class="nav on"><span class="ico">◇</span>Priority<span class="n">4</span></div>
+      <div class="cap">AREAS</div>
+      <div class="nav"><span class="ico">⎇</span>Repos<span class="n">3</span></div>
+      <div class="nav"><span class="ico">▤</span>Runs<span class="n">4</span></div>
+      <div class="nav"><span class="ico">◷</span>Routines<span class="n">2</span></div>
+      <div class="nav"><span class="ico">⚭</span>Brain<span class="n">3</span></div>
+      <div class="cap">STATE</div>
+      <div class="nav"><span class="ico">✓</span>Done<span class="n">6</span></div>
+      <div class="nav"><span class="ico">⤫</span>Skipped<span class="n">1</span></div>
+    </div>
+    <div class="main">
+      <div class="head"><span class="logo"></span><span class="title">RELAY <span>RECOS</span></span>
+        <div class="mascots" id="mascots"></div></div>
+      <div class="stats"><span><b>12</b> recos</span><span><i class="ac"></i>Repos 3</span><span><i></i>Runs 4</span><span><i></i>Routines 2</span><span><i></i>Brain 3</span><span><b>7</b> at zero tokens</span><span>Built 22 Oct 2026 · from routines, ledgers and the Brain</span></div>
+      <h2>◇ Priority <span class="n">4</span></h2>
+      <div class="cards">
+
+        <div class="card bad">
+          <div class="top"><span class="cat"><i></i>BRAIN</span><span class="rank">#1</span><span class="glyph">⚿</span></div>
+          <div class="cb">
+            <h3>Sign in gh</h3>
+            <p><b>What's the benefit:</b> PR hygiene, CI on Home and review requests all depend on it; today every repository says <span class="hl">gh is not signed in</span>.</p>
+            <p><b>What I can do:</b> nothing for you: it needs your login. I give you the command.</p>
+            <div class="chips"><span class="chip lvl">Effort <b>Low</b></span><span class="chip lvl">Priority <b>High</b></span><span class="chip ac">0 tokens</span></div>
+            <div class="chips"><span class="chip code">gh auth login</span></div>
+            <div class="acts"><span class="b">Copy</span><span class="b">Done</span><span class="b">Skip</span></div>
+          </div>
+        </div>
+
+        <div class="card hi">
+          <div class="top"><span class="cat"><i></i>REPOS</span><span class="rank">#2</span><span class="glyph">⎇</span></div>
+          <div class="cb">
+            <h3>Delete 21 leftover relay branches</h3>
+            <p><b>What's the benefit:</b> three finished plans stop showing as <span class="hl">ready to merge</span>, and pr-hygiene stops reporting them.</p>
+            <p><b>What I can do:</b> run the two quoted <code>git branch -D</code> commands pr-hygiene found. Your work is in relay-hq.</p>
+            <div class="chips"><span class="chip lvl">Effort <b>Low</b></span><span class="chip lvl">Priority <b>Mid</b></span><span class="chip ac">0 tokens</span></div>
+            <div class="chips"><span class="chip code">relay/relay-hq/*</span><span class="chip code">relay/relay-flows-team/*</span></div>
+            <div class="acts"><span class="b ac">In cart ✓</span><span class="b">Skip</span></div>
+          </div>
+        </div>
+
+        <div class="card hi">
+          <div class="top"><span class="cat"><i></i>RUNS</span><span class="rank">#3</span><span class="glyph">▤</span></div>
+          <div class="cb">
+            <h3>Close 3 deferred minors from relay-routines</h3>
+            <p><b>What's the benefit:</b> the gaps the reviewers parked get a test: <span class="hl">routine new</span>, the relay CLI label, a scheduled same-day re-run.</p>
+            <p><b>What I can do:</b> plan them as one <b>bugfix</b> run, three tasks, on Sonnet; the plan comes back to you before it runs.</p>
+            <div class="chips"><span class="chip lvl">Effort <b>Mid</b></span><span class="chip lvl">Priority <b>Mid</b></span><span class="chip">~2% of 5h</span></div>
+            <div class="chips"><span class="chip code">lib/routines/run.mjs</span><span class="chip code">test/routine-*.test.mjs</span></div>
+            <div class="acts"><span class="b ac">In cart ✓</span><span class="b">Skip</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="top"><span class="cat"><i></i>BRAIN</span><span class="rank">#4</span><span class="glyph">⚡</span></div>
+          <div class="cb">
+            <h3>Fix 10 broken Codex skill links</h3>
+            <p><b>What's the benefit:</b> Codex lists skills it cannot load: <span class="hl">narrio-*</span> point to a folder that no longer exists.</p>
+            <p><b>What I can do:</b> show the 10 links and the folder they expect; relink or remove is your call.</p>
+            <div class="chips"><span class="chip lvl">Effort <b>Low</b></span><span class="chip lvl">Priority <b>Low</b></span><span class="chip ac">0 tokens</span></div>
+            <div class="chips"><span class="chip code">~/.codex/skills/narrio-*</span></div>
+            <div class="acts"><span class="b">Add to cart</span><span class="b">Skip</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="top"><span class="cat"><i></i>ROUTINES</span><span class="rank">#5</span><span class="glyph">◷</span></div>
+          <div class="cb">
+            <h3>Turn on pr-hygiene for Narrio</h3>
+            <p><b>What's the benefit:</b> you ran <span class="hl">/relay:status</span> on narrio-web 4 times this week by hand.</p>
+            <p><b>What I can do:</b> enable it weekdays 09:00 on the harness you pick.</p>
+            <div class="chips"><span class="chip lvl">Effort <b>Low</b></span><span class="chip lvl">Priority <b>Mid</b></span><span class="chip">from weekly-report</span></div>
+            <div class="acts"><span class="b">Add to cart</span><span class="b">Skip</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="top"><span class="cat"><i></i>RUNS</span><span class="rank">#6</span><span class="glyph">☺</span></div>
+          <div class="cb">
+            <h3>Add a requirements document to relay-routines</h3>
+            <p><b>What's the benefit:</b> requirements-check was <span class="hl">skipped</span> at the end of the run because there was nothing to check against.</p>
+            <p><b>What I can do:</b> have the Business Analyst write it from the spec, then run requirements-check on the merged code.</p>
+            <div class="chips"><span class="chip lvl">Effort <b>Mid</b></span><span class="chip lvl">Priority <b>Low</b></span><span class="chip">~1% of 5h</span></div>
+            <div class="acts"><span class="b">Add to cart</span><span class="b">Skip</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="cart">
+  <h4>Cart · 2</h4>
+  <div class="row">⎇ Delete 21 leftover relay branches<small>COMMAND</small></div>
+  <div class="row">▤ Close 3 deferred minors<small>PLAN</small></div>
+  <p class="how">Apply runs the commands here, at zero tokens, and starts one <b>/relay:plan</b> (bugfix flow) with the rest as its goal. You confirm both first, in the launch dialog.</p>
+  <pre>git -C ~/Workspaces/relay branch -D 'relay/relay-hq/integration' …
+/relay:plan "Close the deferred minors: …"   flow: bugfix</pre>
+  <span class="b ac">Apply 2</span> <span class="b">Clear</span>
+</div>
+
+<script>
+// team mascots in the header: one tone, the working one in the accent
+const roles=[['cap',0],['helmet',1],['none',0],['cap',0],['helmet',0],['none',0]];
+const box=document.getElementById('mascots');
+roles.forEach(([hat,active])=>{const body=['..XXXXX..','.XXXXXXX.','XX.XXX.XX','XXXXXXXXX','.XXXXXXX.','.X.X.X.X.'];const hats={cap:['...HHHH..','..HHHHHH.'],helmet:['..HHHHH..','.HHHHHHH.'],none:['.........','.........']};const rows=[...hats[hat],...body];let s='<svg width="38" height="34" viewBox="0 0 9 8" shape-rendering="crispEdges">';rows.forEach((r,y)=>[...r].forEach((ch,x)=>{if(ch==='X')s+=`<rect x="${x}" y="${y}" width="1" height="1" fill="${active?'#7cc8ff':'#aeb7c0'}"/>`;if(ch==='H')s+=`<rect x="${x}" y="${y}" width="1" height="1" fill="${active?'#cdeaff':'#6f7882'}"/>`;}));box.insertAdjacentHTML('beforeend',s+'</svg>');});
+</script>
+</body></html>
