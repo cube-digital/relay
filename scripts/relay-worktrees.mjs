@@ -19,7 +19,7 @@ import { createHash } from 'node:crypto';
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { parseArgs } from '../lib/args.mjs';
-import { ensureExcluded, git, mainRoot } from '../lib/git.mjs';
+import { ensureExcluded, git, mainRoot, realPath } from '../lib/git.mjs';
 import { refreshBoard } from './relay-board.mjs';
 import { describeSegments, planLanes, renderBrief, runDir } from './relay-lanes.mjs';
 
@@ -278,9 +278,9 @@ export function clean(ctx) {
     .split('\n')
     .filter((l) => l.startsWith('worktree '))
     .map((l) => l.slice('worktree '.length));
-  const prefix = join(ctx.root, '.claude', 'worktrees', `relay-${ctx.slug}-`);
+  const prefix = join(realPath(ctx.root), '.claude', 'worktrees', `relay-${ctx.slug}-`);
   let failed = 0;
-  for (const wt of list.filter((p) => p.startsWith(prefix))) {
+  for (const wt of list.filter((p) => realPath(p).startsWith(prefix))) {
     if (git(['worktree', 'remove', wt], ctx.root, { allowFail: true }) === undefined) {
       console.error(`✗ kept ${wt} (uncommitted changes?)`);
       failed++;

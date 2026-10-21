@@ -1,5 +1,5 @@
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdtempSync, writeFileSync, mkdirSync, copyFileSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, mkdirSync, copyFileSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -7,8 +7,12 @@ import { fileURLToPath } from 'node:url';
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const FIXTURES = join(ROOT, 'test', 'fixtures');
 
+// The repo is handed out through a symlink, as macOS's /var → /private/var does,
+// so code comparing caller paths with git's canonical ones fails on every platform.
 export function tempRepo(files = { 'README.md': '# demo\n' }) {
-  const dir = mkdtempSync(join(tmpdir(), 'relay-test-'));
+  const real = mkdtempSync(join(tmpdir(), 'relay-test-'));
+  const dir = `${real}-link`;
+  symlinkSync(real, dir);
   const git = (...args) => execFileSync('git', args, { cwd: dir, encoding: 'utf8' }).trim();
   git('init', '-q', '-b', 'main');
   git('config', 'user.email', 'test@example.com');
