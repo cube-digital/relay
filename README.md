@@ -789,6 +789,22 @@ claude --plugin-dir ~/Workspaces/relay
 node ~/Workspaces/relay/bin/relay hq
 ```
 
+## Routines
+
+Scheduled engineering checks, run by the harness you choose. The checks are relay CLI work at zero tokens; the one judgment step uses the cheap tier on bounded data.
+
+| Routine | Kind | Default schedule | What it does |
+|---|---|---|---|
+| `pr-hygiene` | passive | mon-fri 09:00 | stale PRs, review requests, approved but unmerged PRs, leftover relay branches and lane worktrees, old merged branches; only what is new, with the command to run |
+| `weekly-report` | active | fri 16:00 | the week across projects: plans, green tasks, rulings, blocked lanes, pieces, launches; up to three suggested routines |
+
+    relay routine enable pr-hygiene --harness codex --project polaris
+    /relay:routine enable weekly-report --all              # in the Claude desktop app
+    relay routine list
+    relay routine new standup-notes --prompt "Summarise yesterday's merged PRs" --kind active --days mon --at 08:30
+
+On Codex, relay writes `~/.codex/automations/relay-<instance>/` and nothing else there. On Claude, `/relay:routine` creates a desktop scheduled task: it runs while the app is open, on the app's default model. Routines never delete, close, comment or push. Caps: runs per week, and the judgment step's data cut to `maxInputChars`. HQ → Routines shows the week, findings, reports and an Enable dialog.
+
 ## Installation
 
 You need a recent **Claude Code** (run `claude update`), **git**, and **Node 20 or newer**. Relay's hooks and its `relay` command run on Node.

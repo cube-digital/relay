@@ -13,6 +13,7 @@ const COMMANDS = {
   calibrate: ['../scripts/relay-calibrate.mjs', 'learn real usage and time rates from a finished run (--show: current rates)'],
   board: ['../scripts/relay-board.mjs', 'traffic lights for every task, lane and wave: <plan> [--html] [--open]'],
   hq: ['../scripts/relay-hq.mjs', 'the command centre in your browser: [--port N] [--no-open] | stop | add <path> [--project P] | hide | unhide | rm <path>'],
+  routine: ['../scripts/relay-routine.mjs', 'scheduled checks: list | show | enable <routine> --harness claude|codex … | confirm | disable | run <instance> | note | new | history | refresh'],
   marathon: ['../scripts/relay-marathon.mjs', 'run a plan unattended across usage windows: <plan> --hours N [--dry-run] | --status | --stop [--now]'],
   worktrees: ['../scripts/relay-worktrees.mjs', 'sync | merge | pack | status | clean the lane worktree pool'],
   ledger: ['../scripts/relay-ledger.mjs', 'append to or print a plan\'s ledger (--rulings: only Ruling lines)'],

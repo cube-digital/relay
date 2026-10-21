@@ -43,7 +43,7 @@ export function runHook(script, input, env = {}) {
   return { code: res.status, stdout: res.stdout, stderr: res.stderr };
 }
 
-export function runCli(args, { cwd = ROOT, env = {} } = {}) {
-  const res = spawnSync('node', [join(ROOT, 'bin', 'relay'), ...args], { cwd, encoding: 'utf8', env: { ...process.env, ...env } });
+export function runCli(args, { cwd = ROOT, env = {}, input } = {}) {
+  const res = spawnSync('node', [join(ROOT, 'bin', 'relay'), ...args], { cwd, encoding: 'utf8', ...(input === undefined ? {} : { input }), env: { ...process.env, ...env } });
   return { code: res.status, stdout: res.stdout, stderr: res.stderr };
 }

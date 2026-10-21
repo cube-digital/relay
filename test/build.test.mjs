@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { checkFlow, checkRoles, checkSkills, claudeAgent, codexAgent, injectModRouting, main } from '../scripts/build.mjs';
+import { checkRoutines } from '../lib/routines/templates.mjs';
 import { loadRouting } from '../lib/routing.mjs';
 import { ROOT, runCli } from './helpers.mjs';
 
@@ -57,7 +58,7 @@ test('every hook script referenced by hooks.json exists', () => {
   }
 });
 
-test('build --check fails for a piece with an unknown role, a piece placed outside its slots, and a role without its profile', () => {
+test('build --check fails for a piece with an unknown role, a piece placed outside its slots, and a role without its profile, and a routine with an unknown check or a bad schedule', () => {
   const dir = mkdtempSync(join(tmpdir(), 'relay-flow-'));
   for (const d of ['agents', 'bin', 'codex', 'config', 'flows', 'hooks', 'pieces', 'roles', 'skills']) cpSync(join(ROOT, d), join(dir, d), { recursive: true });
   assert.equal(main(['--check'], dir), 0);
@@ -73,5 +74,11 @@ test('build --check fails for a piece with an unknown role, a piece placed outsi
   assert.match(flowProblems, /pieces\/ghost\.json: role "no-such-role" is not a role/);
   assert.match(flowProblems, /flows\/feature\.json: piece "requirements" cannot sit at lane\.after/);
   assert.match(checkRoles(dir).join('\n'), /roles\/scout\.md: profile section "## Never"/);
+  mkdirSync(join(dir, 'routines'));
+  writeFileSync(join(dir, 'routines', 'ghost.json'), JSON.stringify({ id: 'ghost', title: 'Ghost', kind: 'passive', type: 'check', check: 'no-such-check', schedule: { days: ['mon'], at: '09:00' }, cap: { runsPerWeek: 7 } }));
+  writeFileSync(join(dir, 'routines', 'late.json'), JSON.stringify({ id: 'late', title: 'Late', kind: 'active', type: 'prompt', prompt: 'hi', schedule: { days: ['mon'], at: '25:00' } }));
+  const routineProblems = checkRoutines(dir).join('\n');
+  assert.match(routineProblems, /routines\/ghost\.json: check "no-such-check" has no module/);
+  assert.match(routineProblems, /routines\/late\.json: schedule\.at "25:00"/);
   assert.equal(main(['--check'], dir), 1);
 });

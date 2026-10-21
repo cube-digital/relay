@@ -1,0 +1,10 @@
+{
+  "id": "pr-hygiene",
+  "title": "PR and branch hygiene",
+  "kind": "passive",
+  "type": "check",
+  "check": "pr-hygiene",
+  "schedule": { "days": ["mon", "tue", "wed", "thu", "fri"], "at": "09:00" },
+  "options": { "staleDays": 3, "branchAgeDays": 14 },
+  "cap": { "runsPerWeek": 7 }
+}
