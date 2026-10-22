@@ -77,10 +77,17 @@ if (existsSync(rfile)) {
   const byThread = new Map();
   for (const x of r) byThread.set(x.threadId, [...(byThread.get(x.threadId) ?? []), x]);
   const rows = [];
+  const unpriced = new Set();
   for (const [thread, xs] of byThread) {
     let prev;
     for (const x of xs) {
-      const credits = creditsForTokens(harness, { model: x.model, inputTokens: x.total.input_tokens, cachedInputTokens: x.total.cached_input_tokens, outputTokens: x.total.output_tokens });
+      let credits;
+      try {
+        credits = creditsForTokens(harness, { model: x.model, inputTokens: x.total.input_tokens, cachedInputTokens: x.total.cached_input_tokens, outputTokens: x.total.output_tokens });
+      } catch {
+        unpriced.add(x.model); // e.g. codex-auto-review: no published rates, so no credit estimate for its readings
+        continue;
+      }
       const windows = {};
       for (const id of ['primary', 'secondary']) {
         const w = x.rateLimits[id];
@@ -97,6 +104,7 @@ if (existsSync(rfile)) {
     const cap = capacitySamples(seq, { slug: `rollout:${thread.slice(0, 8)}` });
     report.samples.push(...cap.samples);
   }
+  if (unpriced.size) report.notes.push(`rollouts: readings of models without published rates skipped: ${[...unpriced].join(", ")}`);
   const plans = [...new Set(r.map((x) => x.rateLimits.planType).filter(Boolean))];
   const durations = [...new Set(r.flatMap((x) => [x.rateLimits.primary?.window_minutes, x.rateLimits.secondary?.window_minutes]).filter((v) => v != null))];
   report.notes.push(`rollouts: plan types ${plans.join(', ') || 'none'}; window minutes seen: ${durations.join(', ') || 'none'}`);

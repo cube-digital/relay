@@ -1,0 +1,3602 @@
+{
+ "startedAt": "2026-10-22T12:08:48.084Z",
+ "label": "baseline-0163",
+ "requests": [
+  {
+   "id": 1,
+   "method": "initialize",
+   "params": {
+    "clientInfo": {
+     "name": "relay-codex-math-probe",
+     "title": "relay probe",
+     "version": "0.1.0"
+    },
+    "capabilities": {
+     "experimentalApi": true
+    }
+   }
+  },
+  {
+   "id": 2,
+   "method": "account/read",
+   "params": {}
+  },
+  {
+   "id": 3,
+   "method": "account/rateLimits/read",
+   "params": {}
+  },
+  {
+   "id": 4,
+   "method": "account/usage/read",
+   "params": {}
+  },
+  {
+   "id": 5,
+   "method": "account/usage/read",
+   "params": {
+    "threadId": "01a1632b-45a3-7853-b156-403977f2a3e1"
+   }
+  },
+  {
+   "id": 6,
+   "method": "account/usage/read",
+   "params": {
+    "threadId": "01a1632c-7bf5-7df3-bfbb-37faa7d5de43"
+   }
+  },
+  {
+   "id": 7,
+   "method": "account/usage/read",
+   "params": {
+    "threadId": "01a1632e-8e03-7911-aa6b-a96b7878d4ab"
+   }
+  },
+  {
+   "id": 8,
+   "method": "model/list",
+   "params": {}
+  },
+  {
+   "id": 9,
+   "method": "experimentalFeature/list",
+   "params": {}
+  },
+  {
+   "id": 10,
+   "method": "config/read",
+   "params": {}
+  }
+ ],
+ "responses": {
+  "initialize": [
+   {
+    "id": 1,
+    "params": {
+     "clientInfo": {
+      "name": "relay-codex-math-probe",
+      "title": "relay probe",
+      "version": "0.1.0"
+     },
+     "capabilities": {
+      "experimentalApi": true
+     }
+    },
+    "result": {
+     "userAgent": "relay-codex-math-probe/0.163.0 (Linux Mint 22.3.0; x86_64) unknown (relay-codex-math-probe; 0.1.0)",
+     "codexHome": "$HOME/.codex",
+     "platformFamily": "unix",
+     "platformOs": "linux"
+    }
+   }
+  ],
+  "account/read": [
+   {
+    "id": 2,
+    "params": {},
+    "result": {
+     "account": {
+      "type": "chatgpt",
+      "email": "c***@narrio.app",
+      "planType": "self_serve_business_prolite"
+     },
+     "requiresOpenaiAuth": true,
+     "workspaceRouting": {
+      "chatgptAccountId": "59dff5…",
+      "backendOrigin": "https://chatgpt.com",
+      "accountRoutingOverride": "NO_CONSTRAINT"
+     }
+    }
+   }
+  ],
+  "account/rateLimits/read": [
+   {
+    "id": 3,
+    "params": {},
+    "result": {
+     "ordinaryUsageAllowed": true,
+     "rateLimits": {
+      "limitId": "codex",
+      "limitName": null,
+      "normalModelSlug": null,
+      "primary": {
+       "usedPercent": 24,
+       "windowDurationMins": 10080,
+       "resetsAt": 1793089926
+      },
+      "secondary": null,
+      "credits": {
+       "hasCredits": false,
+       "unlimited": false,
+       "balance": null
+      },
+      "individualLimit": null,
+      "spendControlReached": false,
+      "planType": "self_serve_business_prolite",
+      "rateLimitReachedType": null
+     },
+     "rateLimitsByLimitId": {
+      "codex": {
+       "limitId": "codex",
+       "limitName": null,
+       "normalModelSlug": null,
+       "primary": {
+        "usedPercent": 24,
+        "windowDurationMins": 10080,
+        "resetsAt": 1793089926
+       },
+       "secondary": null,
+       "credits": {
+        "hasCredits": false,
+        "unlimited": false,
+        "balance": null
+       },
+       "individualLimit": null,
+       "spendControlReached": false,
+       "planType": "self_serve_business_prolite",
+       "rateLimitReachedType": null
+      }
+     },
+     "rateLimitResetCredits": {
+      "availableCount": 1,
+      "credits": [
+       {
+        "id": "RateLimitResetCredit_62c2787497648191af5158b93459e9f7",
+        "resetType": "codexRateLimits",
+        "status": "available",
+        "grantedAt": 1791416104,
+        "expiresAt": 1794008104,
+        "title": "Full reset",
+        "description": "Thanks for using Codex! You've been granted one free rate limit reset."
+       }
+      ]
+     },
+     "accountId": "59dff5…",
+     "rateLimitUpsell": null
+    }
+   }
+  ],
+  "account/usage/read": [
+   {
+    "id": 4,
+    "params": {},
+    "result": {
+     "summary": {
+      "lifetimeTokens": 437380201,
+      "peakDailyTokens": 185680274,
+      "longestRunningTurnSec": 2941,
+      "currentStreakDays": 3,
+      "longestStreakDays": 3
+     },
+     "dailyUsageBuckets": [
+      {
+       "startDate": "2026-09-28",
+       "tokens": 7140028
+      },
+      {
+       "startDate": "2026-10-01",
+       "tokens": 22833680
+      },
+      {
+       "startDate": "2026-10-06",
+       "tokens": 9195121
+      },
+      {
+       "startDate": "2026-10-08",
+       "tokens": 1612615
+      },
+      {
+       "startDate": "2026-10-19",
+       "tokens": 142124793
+      },
+      {
+       "startDate": "2026-10-20",
+       "tokens": 68793690
+      },
+      {
+       "startDate": "2026-10-21",
+       "tokens": 185680274
+      }
+     ],
+     "threadUsage": null
+    }
+   },
+   {
+    "id": 5,
+    "params": {
+     "threadId": "01a1632b-45a3-7853-b156-403977f2a3e1"
+    },
+    "result": {
+     "summary": {
+      "lifetimeTokens": null,
+      "peakDailyTokens": null,
+      "longestRunningTurnSec": null,
+      "currentStreakDays": null,
+      "longestStreakDays": null
+     },
+     "dailyUsageBuckets": null,
+     "threadUsage": null
+    }
+   },
+   {
+    "id": 6,
+    "params": {
+     "threadId": "01a1632c-7bf5-7df3-bfbb-37faa7d5de43"
+    },
+    "result": {
+     "summary": {
+      "lifetimeTokens": null,
+      "peakDailyTokens": null,
+      "longestRunningTurnSec": null,
+      "currentStreakDays": null,
+      "longestStreakDays": null
+     },
+     "dailyUsageBuckets": null,
+     "threadUsage": null
+    }
+   },
+   {
+    "id": 7,
+    "params": {
+     "threadId": "01a1632e-8e03-7911-aa6b-a96b7878d4ab"
+    },
+    "result": {
+     "summary": {
+      "lifetimeTokens": null,
+      "peakDailyTokens": null,
+      "longestRunningTurnSec": null,
+      "currentStreakDays": null,
+      "longestStreakDays": null
+     },
+     "dailyUsageBuckets": null,
+     "threadUsage": null
+    }
+   }
+  ],
+  "model/list": [
+   {
+    "id": 8,
+    "params": {},
+    "result": {
+     "data": [
+      {
+       "id": "gpt-6.1-sol",
+       "model": "gpt-6.1-sol",
+       "upgrade": null,
+       "upgradeInfo": null,
+       "availabilityNux": {
+        "message": "Maximize usage with GPT-6.1 Sol. Try it on complex work for near-Astra performance at a lower cost."
+       },
+       "displayName": "GPT-6.1-Sol",
+       "description": "Latest workhorse model for coding and everyday work.",
+       "modelSpecialty": null,
+       "hidden": false,
+       "supportedReasoningEfforts": [
+        {
+         "reasoningEffort": "low",
+         "description": "Fast responses with lighter reasoning"
+        },
+        {
+         "reasoningEffort": "medium",
+         "description": "Balances speed and reasoning depth for everyday tasks"
+        },
+        {
+         "reasoningEffort": "high",
+         "description": "Greater reasoning depth for complex problems"
+        },
+        {
+         "reasoningEffort": "xhigh",
+         "description": "Extra high reasoning depth for complex problems"
+        },
+        {
+         "reasoningEffort": "max",
+         "description": "Maximum reasoning depth for the hardest problems"
+        },
+        {
+         "reasoningEffort": "ultra",
+         "description": "Maximum reasoning with automatic task delegation"
+        }
+       ],
+       "defaultReasoningEffort": "medium",
+       "inputModalities": [
+        "text",
+        "image"
+       ],
+       "supportsPersonality": false,
+       "multiAgentVersion": "v2",
+       "additionalSpeedTiers": [
+        "fast"
+       ],
+       "serviceTiers": [
+        {
+         "id": "priority",
+         "name": "Fast",
+         "description": "2x speed, increased usage"
+        }
+       ],
+       "defaultServiceTier": null,
+       "availableAccessPrograms": {
+        "cyber": [
+         "standard"
+        ]
+       },
+       "isDefault": true
+      },
+      {
+       "id": "gpt-6-astra",
+       "model": "gpt-6-astra",
+       "upgrade": null,
+       "upgradeInfo": null,
+       "availabilityNux": null,
+       "displayName": "GPT-6-Astra",
+       "description": "Frontier intelligence for the most demanding work.",
+       "modelSpecialty": null,
+       "hidden": false,
+       "supportedReasoningEfforts": [
+        {
+         "reasoningEffort": "low",
+         "description": "Fast responses with lighter reasoning"
+        },
+        {
+         "reasoningEffort": "medium",
+         "description": "Balances speed and reasoning depth for everyday tasks"
+        },
+        {
+         "reasoningEffort": "high",
+         "description": "Greater reasoning depth for complex problems"
+        },
+        {
+         "reasoningEffort": "xhigh",
+         "description": "Extra high reasoning depth for complex problems"
+        },
+        {
+         "reasoningEffort": "max",
+         "description": "Maximum reasoning depth for the hardest problems"
+        },
+        {
+         "reasoningEffort": "ultra",
+         "description": "Maximum reasoning with automatic task delegation"
+        }
+       ],
+       "defaultReasoningEffort": "medium",
+       "inputModalities": [
+        "text",
+        "image"
+       ],
+       "supportsPersonality": false,
+       "multiAgentVersion": "v2",
+       "additionalSpeedTiers": [
+        "fast"
+       ],
+       "serviceTiers": [
+        {
+         "id": "priority",
+         "name": "Fast",
+         "description": "2x speed, increased usage"
+        }
+       ],
+       "defaultServiceTier": null,
+       "availableAccessPrograms": {
+        "cyber": [
+         "standard"
+        ]
+       },
+       "isDefault": false
+      },
+      {
+       "id": "gpt-6-sol",
+       "model": "gpt-6-sol",
+       "upgrade": null,
+       "upgradeInfo": null,
+       "availabilityNux": null,
+       "displayName": "GPT-6-Sol",
+       "description": "Previous generation workhorse model.",
+       "modelSpecialty": null,
+       "hidden": false,
+       "supportedReasoningEfforts": [
+        {
+         "reasoningEffort": "low",
+         "description": "Fast responses with lighter reasoning"
+        },
+        {
+         "reasoningEffort": "medium",
+         "description": "Balances speed and reasoning depth for everyday tasks"
+        },
+        {
+         "reasoningEffort": "high",
+         "description": "Greater reasoning depth for complex problems"
+        },
+        {
+         "reasoningEffort": "xhigh",
+         "description": "Extra high reasoning depth for complex problems"
+        },
+        {
+         "reasoningEffort": "max",
+         "description": "Maximum reasoning depth for the hardest problems"
+        },
+        {
+         "reasoningEffort": "ultra",
+         "description": "Maximum reasoning with automatic task delegation"
+        }
+       ],
+       "defaultReasoningEffort": "medium",
+       "inputModalities": [
+        "text",
+        "image"
+       ],
+       "supportsPersonality": false,
+       "multiAgentVersion": "v2",
+       "additionalSpeedTiers": [
+        "fast"
+       ],
+       "serviceTiers": [
+        {
+         "id": "priority",
+         "name": "Fast",
+         "description": "1.5x speed"
+        }
+       ],
+       "defaultServiceTier": null,
+       "availableAccessPrograms": {
+        "cyber": [
+         "standard"
+        ]
+       },
+       "isDefault": false
+      },
+      {
+       "id": "gpt-6-luna",
+       "model": "gpt-6-luna",
+       "upgrade": null,
+       "upgradeInfo": null,
+       "availabilityNux": null,
+       "displayName": "GPT-6-Luna",
+       "description": "Fast and affordable model for easier tasks.",
+       "modelSpecialty": null,
+       "hidden": false,
+       "supportedReasoningEfforts": [
+        {
+         "reasoningEffort": "low",
+         "description": "Fast responses with lighter reasoning"
+        },
+        {
+         "reasoningEffort": "medium",
+         "description": "Balances speed and reasoning depth for everyday tasks"
+        },
+        {
+         "reasoningEffort": "high",
+         "description": "Greater reasoning depth for complex problems"
+        },
+        {
+         "reasoningEffort": "xhigh",
+         "description": "Extra high reasoning depth for complex problems"
+        },
+        {
+         "reasoningEffort": "max",
+         "description": "Maximum reasoning depth for the hardest problems"
+        }
+       ],
+       "defaultReasoningEffort": "medium",
+       "inputModalities": [
+        "text",
+        "image"
+       ],
+       "supportsPersonality": false,
+       "multiAgentVersion": "v2",
+       "additionalSpeedTiers": [
+        "fast"
+       ],
+       "serviceTiers": [
+        {
+         "id": "priority",
+         "name": "Fast",
+         "description": "1.5x speed"
+        }
+       ],
+       "defaultServiceTier": null,
+       "availableAccessPrograms": {
+        "cyber": [
+         "standard"
+        ]
+       },
+       "isDefault": false
+      },
+      {
+       "id": "gpt-5.6-sol",
+       "model": "gpt-5.6-sol",
+       "upgrade": null,
+       "upgradeInfo": null,
+       "availabilityNux": null,
+       "displayName": "GPT-5.6-Sol",
+       "description": "Older generation workhorse model.",
+       "modelSpecialty": null,
+       "hidden": false,
+       "supportedReasoningEfforts": [
+        {
+         "reasoningEffort": "low",
+         "description": "Fast responses with lighter reasoning"
+        },
+        {
+         "reasoningEffort": "medium",
+         "description": "Balances speed and reasoning depth for everyday tasks"
+        },
+        {
+         "reasoningEffort": "high",
+         "description": "Greater reasoning depth for complex problems"
+        },
+        {
+         "reasoningEffort": "xhigh",
+         "description": "Extra high reasoning depth for complex problems"
+        },
+        {
+         "reasoningEffort": "max",
+         "description": "Maximum reasoning depth for the hardest problems"
+        },
+        {
+         "reasoningEffort": "ultra",
+         "description": "Maximum reasoning with automatic task delegation"
+        }
+       ],
+       "defaultReasoningEffort": "medium",
+       "inputModalities": [
+        "text",
+        "image"
+       ],
+       "supportsPersonality": false,
+       "multiAgentVersion": "v2",
+       "additionalSpeedTiers": [
+        "fast"
+       ],
+       "serviceTiers": [
+        {
+         "id": "priority",
+         "name": "Fast",
+         "description": "1.5x speed, increased usage"
+        }
+       ],
+       "defaultServiceTier": null,
+       "availableAccessPrograms": {
+        "cyber": [
+         "standard"
+        ]
+       },
+       "isDefault": false
+      },
+      {
+       "id": "gpt-5.6-terra",
+       "model": "gpt-5.6-terra",
+       "upgrade": null,
+       "upgradeInfo": null,
+       "availabilityNux": null,
+       "displayName": "GPT-5.6-Terra",
+       "description": "Older balanced model for straightforward work.",
+       "modelSpecialty": null,
+       "hidden": false,
+       "supportedReasoningEfforts": [
+        {
+         "reasoningEffort": "low",
+         "description": "Fast responses with lighter reasoning"
+        },
+        {
+         "reasoningEffort": "medium",
+         "description": "Balances speed and reasoning depth for everyday tasks"
+        },
+        {
+         "reasoningEffort": "high",
+         "description": "Greater reasoning depth for complex problems"
+        },
+        {
+         "reasoningEffort": "xhigh",
+         "description": "Extra high reasoning depth for complex problems"
+        },
+        {
+         "reasoningEffort": "max",
+         "description": "Maximum reasoning depth for the hardest problems"
+        },
+        {
+         "reasoningEffort": "ultra",
+         "description": "Maximum reasoning with automatic task delegation"
+        }
+       ],
+       "defaultReasoningEffort": "medium",
+       "inputModalities": [
+        "text",
+        "image"
+       ],
+       "supportsPersonality": false,
+       "multiAgentVersion": "v2",
+       "additionalSpeedTiers": [
+        "fast"
+       ],
+       "serviceTiers": [
+        {
+         "id": "priority",
+         "name": "Fast",
+         "description": "1.5x speed, increased usage"
+        }
+       ],
+       "defaultServiceTier": null,
+       "availableAccessPrograms": {
+        "cyber": [
+         "standard"
+        ]
+       },
+       "isDefault": false
+      },
+      {
+       "id": "gpt-5.6-luna",
+       "model": "gpt-5.6-luna",
+       "upgrade": null,
+       "upgradeInfo": null,
+       "availabilityNux": null,
+       "displayName": "GPT-5.6-Luna",
+       "description": "Older fast and efficient model.",
+       "modelSpecialty": null,
+       "hidden": false,
+       "supportedReasoningEfforts": [
+        {
+         "reasoningEffort": "low",
+         "description": "Fast responses with lighter reasoning"
+        },
+        {
+         "reasoningEffort": "medium",
+         "description": "Balances speed and reasoning depth for everyday tasks"
+        },
+        {
+         "reasoningEffort": "high",
+         "description": "Greater reasoning depth for complex problems"
+        },
+        {
+         "reasoningEffort": "xhigh",
+         "description": "Extra high reasoning depth for complex problems"
+        },
+        {
+         "reasoningEffort": "max",
+         "description": "Maximum reasoning depth for the hardest problems"
+        }
+       ],
+       "defaultReasoningEffort": "medium",
+       "inputModalities": [
+        "text",
+        "image"
+       ],
+       "supportsPersonality": false,
+       "multiAgentVersion": "v1",
+       "additionalSpeedTiers": [
+        "fast"
+       ],
+       "serviceTiers": [
+        {
+         "id": "priority",
+         "name": "Fast",
+         "description": "1.5x speed, increased usage"
+        }
+       ],
+       "defaultServiceTier": null,
+       "availableAccessPrograms": {
+        "cyber": [
+         "standard"
+        ]
+       },
+       "isDefault": false
+      }
+     ],
+     "nextCursor": null
+    }
+   }
+  ],
+  "experimentalFeature/list": [
+   {
+    "id": 9,
+    "params": {},
+    "result": {
+     "data": [
+      {
+       "name": "analytics_plan_history",
+       "stage": "beta",
+       "displayName": "Analytics plan history",
+       "description": "Preview five-hour and weekly allowance history for consumer accounts in /analytics.",
+       "announcement": "",
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "daemon_auto_start",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "transcript_v2",
+       "stage": "deprecated",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "undo",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "shell_tool",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "view_image",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "sleep_tool",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "secret_auth_storage",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "unified_exec",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "unified_exec_tty",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "shell_zsh_fork",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "unified_exec_zsh_fork",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "shell_snapshot",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "login_shell_package_path",
+       "stage": "beta",
+       "displayName": "Bundled tools in login shells",
+       "description": "Keep bundled tools such as ripgrep available when login shell startup resets PATH.",
+       "announcement": "",
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "powershell_shell_version",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "shell_snapshot_v2",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "deferred_executor",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "cwd_relative_turn_diffs",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "js_repl",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "content_item_kinds",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "executed_tool_call_metadata",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "stable_environment_tools",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "code_mode",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "code_mode_tool_search",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "code_mode_buffered_exec",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "code_mode_host",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "code_mode_host_grpc",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "code_mode_prewarm",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "code_mode_interrupt",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "code_mode_tool_description_first",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "instant_interrupt",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "code_mode_only",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "code_mode_only_strict_3p_tools",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "js_repl_tools_only",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "terminal_resize_reflow",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "web_search_request",
+       "stage": "deprecated",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "web_search_cached",
+       "stage": "deprecated",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "standalone_web_search",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "search_tool",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "codex_git_commit",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "runtime_metrics",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "sqlite",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "memories",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "external_agent_memory_import",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "local_thread_store_compression",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "local_thread_store_shared_compression",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "background_paginated_rollout_migration",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "chronicle",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "apply_patch_freeform",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "apply_patch_streaming_events",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "apply_patch_preserve_line_endings",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "exec_permission_approvals",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "write_stdin_approval",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "hooks",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "request_permissions_tool",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "use_linux_sandbox_bwrap",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "use_legacy_landlock",
+       "stage": "deprecated",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "request_rule",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "experimental_windows_sandbox",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "elevated_windows_sandbox",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "windows_sandbox_service",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "prefer_mxc",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "remote_models",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "api_key_model_discovery",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "cli_daybreak",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "api_key_cyber_access_programs",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "enable_request_compression",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "unbounded_connection_retries",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "network_proxy",
+       "stage": "beta",
+       "displayName": "Network proxy",
+       "description": "Apply network proxy restrictions to sandboxed sessions that already have network access.",
+       "announcement": "NEW: Network proxy can now be enabled from /experimental. Restart Codex after enabling it.",
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "credential_masking",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "worktrees",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "respect_system_proxy",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "system_proxy_fallback",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "multi_agent",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "multi_agent_v2",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "model_catalog_in_context",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "multi_agent_v2_dynamic_tools",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "subagent_default_context_limits",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "defer_mailbox_preemption",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "agent_message_board",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "multi_agent_mode",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "enable_fanout",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "apps",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "psp",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "enable_mcp_apps",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "mcp_2026_07_28",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "codex_apps_mcp_2026_07_28",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "mcp_oauth_refresh_coordination",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "use_xaa",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "apps_mcp_path_override",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "tool_search",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "tool_search_always_defer_mcp_tools",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "deferred_tool_world_state",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "incremental_tools",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "non_prefixed_mcp_tool_names",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "unavailable_dummy_tools",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "tool_suggest",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "recommended_plugins",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "plugins",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "executor_capability_discovery",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "skip_host_skill_discovery",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "plugin_hooks",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "in_app_browser",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "browser_annotation_api",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "in_app_chat",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "in_app_dictation",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "in_app_voice",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "in_app_local_automation",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "in_app_updates",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "browser_use",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "browser_use_full_cdp_access",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "browser_use_external",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "computer_use",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "remote_plugin",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "plugin_sharing",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "external_migration",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "image_generation",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "omit_app_server_notification_media",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "image_resize_notice",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "unified_image_budget",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "resize_all_images",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "item_ids",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "concurrent_reasoning_summaries",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "output_token_replay",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "skill_mcp_dependency_install",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "skill_search",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "skill_env_var_dependency_prompt",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "mentions_v2",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "steer",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "default_mode_request_user_input",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "send_async_message",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "send_message_to_user_async",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "terminal_visualization_instructions",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "guardian_approval",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "guardianv2.thread_context",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "guardian_reuse_parent_compaction",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "guardian_root_handoff_context",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "guardian_enhanced_node_repl_transcripts",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "guardian_node_repl_transcript_images",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "guardian_trust_orchestrator_connectors",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "guardian_conversation_history_tools",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "guardianv2",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "guardianv2_decisions_comparison",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "guardian_ext",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "goals",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "token_budget",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "context_management",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "rollout_budget",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "reasoning_effort_override",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "current_time_reminder",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "nonfatal_clock_read_errors",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "collaboration_modes",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "tool_call_mcp_elicitation",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "auth_elicitation",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "bedrock_setup_wizard",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "personality",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "artifact",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "fast_mode",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "ultrafast_mode",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "step_model_switching",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "realtime_conversation",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "remote_control",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "image_detail_original",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "tui_app_server",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "prevent_idle_sleep",
+       "stage": "beta",
+       "displayName": "Prevent sleep while running",
+       "description": "Keep your computer awake while Codex is running a thread.",
+       "announcement": "NEW: Prevent sleep while running is now available in /experimental.",
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "workspace_owner_usage_nudge",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "responses_websockets",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "responses_websockets_v2",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "remote_compaction_v2",
+       "stage": "removed",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "async_compaction",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "compaction_image_budget",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      },
+      {
+       "name": "retain_client_developer_messages",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "retain_client_tool_outputs",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "use_agent_identity",
+       "stage": "underDevelopment",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": false,
+       "defaultEnabled": false
+      },
+      {
+       "name": "workspace_dependencies",
+       "stage": "stable",
+       "displayName": null,
+       "description": null,
+       "announcement": null,
+       "enabled": true,
+       "defaultEnabled": true
+      }
+     ],
+     "nextCursor": null
+    }
+   }
+  ],
+  "config/read": [
+   {
+    "id": 10,
+    "params": {},
+    "result": {
+     "config": {
+      "model": "gpt-6.1-sol",
+      "review_model": null,
+      "model_context_window": null,
+      "model_auto_compact_token_limit": null,
+      "model_auto_compact_token_limit_scope": null,
+      "model_provider": null,
+      "approval_policy": null,
+      "approvals_reviewer": null,
+      "sandbox_mode": null,
+      "sandbox_workspace_write": null,
+      "forced_chatgpt_workspace_id": null,
+      "forced_login_method": null,
+      "web_search": null,
+      "tools": null,
+      "instructions": null,
+      "developer_instructions": null,
+      "compact_prompt": null,
+      "model_reasoning_effort": "high",
+      "model_reasoning_summary": null,
+      "model_verbosity": null,
+      "service_tier": "default",
+      "analytics": null,
+      "apps": null,
+      "browser_use": null,
+      "computer_use": null,
+      "desktop": {
+       "followUpQueueMode": "queue",
+       "ambient-suggestions-enabled": true,
+       "appearanceTheme": "dark",
+       "conversationDetailMode": "STEPS_COMMANDS"
+      },
+      "file_opener": "vscode",
+      "orchestrator": null,
+      "log_dir": null,
+      "model_catalog_json": null,
+      "experimental_thread_store": null,
+      "marketplaces": {
+       "openai-bundled": {
+        "last_updated": null,
+        "last_revision": null,
+        "source_type": "local",
+        "source": "$HOME/.codex/.tmp/bundled-marketplaces/openai-bundled",
+        "ref": null,
+        "sparse_paths": null
+       },
+       "openai-primary-runtime": {
+        "last_updated": null,
+        "last_revision": null,
+        "source_type": "local",
+        "source": "$HOME/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime",
+        "ref": null,
+        "sparse_paths": null
+       },
+       "relay": {
+        "last_updated": "2026-10-22T12:00:55Z",
+        "last_revision": "081928b904fca7408a7d82e7b1ea451c1241a7b5",
+        "source_type": "git",
+        "source": "https://github.com/cube-digital/relay.git",
+        "ref": null,
+        "sparse_paths": null
+       }
+      },
+      "check_for_update_on_startup": null,
+      "tool_output_token_limit": null,
+      "audio": null,
+      "windows": null,
+      "mcp_oauth_credentials_store": "auto",
+      "project_root_markers": [
+       ".git"
+      ],
+      "agents": null,
+      "hooks": {
+       "PreToolUse": [],
+       "PermissionRequest": [],
+       "PostToolUse": [],
+       "PreCompact": [],
+       "PostCompact": [],
+       "SessionStart": [],
+       "SessionEnd": [],
+       "UserPromptSubmit": [],
+       "SubagentStart": [],
+       "SubagentStop": [],
+       "Stop": [],
+       "Interrupt": [],
+       "state": {
+        "$HOME/.codex/hooks.json:interrupt:0:0": {
+         "enabled": true,
+         "trusted_hash": "sha256:78b430d1d7794c49e6d83a36964d4082d05ec72023ccc38244e97b8e08d054d2"
+        },
+        "$HOME/.codex/hooks.json:permission_request:0:0": {
+         "enabled": true,
+         "trusted_hash": "sha256:bd2c29369e47a438a3f2c1c18896d7bd86ce58c0eb5542f1c3b879e427f92fc9"
+        },
+        "$HOME/.codex/hooks.json:post_tool_use:0:0": {
+         "enabled": true,
+         "trusted_hash": "sha256:a452131ceaecacb08404d1a8d49d85315fdf109905d152859c32b538c9002f93"
+        },
+        "$HOME/.codex/hooks.json:pre_tool_use:0:0": {
+         "enabled": true,
+         "trusted_hash": "sha256:33153c88ce09e9a5b899b9cb33dd23382be394a3e1cdb421e44e0b3778e8bdf2"
+        },
+        "$HOME/.codex/hooks.json:session_start:0:0": {
+         "enabled": true,
+         "trusted_hash": "sha256:d853ef9fbaf2ff5c8504bf2463675664aaf29a8016c6a35293a6ddc053b4f030"
+        },
+        "$HOME/.codex/hooks.json:stop:0:0": {
+         "enabled": true,
+         "trusted_hash": "sha256:1ae8ee19d95298f7bc4821368a7d4600b9f9d36c68695812c19419b28b5ad53e"
+        },
+        "$HOME/.codex/hooks.json:subagent_start:0:0": {
+         "enabled": true,
+         "trusted_hash": "sha256:269737162a0cf2b29b3e40df23411c02a8bbdeb5f471243c924dac116624cdcf"
+        },
+        "$HOME/.codex/hooks.json:subagent_stop:0:0": {
+         "enabled": true,
+         "trusted_hash": "sha256:62ff9ef7fcca3784011e955f35ee3612b11168b2f62bd772f08adefb918d34be"
+        },
+        "$HOME/.codex/hooks.json:user_prompt_submit:0:0": {
+         "enabled": true,
+         "trusted_hash": "sha256:5383e8af0fe09d96df4e6d0f5f3edaec15485d6162a1a749b5c69e7242eb0478"
+        }
+       }
+      },
+      "experimental_use_unified_exec_tool": null,
+      "chatgpt_base_url": "https://chatgpt.com/backend-api/",
+      "projects": {
+       "$HOME/Documents/Codex/2026-08-18/can-2": {
+        "trust_level": "trusted"
+       },
+       "$HOME/Documents/ChatGPT/Aboba": {
+        "trust_level": "trusted"
+       },
+       "$HOME/Study/Uni/MRA": {
+        "trust_level": "trusted"
+       },
+       "$HOME/Documents/Codex/2026-09-09/wh": {
+        "trust_level": "trusted"
+       },
+       "$HOME/Study/Uni/IDL/cv-job-match": {
+        "trust_level": "trusted"
+       },
+       "$HOME/Work/narrio-server": {
+        "trust_level": "trusted"
+       },
+       "$HOME/Documents/Codex/2026-08-18/can": {
+        "trust_level": "trusted"
+       },
+       "$HOME/Documents/Codex/2026-09-09/che": {
+        "trust_level": "trusted"
+       },
+       "$HOME/Documents/Codex/2026-09-10/explain-to-me-how-the-bronze": {
+        "trust_level": "trusted"
+       },
+       "$HOME/Work/narrio-rig": {
+        "trust_level": "trusted"
+       },
+       "$HOME/Documents/Codex/2026-08-13/he": {
+        "trust_level": "trusted"
+       },
+       "$HOME/Study/Extra/Claude-Desktop/claude-controller": {
+        "trust_level": "trusted"
+       },
+       "$HOME/Study/Extra/Claude-Desktop": {
+        "trust_level": "trusted"
+       }
+      },
+      "responses_api_metadata": null,
+      "profile": null,
+      "default_permissions": null,
+      "notify": null,
+      "experimental_compact_prompt_file": null,
+      "hide_agent_reasoning": false,
+      "mcp_optional_startup_grace_ms": null,
+      "background_terminal_max_timeout": 300000,
+      "project_doc_max_bytes": 32768,
+      "plan_mode_reasoning_effort": null,
+      "oss_provider": null,
+      "experimental_realtime_webrtc_call_base_url": null,
+      "show_raw_agent_reasoning": null,
+      "cli_auth_credentials_store": "file",
+      "model_providers": {
+       "nvidia": {
+        "name": "NVIDIA NIM",
+        "base_url": "https://integrate.api.nvidia.com/v1",
+        "model_catalog_url": null,
+        "env_key": null,
+        "env_key_instructions": null,
+        "experimental_bearer_token": null,
+        "auth": null,
+        "gateway_oauth": null,
+        "aws": null,
+        "wire_api": "responses",
+        "capabilities": null,
+        "query_params": null,
+        "http_headers": null,
+        "env_http_headers": null,
+        "request_max_retries": null,
+        "stream_max_retries": null,
+        "stream_idle_timeout_ms": null,
+        "websocket_connect_timeout_ms": null,
+        "requires_openai_auth": false,
+        "supports_websockets": false,
+        "supports_standalone_web_search": false
+       }
+      },
+      "history": {
+       "persistence": "save-all",
+       "max_bytes": null
+      },
+      "allow_symlinked_codex_home": null,
+      "include_apps_instructions": true,
+      "model_instructions_file": null,
+      "experimental_realtime_ws_startup_context": null,
+      "mcp_enterprise_managed_auth": null,
+      "mcp_oauth_callback_url": null,
+      "include_environment_context": true,
+      "auto_review": null,
+      "js_repl_node_module_dirs": null,
+      "memories": null,
+      "project_doc_fallback_filenames": [],
+      "feedback": null,
+      "permissions": null,
+      "sqlite_home": null,
+      "ghost_snapshot": null,
+      "experimental_thread_store_endpoint": null,
+      "shell_environment_policy": {
+       "inherit": null,
+       "ignore_default_excludes": null,
+       "exclude": null,
+       "set": {
+        "NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S": "9230e2bd8b24b7ac7a0ba6774c64bf0d78ecdabbdd91d0ed627b02a587bae2df"
+       },
+       "include_only": null,
+       "filters": null,
+       "experimental_use_profile": null
+      },
+      "allow_login_shell": true,
+      "model_post_turn_compact_threshold_percent": null,
+      "realtime": null,
+      "tool_suggest": null,
+      "skills": null,
+      "include_environment_context_time": true,
+      "thread_unload_delay_secs": null,
+      "experimental_realtime_ws_model": null,
+      "features": {
+       "network_proxy": null,
+       "js_repl": false,
+       "api_key_cyber_access_programs": true,
+       "api_key_model_discovery": true,
+       "auth_elicitation": true,
+       "background_paginated_rollout_migration": false,
+       "codex_apps_mcp_2026_07_28": false,
+       "mcp_2026_07_28": false,
+       "memories": false,
+       "mentions_v2": true,
+       "remote_control": false,
+       "remote_plugin": true,
+       "tool_suggest": true,
+       "windows_sandbox_service": false
+      },
+      "js_repl_node_path": null,
+      "apps_mcp_product_sku": null,
+      "openai_base_url": null,
+      "otel": null,
+      "disable_paste_burst": null,
+      "mcp_oauth_callback_port": null,
+      "notice": null,
+      "personality": null,
+      "goals": null,
+      "plugins": {
+       "codex-app-tools@openai-bundled": {
+        "enabled": true
+       },
+       "template-creator@openai-primary-runtime": {
+        "enabled": true
+       },
+       "visualize@openai-bundled": {
+        "enabled": true
+       },
+       "pdf@openai-primary-runtime": {
+        "enabled": true
+       },
+       "unified-computer-use@openai-bundled": {
+        "enabled": true
+       },
+       "code-review@openai-bundled": {
+        "enabled": true
+       },
+       "relay@relay": {
+        "enabled": false
+       },
+       "documents@openai-primary-runtime": {
+        "enabled": true
+       },
+       "browser@openai-bundled": {
+        "enabled": true
+       },
+       "presentations@openai-primary-runtime": {
+        "enabled": true
+       },
+       "google-calendar@openai-curated": {
+        "enabled": true
+       },
+       "slack@openai-curated": {
+        "enabled": true
+       },
+       "spreadsheets@openai-primary-runtime": {
+        "enabled": true
+       }
+      },
+      "mcp_servers": {
+       "linear": {
+        "url": "https://mcp.linear.app/mcp",
+        "environment_id": "local",
+        "enabled": true,
+        "tool_timeout_sec": null
+       },
+       "node_repl": {
+        "command": "/usr/lib/chatgpt/resources/cua_node/bin/node_repl",
+        "args": [],
+        "env": {
+         "CODEX_HOME": "$HOME/.codex",
+         "NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER": "",
+         "BROWSER_USE_CODEX_APP_BUILD_FLAVOR": "prod",
+         "NODE_REPL_TRUSTED_CODE_PATHS": "$HOME/.codex:/usr/lib/chatgpt/resources/cua_node/lib/node_modules",
+         "NODE_REPL_TRUSTED_SERVICES": "{\"browser\":\"$HOME/.codex/plugins/cache/openai-bundled/browser/26.1016.61520/scripts/browser-service.mjs\"}",
+         "CODEX_CLI_PATH": "/usr/lib/chatgpt/resources/codex",
+         "NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS": "1000",
+         "NODE_REPL_NODE_MODULE_DIRS": "/usr/lib/chatgpt/resources/cua_node/lib/node_modules",
+         "NODE_REPL_NODE_PATH": "/usr/lib/chatgpt/resources/cua_node/bin/node",
+         "BROWSER_USE_AVAILABLE_BACKENDS": "chrome,iab,mcpapps",
+         "BROWSER_USE_TINYSKY_ENABLED": "1",
+         "NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME": "",
+         "BROWSER_USE_CODEX_APP_VERSION": "26.1016.61520"
+        },
+        "env_vars": [
+         "BROWSER_USE_ACCESS_EXECUTOR_ID",
+         "BROWSER_USE_ACCESS_PIPE_PATH",
+         "BROWSER_USE_ACCESS_VERIFYING_IDENTITY"
+        ],
+        "environment_id": "local",
+        "enabled": true,
+        "startup_timeout_sec": 120,
+        "tool_timeout_sec": null
+       }
+      },
+      "daybreak": null,
+      "experimental_realtime_ws_base_url": null,
+      "experimental_realtime_ws_backend_prompt": null,
+      "tui": {
+       "notifications": true,
+       "notification_method": "auto",
+       "notification_condition": "unfocused",
+       "animations": true,
+       "screen_reader_detection_done": true,
+       "effects": {
+        "starfield": true,
+        "shimmer": true,
+        "welcome": true,
+        "effort": true,
+        "progress": true,
+        "title": true
+       },
+       "rendering": {
+        "mermaid": true,
+        "math": true,
+        "tables": true,
+        "lists": true
+       },
+       "show_tooltips": true,
+       "show_server_version_notice": true,
+       "auto_recap": true,
+       "disable_paste_burst": null,
+       "vim_mode_default": false,
+       "question_esc_back": true,
+       "raw_output_mode": false,
+       "fullscreen_transcript": true,
+       "mouse_scroll_speed": null,
+       "copy_on_select": "auto",
+       "copy_on_select_clear_selection": false,
+       "right_click_paste": "auto",
+       "alternate_screen": "auto",
+       "status_line": null,
+       "status_line_use_colors": true,
+       "terminal_title": null,
+       "theme": null,
+       "pet": null,
+       "pet_anchor": "composer",
+       "session_picker_view": null,
+       "agents_overview_grouping": "project",
+       "resume_cwd": null,
+       "keymap": {
+        "global": {
+         "leader": null,
+         "open_agents": null,
+         "open_transcript": null,
+         "find_transcript": null,
+         "focus_activity": null,
+         "open_external_editor": null,
+         "copy": null,
+         "clear_terminal": null,
+         "submit": null,
+         "queue": null,
+         "toggle_shortcuts": null,
+         "toggle_vim_mode": null,
+         "toggle_fast_mode": null,
+         "toggle_raw_output": null,
+         "toggle_side_conversation": null
+        },
+        "chat": {
+         "toggle_voice": null,
+         "toggle_voice_mute": null,
+         "interrupt_turn": null,
+         "decrease_reasoning_effort": null,
+         "increase_reasoning_effort": null,
+         "previous_permission_mode": null,
+         "next_permission_mode": null,
+         "edit_queued_message": null,
+         "prompt_stack_back": null,
+         "skip_question": null
+        },
+        "composer": {
+         "submit": null,
+         "queue": null,
+         "toggle_shortcuts": null,
+         "history_search_previous": null,
+         "history_search_next": null
+        },
+        "editor": {
+         "insert_newline": null,
+         "move_left": null,
+         "move_right": null,
+         "move_up": null,
+         "move_down": null,
+         "move_word_left": null,
+         "move_word_right": null,
+         "move_line_start": null,
+         "move_line_end": null,
+         "delete_backward": null,
+         "delete_forward": null,
+         "delete_backward_word": null,
+         "delete_forward_word": null,
+         "kill_line_start": null,
+         "kill_whole_line": null,
+         "kill_line_end": null,
+         "yank": null
+        },
+        "vim_normal": {
+         "enter_insert": null,
+         "append_after_cursor": null,
+         "append_line_end": null,
+         "insert_line_start": null,
+         "open_line_below": null,
+         "open_line_above": null,
+         "enter_replace_mode": null,
+         "move_left": null,
+         "move_right": null,
+         "move_up": null,
+         "move_down": null,
+         "move_word_forward": null,
+         "move_word_backward": null,
+         "move_word_end": null,
+         "move_line_start": null,
+         "move_line_end": null,
+         "find_forward": null,
+         "find_backward": null,
+         "till_forward": null,
+         "till_backward": null,
+         "jump_top": null,
+         "jump_bottom": null,
+         "delete_char": null,
+         "replace_char": null,
+         "repeat_last_change": null,
+         "substitute_char": null,
+         "delete_to_line_end": null,
+         "change_to_line_end": null,
+         "yank_line": null,
+         "paste_after": null,
+         "start_delete_operator": null,
+         "start_yank_operator": null,
+         "start_change_operator": null,
+         "undo": null,
+         "redo": null,
+         "cancel_operator": null
+        },
+        "vim_operator": {
+         "delete_line": null,
+         "yank_line": null,
+         "motion_left": null,
+         "motion_right": null,
+         "motion_up": null,
+         "motion_down": null,
+         "motion_word_forward": null,
+         "motion_word_backward": null,
+         "motion_word_end": null,
+         "motion_line_start": null,
+         "motion_line_end": null,
+         "motion_find_forward": null,
+         "motion_find_backward": null,
+         "motion_till_forward": null,
+         "motion_till_backward": null,
+         "motion_jump_top": null,
+         "motion_jump_bottom": null,
+         "select_inner_text_object": null,
+         "select_around_text_object": null,
+         "cancel": null
+        },
+        "vim_search": {
+         "forward": null,
+         "backward": null,
+         "next": null,
+         "previous": null
+        },
+        "vim_text_object": {
+         "word": null,
+         "big_word": null,
+         "parentheses": null,
+         "brackets": null,
+         "braces": null,
+         "double_quote": null,
+         "single_quote": null,
+         "backtick": null,
+         "cancel": null
+        },
+        "pager": {
+         "scroll_up": null,
+         "scroll_down": null,
+         "page_up": null,
+         "page_down": null,
+         "half_page_up": null,
+         "half_page_down": null,
+         "jump_top": null,
+         "jump_bottom": null,
+         "close": null,
+         "close_transcript": null,
+         "find": null
+        },
+        "list": {
+         "move_up": null,
+         "move_down": null,
+         "move_left": null,
+         "move_right": null,
+         "page_up": null,
+         "page_down": null,
+         "jump_top": null,
+         "jump_bottom": null,
+         "accept": null,
+         "cancel": null
+        },
+        "agents": {
+         "resume": null,
+         "search": null,
+         "new_task": null,
+         "new_worktree": null,
+         "fork": null,
+         "rename": null,
+         "stop": null,
+         "archive": null,
+         "delete": null,
+         "hide": null,
+         "toggle_pin": null,
+         "toggle_grouping": null
+        },
+        "approval": {
+         "open_fullscreen": null,
+         "open_thread": null,
+         "approve": null,
+         "approve_for_session": null,
+         "approve_for_prefix": null,
+         "deny": null,
+         "decline": null,
+         "cancel": null
+        }
+       },
+       "model_availability_nux": {
+        "gpt-5.5": 4
+       },
+       "terminal_resize_reflow_max_rows": null
+      },
+      "suppress_unstable_features_warning": null,
+      "cloud": null,
+      "include_permissions_instructions": true,
+      "include_collaboration_mode_instructions": true,
+      "experimental_realtime_start_instructions": null,
+      "profiles": {}
+     },
+     "origins": {
+      "plugins.browser[at]openai-bundled.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "hooks.state.$HOME/.codex/hooks.json:stop:0:0.trusted_hash": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "model": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "projects.$HOME/Study/Uni/IDL/cv-job-match.trust_level": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "service_tier": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "projects.$HOME/Documents/Codex/2026-08-18/can-2.trust_level": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "mcp_servers.node_repl.env.BROWSER_USE_CODEX_APP_VERSION": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "hooks.state.$HOME/.codex/hooks.json:interrupt:0:0.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "mcp_servers.node_repl.env_vars.0": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "hooks.state.$HOME/.codex/hooks.json:session_start:0:0.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "mcp_servers.node_repl.env.NODE_REPL_TRUSTED_CODE_PATHS": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "hooks.state.$HOME/.codex/hooks.json:post_tool_use:0:0.trusted_hash": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "projects.$HOME/Documents/Codex/2026-09-09/che.trust_level": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "hooks.state.$HOME/.codex/hooks.json:post_tool_use:0:0.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "plugins.slack[at]openai-curated.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "mcp_servers.node_repl.env.BROWSER_USE_AVAILABLE_BACKENDS": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "hooks.state.$HOME/.codex/hooks.json:permission_request:0:0.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "projects.$HOME/Study/Extra/Claude-Desktop/claude-controller.trust_level": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "hooks.state.$HOME/.codex/hooks.json:pre_tool_use:0:0.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "marketplaces.openai-primary-runtime.source": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "marketplaces.relay.source": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "hooks.state.$HOME/.codex/hooks.json:user_prompt_submit:0:0.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "hooks.state.$HOME/.codex/hooks.json:permission_request:0:0.trusted_hash": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "hooks.state.$HOME/.codex/hooks.json:stop:0:0.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "mcp_servers.node_repl.env.BROWSER_USE_CODEX_APP_BUILD_FLAVOR": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "hooks.state.$HOME/.codex/hooks.json:subagent_start:0:0.trusted_hash": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "plugins.code-review[at]openai-bundled.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "projects.$HOME/Documents/ChatGPT/Aboba.trust_level": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "projects.$HOME/Documents/Codex/2026-09-09/wh.trust_level": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "features.js_repl": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "mcp_servers.node_repl.command": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "marketplaces.openai-primary-runtime.source_type": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "mcp_servers.node_repl.env_vars.2": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "marketplaces.openai-bundled.source": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "hooks.state.$HOME/.codex/hooks.json:user_prompt_submit:0:0.trusted_hash": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "desktop.appearanceTheme": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "plugins.relay[at]relay.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "mcp_servers.node_repl.startup_timeout_sec": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "projects.$HOME/Work/narrio-rig.trust_level": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "shell_environment_policy.set.NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "plugins.presentations[at]openai-primary-runtime.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "plugins.google-calendar[at]openai-curated.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "mcp_servers.node_repl.env.NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "projects.$HOME/Documents/Codex/2026-09-10/explain-to-me-how-the-bronze.trust_level": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "plugins.unified-computer-use[at]openai-bundled.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "plugins.documents[at]openai-primary-runtime.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "mcp_servers.node_repl.env.NODE_REPL_TRUSTED_SERVICES": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "marketplaces.relay.last_updated": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "plugins.template-creator[at]openai-primary-runtime.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "marketplaces.openai-bundled.source_type": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "mcp_servers.linear.url": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "mcp_servers.node_repl.env.NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "mcp_servers.node_repl.env.CODEX_CLI_PATH": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "tui.model_availability_nux.gpt-5.5": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "model_providers.nvidia.base_url": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "hooks.state.$HOME/.codex/hooks.json:session_start:0:0.trusted_hash": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "hooks.state.$HOME/.codex/hooks.json:interrupt:0:0.trusted_hash": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "hooks.state.$HOME/.codex/hooks.json:subagent_stop:0:0.trusted_hash": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "marketplaces.relay.source_type": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "desktop.followUpQueueMode": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "plugins.spreadsheets[at]openai-primary-runtime.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "desktop.conversationDetailMode": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "model_providers.nvidia.api_key": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "projects.$HOME/Study/Uni/MRA.trust_level": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "plugins.codex-app-tools[at]openai-bundled.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "mcp_servers.node_repl.env.NODE_REPL_NODE_MODULE_DIRS": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "projects.$HOME/Documents/Codex/2026-08-13/he.trust_level": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "mcp_servers.node_repl.env.NODE_REPL_NODE_PATH": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "projects.$HOME/Work/narrio-server.trust_level": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "plugins.pdf[at]openai-primary-runtime.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "projects.$HOME/Study/Extra/Claude-Desktop.trust_level": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "mcp_servers.node_repl.env.NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "desktop.ambient-suggestions-enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "hooks.state.$HOME/.codex/hooks.json:subagent_start:0:0.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "plugins.visualize[at]openai-bundled.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "hooks.state.$HOME/.codex/hooks.json:pre_tool_use:0:0.trusted_hash": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "marketplaces.relay.last_revision": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "mcp_servers.node_repl.env_vars.1": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "mcp_servers.node_repl.env.CODEX_HOME": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "model_reasoning_effort": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "mcp_servers.node_repl.env.BROWSER_USE_TINYSKY_ENABLED": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "model_providers.nvidia.name": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "projects.$HOME/Documents/Codex/2026-08-18/can.trust_level": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "tui.screen_reader_detection_done": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      },
+      "hooks.state.$HOME/.codex/hooks.json:subagent_stop:0:0.enabled": {
+       "name": {
+        "type": "user",
+        "file": "$HOME/.codex/config.toml",
+        "profile": null
+       },
+       "version": "sha256:404f836aa720650aed8ffa2f2d180aede989eb12a935b8682dc8243d03ba4665"
+      }
+     }
+    }
+   }
+  ]
+ },
+ "notifications": [
+  {
+   "method": "configWarning",
+   "params": {
+    "summary": "Codex is ignoring 1 unrecognized configuration setting. Check for typos or deprecated settings.\n  user ($HOME/.codex/config.toml): `model_providers.nvidia.api_key` is ignored.",
+    "details": null
+   },
+   "emittedAtMs": 1792670928246
+  },
+  {
+   "method": "remoteControl/status/changed",
+   "params": {
+    "status": "disabled",
+    "serverName": "aleliuhin-Lenovo",
+    "installationId": "4bc272f6-09c7-4cf2-af2b-5306f711501a",
+    "environmentId": null
+   },
+   "emittedAtMs": 1792670928246
+  },
+  {
+   "method": "account/updated",
+   "params": {
+    "authMode": "chatgpt",
+    "planType": "self_serve_business_prolite"
+   },
+   "emittedAtMs": 1792670929024
+  }
+ ],
+ "stderrTail": "\u001b[2m2026-10-22T12:08:48.217146Z\u001b[0m \u001b[31mERROR\u001b[0m \u001b[2mcodex_app_server\u001b[0m\u001b[2m:\u001b[0m Codex is ignoring 1 unrecognized configuration setting. Check for typos or deprecated settings.\n  user ($HOME/.codex/config.toml): `model_providers.nvidia.api_key` is ignored.\n",
+ "finishedAt": "2026-10-22T12:08:52.728Z"
+}

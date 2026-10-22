@@ -1,0 +1,2999 @@
+{
+ "count": 131,
+ "sessions": [
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/01/rollout-2026-10-01T13-40-29-01a0f70d-2593-76a0-8e52-ced7c73e80c6.jsonl",
+   "threadId": "01a0f70d-2593-76a0-8e52-ced7c73e80c6",
+   "cliVersion": "0.159.2",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-01T10:40:29.080Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 56,
+    "response_item": 41,
+    "world_state": 1,
+    "turn_context": 3,
+    "token_usage_record": 12
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/01/rollout-2026-10-01T15-38-55-01a0f779-9481-7242-acd0-0737a587d62f.jsonl",
+   "threadId": "01a0f779-9481-7242-acd0-0737a587d62f",
+   "cliVersion": "0.159.2",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-01T12:38:55.366Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 50,
+    "response_item": 48,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 14
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/13/rollout-2026-10-13T10-08-46-01a13417-a175-7390-8ae4-1cbbc88fa990.jsonl",
+   "threadId": "01a13417-a175-7390-8ae4-1cbbc88fa990",
+   "cliVersion": "0.162.0-alpha.17.2",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-13T07:08:46.335Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 387,
+    "response_item": 291,
+    "world_state": 6,
+    "turn_context": 22,
+    "token_usage_record": 94
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/14/rollout-2026-10-14T11-40-47-01a13992-3c0e-7ce3-ace5-e9d2a1a32d61.jsonl",
+   "threadId": "01a13992-3c0e-7ce3-ace5-e9d2a1a32d61",
+   "cliVersion": "0.162.0-alpha.17.2",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-14T08:40:47.383Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 1846,
+    "response_item": 1555,
+    "world_state": 21,
+    "turn_context": 17,
+    "token_usage_record": 430,
+    "inter_agent_communication_metadata": 74,
+    "compacted": 3
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/14/rollout-2026-10-14T11-55-45-01a1399f-ef8f-7493-bcfc-d5e45a211775.jsonl",
+   "threadId": "01a13992-3c0e-7ce3-ace5-e9d2a1a32d61",
+   "cliVersion": "0.162.0-alpha.17.2",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-14T08:40:47.383Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 2,
+    "event_msg": 549,
+    "response_item": 478,
+    "world_state": 7,
+    "turn_context": 20,
+    "inter_agent_communication_metadata": 24,
+    "token_usage_record": 143,
+    "compacted": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/14/rollout-2026-10-14T16-59-32-01a13ab6-0e7a-7b32-866a-d991201f2980.jsonl",
+   "threadId": "01a13992-3c0e-7ce3-ace5-e9d2a1a32d61",
+   "cliVersion": "0.162.0-alpha.17.2",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-14T08:40:47.383Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 2,
+    "compacted": 1,
+    "world_state": 8,
+    "turn_context": 11,
+    "response_item": 267,
+    "event_msg": 263,
+    "inter_agent_communication_metadata": 9,
+    "token_usage_record": 83
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/15/rollout-2026-10-15T11-34-52-01a13eb3-2c7b-77d3-bf03-7faf0f902d15.jsonl",
+   "threadId": "01a13eb3-2c7b-77d3-bf03-7faf0f902d15",
+   "cliVersion": "0.162.0-alpha.17.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-15T08:34:52.171Z",
+   "records": {
+    "session_meta": 1,
+    "response_item": 1,
+    "event_msg": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/15/rollout-2026-10-15T11-40-29-01a13eb8-5351-7b01-98c7-fd6b3f660413.jsonl",
+   "threadId": "01a13eb8-5351-7b01-98c7-fd6b3f660413",
+   "cliVersion": "0.162.0-alpha.17.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-15T08:40:29.794Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "response_item": 27,
+    "event_msg": 26,
+    "world_state": 1,
+    "turn_context": 4,
+    "token_usage_record": 4
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/15/rollout-2026-10-15T11-46-09-01a13ebd-8123-78e2-9a32-3b66e34f7a01.jsonl",
+   "threadId": "01a13ebd-8123-78e2-9a32-3b66e34f7a01",
+   "cliVersion": "0.162.0-alpha.17.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-15T08:46:09.199Z",
+   "records": {
+    "session_meta": 1,
+    "response_item": 1,
+    "event_msg": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/15/rollout-2026-10-15T11-50-36-01a13ec1-965d-72b0-b64a-d34a91608fbd.jsonl",
+   "threadId": "01a13ec1-965d-72b0-b64a-d34a91608fbd",
+   "cliVersion": "0.162.0-alpha.17.2",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-15T08:50:36.777Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 853,
+    "response_item": 758,
+    "world_state": 4,
+    "turn_context": 7,
+    "token_usage_record": 222,
+    "inter_agent_communication_metadata": 49,
+    "compacted": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/15/rollout-2026-10-15T11-53-03-01a13ec3-d1a2-74c0-a0fc-0fbdb623e9d7.jsonl",
+   "threadId": "01a13ec1-965d-72b0-b64a-d34a91608fbd",
+   "cliVersion": "0.162.0-alpha.17.2",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-15T08:50:36.777Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 2,
+    "event_msg": 117,
+    "response_item": 113,
+    "world_state": 2,
+    "turn_context": 6,
+    "inter_agent_communication_metadata": 6,
+    "token_usage_record": 40
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/15/rollout-2026-10-15T12-01-32-01a13ecb-9739-7723-be7e-6e63974c09bd.jsonl",
+   "threadId": "01a13ec1-965d-72b0-b64a-d34a91608fbd",
+   "cliVersion": "0.162.0-alpha.17.2",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-15T08:50:36.777Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 2,
+    "event_msg": 306,
+    "response_item": 296,
+    "world_state": 3,
+    "turn_context": 9,
+    "inter_agent_communication_metadata": 12,
+    "token_usage_record": 100
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/15/rollout-2026-10-15T12-15-18-01a13ed8-3163-7633-80c0-bd4e08819b76.jsonl",
+   "threadId": "01a13ed8-3163-7633-80c0-bd4e08819b76",
+   "cliVersion": "0.162.0-alpha.17.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-15T09:15:18.256Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 63,
+    "response_item": 61,
+    "world_state": 1,
+    "turn_context": 10,
+    "token_usage_record": 10
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/15/rollout-2026-10-15T12-56-12-01a13efd-a36a-7841-a417-a62cef250475.jsonl",
+   "threadId": "01a13efd-a36a-7841-a417-a62cef250475",
+   "cliVersion": "0.162.0-alpha.17.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-15T09:56:12.278Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "response_item": 121,
+    "event_msg": 222,
+    "world_state": 1,
+    "turn_context": 34,
+    "token_usage_record": 34
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/15/rollout-2026-10-15T19-16-25-01a14059-bb7c-77a2-9cd8-8ef0e532218f.jsonl",
+   "threadId": "01a14059-bb7c-77a2-9cd8-8ef0e532218f",
+   "cliVersion": "0.162.0-alpha.17.2",
+   "originator": "claude-controller",
+   "source": "vscode",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-15T16:16:25.749Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 16,
+    "response_item": 17,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 5
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/16/rollout-2026-10-16T00-16-02-01a1416c-07d8-78f1-bc79-c9c1d37d49ff.jsonl",
+   "threadId": "01a1416c-07d8-78f1-bc79-c9c1d37d49ff",
+   "cliVersion": "0.162.0-alpha.17.2",
+   "originator": "claude-controller",
+   "source": "vscode",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-15T21:16:02.545Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 55,
+    "response_item": 38,
+    "world_state": 1,
+    "turn_context": 2,
+    "token_usage_record": 11
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/18/rollout-2026-10-18T12-25-29-01a14e54-9a71-74e1-9ae1-62bc2f5956c5.jsonl",
+   "threadId": "01a14e54-9a71-74e1-9ae1-62bc2f5956c5",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "claude-controller",
+   "source": "vscode",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-18T09:25:29.849Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 5,
+    "response_item": 6,
+    "world_state": 1,
+    "turn_context": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/19/rollout-2026-10-19T14-11-46-01a153dc-4473-7051-ac38-731f9fcc2f2c.jsonl",
+   "threadId": "01a153dc-4473-7051-ac38-731f9fcc2f2c",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-19T11:11:46.803Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 6,
+    "response_item": 7,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/19/rollout-2026-10-19T14-15-43-01a153df-e080-7fd2-a404-570b9656511a.jsonl",
+   "threadId": "01a153df-e080-7fd2-a404-570b9656511a",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-19T11:15:43.366Z",
+   "records": {
+    "session_meta": 1,
+    "response_item": 1,
+    "event_msg": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/19/rollout-2026-10-19T14-17-26-01a153e1-72e2-75e2-a6e4-40ee24cd4932.jsonl",
+   "threadId": "01a153e1-72e2-75e2-a6e4-40ee24cd4932",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-19T11:17:26.380Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "response_item": 37,
+    "event_msg": 41,
+    "world_state": 1,
+    "turn_context": 6,
+    "token_usage_record": 6
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/19/rollout-2026-10-19T14-18-40-01a153e2-937a-7b80-a64f-af8bc2c1f4b4.jsonl",
+   "threadId": "01a153e2-937a-7b80-a64f-af8bc2c1f4b4",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-19T11:18:40.262Z",
+   "records": {
+    "session_meta": 1,
+    "response_item": 1,
+    "event_msg": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/19/rollout-2026-10-19T14-23-29-01a153e6-fc2d-7c90-93d1-a0aae1b71f02.jsonl",
+   "threadId": "01a153e6-fc2d-7c90-93d1-a0aae1b71f02",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-19T11:23:29.209Z",
+   "records": {
+    "session_meta": 1,
+    "response_item": 1,
+    "event_msg": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/19/rollout-2026-10-19T14-27-00-01a153ea-3595-72d0-978e-462c0a73df2a.jsonl",
+   "threadId": "01a153ea-3595-72d0-978e-462c0a73df2a",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-19T11:27:00.511Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 2929,
+    "response_item": 2579,
+    "world_state": 14,
+    "turn_context": 28,
+    "token_usage_record": 783,
+    "inter_agent_communication_metadata": 66,
+    "compacted": 4
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/19/rollout-2026-10-19T14-28-12-01a153eb-4fc4-7c02-b8e6-96be786b194f.jsonl",
+   "threadId": "01a153ea-3595-72d0-978e-462c0a73df2a",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-19T11:27:00.511Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 2,
+    "event_msg": 154,
+    "response_item": 155,
+    "world_state": 4,
+    "turn_context": 8,
+    "inter_agent_communication_metadata": 8,
+    "token_usage_record": 50
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/19/rollout-2026-10-19T14-28-17-01a153eb-6372-7051-991a-c7c70564a51b.jsonl",
+   "threadId": "01a153ea-3595-72d0-978e-462c0a73df2a",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-19T11:27:00.511Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 2,
+    "event_msg": 92,
+    "response_item": 93,
+    "world_state": 3,
+    "turn_context": 5,
+    "inter_agent_communication_metadata": 4,
+    "token_usage_record": 33
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/19/rollout-2026-10-19T14-36-52-01a153f3-3c38-71b3-953b-51a390fa2f63.jsonl",
+   "threadId": "01a153f3-3c38-71b3-953b-51a390fa2f63",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-19T11:36:52.036Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 164,
+    "response_item": 95,
+    "world_state": 1,
+    "turn_context": 26,
+    "token_usage_record": 25
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/19/rollout-2026-10-19T15-18-02-01a15418-ee4f-7382-b480-3f8cb803abae.jsonl",
+   "threadId": "01a15418-ee4f-7382-b480-3f8cb803abae",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-19T12:18:02.456Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "response_item": 32,
+    "event_msg": 60,
+    "world_state": 1,
+    "turn_context": 9,
+    "token_usage_record": 9
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/19/rollout-2026-10-19T18-25-20-01a154c4-684e-72d1-8437-f961d993333f.jsonl",
+   "threadId": "01a154c4-684e-72d1-8437-f961d993333f",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-19T15:25:20.348Z",
+   "records": {
+    "session_meta": 1,
+    "response_item": 1,
+    "event_msg": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/19/rollout-2026-10-19T18-29-24-01a154c8-21f2-7991-bacc-c8f467b5c6c6.jsonl",
+   "threadId": "01a154c8-21f2-7991-bacc-c8f467b5c6c6",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-19T15:29:24.473Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "response_item": 15,
+    "event_msg": 22,
+    "world_state": 1,
+    "turn_context": 3,
+    "token_usage_record": 3
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/19/rollout-2026-10-19T18-41-50-01a154d3-84ac-71e2-8c89-5c382a901c03.jsonl",
+   "threadId": "01a154d3-84ac-71e2-8c89-5c382a901c03",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-19T15:41:50.642Z",
+   "model": "gpt-6-luna",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 24,
+    "response_item": 28,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 6
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/19/rollout-2026-10-19T18-43-39-01a154d5-2d4b-71b3-aa8c-3cddb7db0afe.jsonl",
+   "threadId": "01a154d5-2d4b-71b3-aa8c-3cddb7db0afe",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-19T15:43:39.349Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "response_item": 70,
+    "event_msg": 150,
+    "world_state": 1,
+    "turn_context": 22,
+    "token_usage_record": 22
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/19/rollout-2026-10-19T23-34-44-01a155df-ab29-7062-a120-28c1fa8d3d12.jsonl",
+   "threadId": "01a155df-ab29-7062-a120-28c1fa8d3d12",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-19T20:34:44.143Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "response_item": 102,
+    "event_msg": 207,
+    "world_state": 2,
+    "turn_context": 31,
+    "token_usage_record": 31
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/20/rollout-2026-10-20T00-29-07-01a15611-751a-7cb0-9310-f72986581d01.jsonl",
+   "threadId": "01a153ea-3595-72d0-978e-462c0a73df2a",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-19T11:27:00.511Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 2,
+    "compacted": 1,
+    "world_state": 2,
+    "turn_context": 6,
+    "response_item": 93,
+    "event_msg": 99,
+    "inter_agent_communication_metadata": 5,
+    "token_usage_record": 34
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/20/rollout-2026-10-20T00-29-07-01a15611-755a-7280-94b3-9069a63d4cc5.jsonl",
+   "threadId": "01a15611-755a-7280-94b3-9069a63d4cc5",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-19T21:29:07.166Z",
+   "records": {
+    "session_meta": 1,
+    "response_item": 1,
+    "event_msg": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/20/rollout-2026-10-20T00-32-26-01a15614-8154-7d13-a77c-65f9413388ab.jsonl",
+   "threadId": "01a15614-8154-7d13-a77c-65f9413388ab",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-19T21:32:26.843Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "response_item": 93,
+    "event_msg": 169,
+    "world_state": 1,
+    "turn_context": 26,
+    "token_usage_record": 26
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/20/rollout-2026-10-20T11-27-52-01a1586c-90b1-7453-9b07-d59c93cf6a6c.jsonl",
+   "threadId": "01a1586c-90b1-7453-9b07-d59c93cf6a6c",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-20T08:27:52.373Z",
+   "records": {
+    "session_meta": 1,
+    "response_item": 1,
+    "event_msg": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/20/rollout-2026-10-20T11-35-57-01a15873-f793-7703-ba9e-82c1a32a77e0.jsonl",
+   "threadId": "01a153ea-3595-72d0-978e-462c0a73df2a",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-19T11:27:00.511Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 2,
+    "compacted": 1,
+    "world_state": 4,
+    "turn_context": 8,
+    "response_item": 119,
+    "event_msg": 119,
+    "inter_agent_communication_metadata": 4,
+    "token_usage_record": 39
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/20/rollout-2026-10-20T11-35-57-01a15873-f7fb-7720-be16-f14005231981.jsonl",
+   "threadId": "01a15873-f7fb-7720-be16-f14005231981",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-20T08:35:57.576Z",
+   "records": {
+    "session_meta": 1,
+    "response_item": 1,
+    "event_msg": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/20/rollout-2026-10-20T11-36-10-01a15874-2b44-7d81-b196-1c9bba3dd9fc.jsonl",
+   "threadId": "01a15874-2b44-7d81-b196-1c9bba3dd9fc",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-20T08:36:10.697Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "response_item": 25,
+    "event_msg": 21,
+    "world_state": 1,
+    "turn_context": 3,
+    "token_usage_record": 3
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/20/rollout-2026-10-20T11-53-08-01a15883-b4c1-7750-a189-7f2cad9a8809.jsonl",
+   "threadId": "01a153ea-3595-72d0-978e-462c0a73df2a",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-19T11:27:00.511Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 2,
+    "compacted": 1,
+    "world_state": 2,
+    "turn_context": 5,
+    "response_item": 94,
+    "event_msg": 108,
+    "inter_agent_communication_metadata": 5,
+    "token_usage_record": 32
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/20/rollout-2026-10-20T11-53-09-01a15883-b52e-7483-a272-3c5e393aa1de.jsonl",
+   "threadId": "01a15883-b52e-7483-a272-3c5e393aa1de",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-20T08:53:09.051Z",
+   "records": {
+    "session_meta": 1,
+    "response_item": 1,
+    "event_msg": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/20/rollout-2026-10-20T11-56-33-01a15886-d58c-7993-9429-b0ebfa7c2db8.jsonl",
+   "threadId": "01a15886-d58c-7993-9429-b0ebfa7c2db8",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-20T08:56:33.940Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "response_item": 192,
+    "event_msg": 362,
+    "world_state": 1,
+    "turn_context": 54,
+    "token_usage_record": 54
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/20/rollout-2026-10-20T13-38-12-01a158e3-e299-7a41-b181-cc2cb35e4d5b.jsonl",
+   "threadId": "01a158e3-e299-7a41-b181-cc2cb35e4d5b",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-20T10:38:12.125Z",
+   "model": "gpt-6-luna",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 295,
+    "response_item": 284,
+    "world_state": 1,
+    "turn_context": 7,
+    "token_usage_record": 75
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/20/rollout-2026-10-20T13-41-50-01a158e7-360b-72c3-8153-5adfdfdcc66d.jsonl",
+   "threadId": "01a158e7-360b-72c3-8153-5adfdfdcc66d",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-20T10:41:50.092Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 266,
+    "response_item": 120,
+    "world_state": 1,
+    "turn_context": 39,
+    "token_usage_record": 39
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/20/rollout-2026-10-20T13-51-28-01a158f0-097c-7133-a0b4-836d199eaff9.jsonl",
+   "threadId": "01a158f0-097c-7133-a0b4-836d199eaff9",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-20T10:51:28.518Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 6,
+    "response_item": 7,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/20/rollout-2026-10-20T14-21-05-01a1590b-27b6-79e3-8fba-b17c96e7370d.jsonl",
+   "threadId": "01a1590b-27b6-79e3-8fba-b17c96e7370d",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-20T11:21:05.718Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 6,
+    "response_item": 7,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/20/rollout-2026-10-20T15-01-28-01a15930-1e62-7d31-ba5f-55814b1eee5a.jsonl",
+   "threadId": "01a15930-1e62-7d31-ba5f-55814b1eee5a",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-20T12:01:28.162Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 26,
+    "response_item": 17,
+    "world_state": 1,
+    "turn_context": 4,
+    "token_usage_record": 4
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/20/rollout-2026-10-20T17-12-46-01a159a8-56bb-7271-82a8-3fbd3a1accce.jsonl",
+   "threadId": "01a159a8-56bb-7271-82a8-3fbd3a1accce",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-20T14:12:46.912Z",
+   "model": "gpt-6-luna",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 15,
+    "response_item": 19,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 3
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/20/rollout-2026-10-20T18-38-56-01a159f7-3798-7cf0-b12b-fa0328869619.jsonl",
+   "threadId": "01a159f7-3798-7cf0-b12b-fa0328869619",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-20T15:38:56.283Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 332,
+    "response_item": 246,
+    "world_state": 1,
+    "turn_context": 11,
+    "token_usage_record": 82
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/20/rollout-2026-10-20T18-41-36-01a159f9-ab52-75f0-b053-3d5934c8db82.jsonl",
+   "threadId": "01a159f9-ab52-75f0-b053-3d5934c8db82",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-20T15:41:36.979Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 13,
+    "response_item": 11,
+    "world_state": 1,
+    "turn_context": 2,
+    "token_usage_record": 2
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/20/rollout-2026-10-20T20-47-22-01a15a6c-cd8c-7ee3-9870-b05bdb9ec322.jsonl",
+   "threadId": "01a15a6c-cd8c-7ee3-9870-b05bdb9ec322",
+   "cliVersion": "0.163.0-alpha.10.2",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-20T17:47:22.380Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 12,
+    "response_item": 11,
+    "world_state": 1,
+    "turn_context": 2,
+    "token_usage_record": 2
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T14-16-53-01a15e2d-abd5-7663-888c-d6f6e3f88794.jsonl",
+   "threadId": "01a15e2d-abd5-7663-888c-d6f6e3f88794",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T11:16:53.849Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 44,
+    "response_item": 26,
+    "world_state": 1,
+    "turn_context": 7,
+    "token_usage_record": 7
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T17-02-05-01a15ec4-e83a-74e1-9051-17be84f9a1c5.jsonl",
+   "threadId": "01a15ec4-e83a-74e1-9051-17be84f9a1c5",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T14:02:05.256Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 30,
+    "response_item": 18,
+    "world_state": 1,
+    "turn_context": 5,
+    "token_usage_record": 5
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T17-14-51-01a15ed0-98eb-7ba2-87b2-837333090ce5.jsonl",
+   "threadId": "01a15ed0-98eb-7ba2-87b2-837333090ce5",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T14:14:51.385Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 108,
+    "response_item": 89,
+    "world_state": 2,
+    "turn_context": 3,
+    "token_usage_record": 24,
+    "inter_agent_communication_metadata": 2
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T17-23-04-01a15ed8-1fac-72f0-b782-c74413206427.jsonl",
+   "threadId": "01a15ed8-1fac-72f0-b782-c74413206427",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a15ed0-98eb-7ba2-87b2-837333090ce5",
+      "depth": 1,
+      "agent_path": "/root/relay_scout",
+      "agent_nickname": "Dalton",
+      "agent_role": "explorer"
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T14:23:04.633Z",
+   "model": "gpt-6-luna",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 18,
+    "response_item": 21,
+    "world_state": 1,
+    "turn_context": 1,
+    "inter_agent_communication_metadata": 1,
+    "token_usage_record": 6
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T20-29-49-01a15f83-1a88-7451-a821-36084420f6dd.jsonl",
+   "threadId": "01a15f83-1a88-7451-a821-36084420f6dd",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T17:29:49.965Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 13,
+    "response_item": 13,
+    "world_state": 1,
+    "turn_context": 2,
+    "token_usage_record": 2
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T20-30-07-01a15f83-5f08-7572-ab79-90c0557775d4.jsonl",
+   "threadId": "01a15f83-5f08-7572-ab79-90c0557775d4",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T17:30:07.505Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 2156,
+    "response_item": 2148,
+    "world_state": 32,
+    "turn_context": 5,
+    "token_usage_record": 593,
+    "inter_agent_communication_metadata": 171,
+    "compacted": 2
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T20-31-45-01a15f84-dbeb-77e0-8460-7c8220366087.jsonl",
+   "threadId": "01a15f84-dbeb-77e0-8460-7c8220366087",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T17:31:45.007Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 93,
+    "response_item": 118,
+    "world_state": 1,
+    "turn_context": 15,
+    "token_usage_record": 15
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T20-32-09-01a15f85-3d3f-7d63-99aa-51a5d9e5cc09.jsonl",
+   "threadId": "01a15f85-3d3f-7d63-99aa-51a5d9e5cc09",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a15f83-5f08-7572-ab79-90c0557775d4",
+      "depth": 1,
+      "agent_path": "/root/lane_a",
+      "agent_nickname": "James",
+      "agent_role": "worker"
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T17:32:09.929Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 82,
+    "response_item": 87,
+    "world_state": 1,
+    "turn_context": 3,
+    "inter_agent_communication_metadata": 14,
+    "token_usage_record": 26
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T20-32-10-01a15f85-3d9b-7230-92d0-4f856578a004.jsonl",
+   "threadId": "01a15f85-3d9b-7230-92d0-4f856578a004",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T17:32:10.027Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 6,
+    "response_item": 22,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T20-33-36-01a15f86-8db4-7fa0-a96c-aacd1b1c7c05.jsonl",
+   "threadId": "01a15f86-8db4-7fa0-a96c-aacd1b1c7c05",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a15f83-5f08-7572-ab79-90c0557775d4",
+      "depth": 1,
+      "agent_path": "/root/recovery_scout",
+      "agent_nickname": "Ampere",
+      "agent_role": "explorer"
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T17:33:36.058Z",
+   "model": "gpt-6-luna",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 29,
+    "response_item": 32,
+    "world_state": 1,
+    "turn_context": 1,
+    "inter_agent_communication_metadata": 1,
+    "token_usage_record": 12
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T20-34-12-01a15f87-1a36-7682-b990-9cd966d22d16.jsonl",
+   "threadId": "01a15f87-1a36-7682-b990-9cd966d22d16",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a15f83-5f08-7572-ab79-90c0557775d4",
+      "depth": 1,
+      "agent_path": "/root/review_a",
+      "agent_nickname": "Pascal",
+      "agent_role": "default"
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T17:34:12.032Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 74,
+    "response_item": 72,
+    "world_state": 1,
+    "turn_context": 2,
+    "inter_agent_communication_metadata": 10,
+    "token_usage_record": 24
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T20-36-35-01a15f89-4c24-7d82-ab3d-fdeb0494a70a.jsonl",
+   "threadId": "01a15f89-4c24-7d82-ab3d-fdeb0494a70a",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a15f83-5f08-7572-ab79-90c0557775d4",
+      "depth": 1,
+      "agent_path": "/root/lane_b",
+      "agent_nickname": "Gauss",
+      "agent_role": "worker"
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T17:36:35.883Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 448,
+    "response_item": 465,
+    "world_state": 1,
+    "turn_context": 4,
+    "inter_agent_communication_metadata": 39,
+    "token_usage_record": 142
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T20-36-35-01a15f89-4c80-7ec2-960f-79c28a342108.jsonl",
+   "threadId": "01a15f89-4c80-7ec2-960f-79c28a342108",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T17:36:35.983Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 50,
+    "response_item": 66,
+    "world_state": 1,
+    "turn_context": 8,
+    "token_usage_record": 8
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T20-36-51-01a15f89-8791-7bd0-aad8-026a8c6db001.jsonl",
+   "threadId": "01a15f89-8791-7bd0-aad8-026a8c6db001",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a15f83-5f08-7572-ab79-90c0557775d4",
+      "depth": 1,
+      "agent_path": "/root/lane_c",
+      "agent_nickname": "Bernoulli",
+      "agent_role": "worker"
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T17:36:51.093Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 475,
+    "response_item": 493,
+    "world_state": 1,
+    "turn_context": 5,
+    "inter_agent_communication_metadata": 42,
+    "token_usage_record": 158
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T20-36-51-01a15f89-87f2-7e61-b1b5-cfd81a5f6b79.jsonl",
+   "threadId": "01a15f89-87f2-7e61-b1b5-cfd81a5f6b79",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T17:36:51.200Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 43,
+    "response_item": 44,
+    "world_state": 1,
+    "turn_context": 7,
+    "token_usage_record": 7
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T20-37-01-01a15f89-ae45-7110-a56c-e2c2aadd6939.jsonl",
+   "threadId": "01a15f89-ae45-7110-a56c-e2c2aadd6939",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a15f83-5f08-7572-ab79-90c0557775d4",
+      "depth": 1,
+      "agent_path": "/root/lane_d",
+      "agent_nickname": "Planck",
+      "agent_role": "worker"
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T17:37:01.002Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 97,
+    "response_item": 100,
+    "world_state": 1,
+    "turn_context": 2,
+    "inter_agent_communication_metadata": 6,
+    "token_usage_record": 34
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T20-37-01-01a15f89-ae9e-7743-8352-488ef72fa686.jsonl",
+   "threadId": "01a15f89-ae9e-7743-8352-488ef72fa686",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T17:37:01.092Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 6,
+    "response_item": 11,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T20-41-16-01a15f8d-92a4-7850-934f-3b17546edd18.jsonl",
+   "threadId": "01a15f8d-92a4-7850-934f-3b17546edd18",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a15f83-5f08-7572-ab79-90c0557775d4",
+      "depth": 1,
+      "agent_path": "/root/review_d",
+      "agent_nickname": "Godel",
+      "agent_role": "default"
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T17:41:16.074Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 41,
+    "response_item": 41,
+    "world_state": 1,
+    "turn_context": 2,
+    "inter_agent_communication_metadata": 3,
+    "token_usage_record": 14
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T20-42-21-01a15f8e-9154-7302-8ff2-738e12436fa5.jsonl",
+   "threadId": "01a15f8e-9154-7302-8ff2-738e12436fa5",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T17:42:21.279Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 6,
+    "response_item": 13,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T20-44-39-01a15f90-ab88-7d80-b7a5-9ce3d2c4b2a6.jsonl",
+   "threadId": "01a15f90-ab88-7d80-b7a5-9ce3d2c4b2a6",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a15f83-5f08-7572-ab79-90c0557775d4",
+      "depth": 1,
+      "agent_path": "/root/review_c",
+      "agent_nickname": "Curie",
+      "agent_role": "default"
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T17:44:39.053Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 77,
+    "response_item": 78,
+    "world_state": 1,
+    "turn_context": 4,
+    "inter_agent_communication_metadata": 11,
+    "token_usage_record": 27
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T20-44-54-01a15f90-e858-7983-abe0-b4cb72c99f24.jsonl",
+   "threadId": "01a15f90-e858-7983-abe0-b4cb72c99f24",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a15f83-5f08-7572-ab79-90c0557775d4",
+      "depth": 1,
+      "agent_path": "/root/review_b",
+      "agent_nickname": "Wegener",
+      "agent_role": "default"
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T17:44:54.623Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 137,
+    "response_item": 142,
+    "world_state": 1,
+    "turn_context": 2,
+    "inter_agent_communication_metadata": 8,
+    "token_usage_record": 51
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T20-46-09-01a15f92-0eb0-7122-87e2-0e0df4c60cf9.jsonl",
+   "threadId": "01a15f92-0eb0-7122-87e2-0e0df4c60cf9",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T17:46:09.982Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 30,
+    "response_item": 47,
+    "world_state": 1,
+    "turn_context": 5,
+    "token_usage_record": 5
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T20-53-35-01a15f98-da01-7913-94be-83805a95d0af.jsonl",
+   "threadId": "01a15f98-da01-7913-94be-83805a95d0af",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T17:53:35.238Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 62,
+    "response_item": 82,
+    "world_state": 1,
+    "turn_context": 10,
+    "token_usage_record": 10
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T20-54-38-01a15f99-cffa-7aa1-92c4-aa198990abc6.jsonl",
+   "threadId": "01a15f99-cffa-7aa1-92c4-aa198990abc6",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T17:54:38.212Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 6,
+    "response_item": 28,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T20-55-58-01a15f9b-0b35-7101-8fe1-97d4fe7e7af0.jsonl",
+   "threadId": "01a15f9b-0b35-7101-8fe1-97d4fe7e7af0",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T17:55:58.905Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 6,
+    "response_item": 18,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T21-00-32-01a15f9f-370c-73e1-89b2-38d9c1b105c1.jsonl",
+   "threadId": "01a15f9f-370c-73e1-89b2-38d9c1b105c1",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a15f83-5f08-7572-ab79-90c0557775d4",
+      "depth": 1,
+      "agent_path": "/root/lane_e",
+      "agent_nickname": "Avicenna",
+      "agent_role": "worker"
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T18:00:32.272Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 846,
+    "response_item": 844,
+    "world_state": 2,
+    "turn_context": 9,
+    "inter_agent_communication_metadata": 82,
+    "token_usage_record": 248,
+    "compacted": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T21-00-32-01a15f9f-37ae-7330-a5f2-2df102557212.jsonl",
+   "threadId": "01a15f9f-37ae-7330-a5f2-2df102557212",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T18:00:32.438Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 103,
+    "response_item": 140,
+    "world_state": 1,
+    "turn_context": 15,
+    "token_usage_record": 18
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T21-05-50-01a15fa4-11da-7093-957a-cde7697e0220.jsonl",
+   "threadId": "01a15fa4-11da-7093-957a-cde7697e0220",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a15f83-5f08-7572-ab79-90c0557775d4",
+      "depth": 1,
+      "agent_path": "/root/review_e",
+      "agent_nickname": "Euler",
+      "agent_role": "default"
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T18:05:50.431Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 69,
+    "response_item": 73,
+    "world_state": 1,
+    "turn_context": 1,
+    "inter_agent_communication_metadata": 2,
+    "token_usage_record": 28
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T21-08-38-01a15fa6-a1fc-7260-af77-1f11ac7a0d02.jsonl",
+   "threadId": "01a15fa6-a1fc-7260-af77-1f11ac7a0d02",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T18:08:38.403Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 18,
+    "response_item": 45,
+    "world_state": 1,
+    "turn_context": 3,
+    "token_usage_record": 3
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T21-15-55-01a15fad-4cf6-77e0-b13a-ee45bc1c4cf4.jsonl",
+   "threadId": "01a15fad-4cf6-77e0-b13a-ee45bc1c4cf4",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a15f83-5f08-7572-ab79-90c0557775d4",
+      "depth": 1,
+      "agent_path": "/root/review_c_progress",
+      "agent_nickname": "Huygens",
+      "agent_role": "default"
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T18:15:55.387Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 37,
+    "response_item": 36,
+    "world_state": 1,
+    "turn_context": 1,
+    "inter_agent_communication_metadata": 2,
+    "token_usage_record": 11
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T21-17-10-01a15fae-71ce-7e63-a5bd-3c806e643808.jsonl",
+   "threadId": "01a15fae-71ce-7e63-a5bd-3c806e643808",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a15f83-5f08-7572-ab79-90c0557775d4",
+      "depth": 1,
+      "agent_path": "/root/review_b_audit",
+      "agent_nickname": "Hypatia",
+      "agent_role": "default"
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T18:17:10.360Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 49,
+    "response_item": 53,
+    "world_state": 1,
+    "turn_context": 1,
+    "inter_agent_communication_metadata": 2,
+    "token_usage_record": 18
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T21-19-03-01a15fb0-2a71-77a1-9453-99abff11ac71.jsonl",
+   "threadId": "01a15fb0-2a71-77a1-9453-99abff11ac71",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a15f83-5f08-7572-ab79-90c0557775d4",
+      "depth": 1,
+      "agent_path": "/root/review_e_final",
+      "agent_nickname": "Kant",
+      "agent_role": "default"
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T18:19:03.158Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 238,
+    "response_item": 243,
+    "world_state": 1,
+    "turn_context": 2,
+    "inter_agent_communication_metadata": 11,
+    "token_usage_record": 90
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T21-31-11-01a15fbb-47fb-7113-94c2-d1422253cc86.jsonl",
+   "threadId": "01a15fbb-47fb-7113-94c2-d1422253cc86",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T18:31:11.617Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "response_item": 80,
+    "event_msg": 77,
+    "world_state": 1,
+    "turn_context": 12,
+    "token_usage_record": 12
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T21-54-19-01a15fd0-756e-7650-b6b0-3c4d6b6aed0e.jsonl",
+   "threadId": "01a15fd0-756e-7650-b6b0-3c4d6b6aed0e",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T18:54:19.509Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "response_item": 58,
+    "event_msg": 34,
+    "world_state": 1,
+    "turn_context": 5,
+    "token_usage_record": 5
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T21-54-40-01a15fd0-c6e1-7b70-a684-1f472c26b652.jsonl",
+   "threadId": "01a15fd0-c6e1-7b70-a684-1f472c26b652",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T18:54:40.354Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 13,
+    "response_item": 11,
+    "world_state": 1,
+    "turn_context": 2,
+    "token_usage_record": 2
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T21-56-36-01a15fd2-8b0d-7c12-a26b-fcb30082e6d4.jsonl",
+   "threadId": "01a15fd2-8b0d-7c12-a26b-fcb30082e6d4",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T18:56:36.109Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 19,
+    "response_item": 14,
+    "world_state": 1,
+    "turn_context": 3,
+    "token_usage_record": 3
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T23-13-11-01a16018-a952-75a1-b0cb-c0d58f6e35c8.jsonl",
+   "threadId": "01a16018-a952-75a1-b0cb-c0d58f6e35c8",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a15f83-5f08-7572-ab79-90c0557775d4",
+      "depth": 1,
+      "agent_path": "/root/architect_final",
+      "agent_nickname": "Popper",
+      "agent_role": "default"
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T20:13:11.393Z",
+   "model": "gpt-6-astra",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 230,
+    "response_item": 231,
+    "world_state": 3,
+    "turn_context": 1,
+    "inter_agent_communication_metadata": 21,
+    "token_usage_record": 84
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T23-13-42-01a16019-2390-79d1-a1f0-3786222562f8.jsonl",
+   "threadId": "01a16019-2390-79d1-a1f0-3786222562f8",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a16018-a952-75a1-b0cb-c0d58f6e35c8",
+      "depth": 2,
+      "agent_path": "/root/architect_final/runtime_scout",
+      "agent_nickname": "Copernicus",
+      "agent_role": "explorer"
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T20:13:42.693Z",
+   "model": "gpt-6-luna",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 35,
+    "response_item": 36,
+    "world_state": 1,
+    "turn_context": 2,
+    "inter_agent_communication_metadata": 2,
+    "token_usage_record": 11
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T23-13-51-01a16019-44b2-7771-a19d-8281fcb29c76.jsonl",
+   "threadId": "01a16019-44b2-7771-a19d-8281fcb29c76",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a16018-a952-75a1-b0cb-c0d58f6e35c8",
+      "depth": 2,
+      "agent_path": "/root/architect_final/claims_scout",
+      "agent_nickname": "Herschel",
+      "agent_role": "explorer"
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T20:13:51.171Z",
+   "model": "gpt-6-luna",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 82,
+    "response_item": 81,
+    "world_state": 1,
+    "turn_context": 3,
+    "inter_agent_communication_metadata": 3,
+    "token_usage_record": 26
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T23-33-34-01a1602b-51bd-7d31-9df0-cd3798899f8f.jsonl",
+   "threadId": "01a1602b-51bd-7d31-9df0-cd3798899f8f",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T20:33:34.145Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "response_item": 41,
+    "event_msg": 28,
+    "world_state": 1,
+    "turn_context": 4,
+    "token_usage_record": 4
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/21/rollout-2026-10-21T23-49-31-01a16039-ec31-7ad1-a2b8-1920614d0748.jsonl",
+   "threadId": "01a16039-ec31-7ad1-a2b8-1920614d0748",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T20:49:31.191Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "response_item": 39,
+    "event_msg": 48,
+    "world_state": 1,
+    "turn_context": 7,
+    "token_usage_record": 7
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T00-05-29-01a16048-8a75-7251-b950-5a3ede1e1eb8.jsonl",
+   "threadId": "01a16048-8a75-7251-b950-5a3ede1e1eb8",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T21:05:29.224Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 216,
+    "response_item": 220,
+    "world_state": 5,
+    "turn_context": 6,
+    "token_usage_record": 64,
+    "inter_agent_communication_metadata": 17
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T00-08-37-01a1604b-69f1-70c2-bad5-73c8a3d8de66.jsonl",
+   "threadId": "01a1604b-69f1-70c2-bad5-73c8a3d8de66",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a16048-8a75-7251-b950-5a3ede1e1eb8",
+      "depth": 1,
+      "agent_path": "/root/relay_scout",
+      "agent_nickname": "Archimedes",
+      "agent_role": null
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T21:08:37.517Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 28,
+    "response_item": 30,
+    "world_state": 1,
+    "turn_context": 1,
+    "inter_agent_communication_metadata": 2,
+    "token_usage_record": 10
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T00-09-41-01a1604c-62f7-7b33-ad5a-6f60e808abd8.jsonl",
+   "threadId": "01a1604c-62f7-7b33-ad5a-6f60e808abd8",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a16048-8a75-7251-b950-5a3ede1e1eb8",
+      "depth": 1,
+      "agent_path": "/root/relay_implementer",
+      "agent_nickname": "Bacon",
+      "agent_role": null
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T21:09:41.256Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 158,
+    "response_item": 145,
+    "world_state": 1,
+    "turn_context": 1,
+    "inter_agent_communication_metadata": 8,
+    "token_usage_record": 49
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T00-09-41-01a1604c-639c-7ce0-b1ef-ed8d6af22eda.jsonl",
+   "threadId": "01a1604c-639c-7ce0-b1ef-ed8d6af22eda",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T21:09:41.420Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 26,
+    "response_item": 27,
+    "world_state": 1,
+    "turn_context": 4,
+    "token_usage_record": 4
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T00-15-25-01a16051-a424-7621-baab-632e2d54a354.jsonl",
+   "threadId": "01a16051-a424-7621-baab-632e2d54a354",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a16048-8a75-7251-b950-5a3ede1e1eb8",
+      "depth": 1,
+      "agent_path": "/root/relay_reviewer",
+      "agent_nickname": "Carver",
+      "agent_role": null
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T21:15:25.618Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 51,
+    "response_item": 42,
+    "world_state": 1,
+    "turn_context": 2,
+    "inter_agent_communication_metadata": 3,
+    "token_usage_record": 12
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T00-21-15-01a16056-fc1e-77c1-b82a-146e9cf04205.jsonl",
+   "threadId": "01a16056-fc1e-77c1-b82a-146e9cf04205",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T21:21:15.823Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 19,
+    "response_item": 28,
+    "world_state": 1,
+    "turn_context": 3,
+    "token_usage_record": 3
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T00-24-30-01a16059-f66c-71d0-a3d0-e70a949c904d.jsonl",
+   "threadId": "01a16059-f66c-71d0-a3d0-e70a949c904d",
+   "cliVersion": "0.163.0-alpha.11",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-21T21:24:30.978Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 6,
+    "response_item": 7,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T10-19-07-01a1627a-592a-7480-ba6a-6935f3474a3a.jsonl",
+   "threadId": "01a1627a-592a-7480-ba6a-6935f3474a3a",
+   "cliVersion": "0.163.0-alpha.11.1",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T07:19:07.825Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 487,
+    "response_item": 491,
+    "world_state": 9,
+    "turn_context": 5,
+    "token_usage_record": 129,
+    "inter_agent_communication_metadata": 37
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T10-19-46-01a1627a-f07f-7a30-82ac-14724d122d81.jsonl",
+   "threadId": "01a1627a-f07f-7a30-82ac-14724d122d81",
+   "cliVersion": "0.163.0-alpha.11.1",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a1627a-592a-7480-ba6a-6935f3474a3a",
+      "depth": 1,
+      "agent_path": "/root/relay_scout",
+      "agent_nickname": "Kuhn",
+      "agent_role": null
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T07:19:46.566Z",
+   "model": "gpt-6-luna",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 22,
+    "response_item": 25,
+    "world_state": 1,
+    "turn_context": 1,
+    "inter_agent_communication_metadata": 1,
+    "token_usage_record": 8
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T10-22-00-01a1627c-f9fd-7021-b75d-380c4e286ff5.jsonl",
+   "threadId": "01a1627c-f9fd-7021-b75d-380c4e286ff5",
+   "cliVersion": "0.163.0-alpha.11.1",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a1627a-592a-7480-ba6a-6935f3474a3a",
+      "depth": 1,
+      "agent_path": "/root/relay_implementer_routing",
+      "agent_nickname": "Aristotle",
+      "agent_role": null
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T07:22:00.068Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 162,
+    "response_item": 170,
+    "world_state": 1,
+    "turn_context": 1,
+    "inter_agent_communication_metadata": 13,
+    "token_usage_record": 51
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T10-22-00-01a1627c-fa6d-7c33-bd87-fb9713357ffc.jsonl",
+   "threadId": "01a1627c-fa6d-7c33-bd87-fb9713357ffc",
+   "cliVersion": "0.163.0-alpha.11.1",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T07:22:00.182Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 24,
+    "response_item": 40,
+    "world_state": 1,
+    "turn_context": 4,
+    "token_usage_record": 4
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T10-22-08-01a1627d-1a04-7c13-916b-2257c29ee6ae.jsonl",
+   "threadId": "01a1627d-1a04-7c13-916b-2257c29ee6ae",
+   "cliVersion": "0.163.0-alpha.11.1",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a1627a-592a-7480-ba6a-6935f3474a3a",
+      "depth": 1,
+      "agent_path": "/root/relay_implementer_delivery",
+      "agent_nickname": "Carver",
+      "agent_role": null
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T07:22:08.270Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 224,
+    "response_item": 235,
+    "world_state": 1,
+    "turn_context": 4,
+    "inter_agent_communication_metadata": 15,
+    "token_usage_record": 80
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T10-22-08-01a1627d-1a79-7af0-a7c4-6844fcfe1458.jsonl",
+   "threadId": "01a1627d-1a79-7af0-a7c4-6844fcfe1458",
+   "cliVersion": "0.163.0-alpha.11.1",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T07:22:08.389Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 6,
+    "response_item": 17,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T10-23-10-01a1627e-0cd0-7450-b96c-64e923aa6b38.jsonl",
+   "threadId": "01a1627e-0cd0-7450-b96c-64e923aa6b38",
+   "cliVersion": "0.163.0-alpha.11.1",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T07:23:10.420Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 18,
+    "response_item": 27,
+    "world_state": 1,
+    "turn_context": 3,
+    "token_usage_record": 3
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T10-28-37-01a16283-08a2-72c0-9ddb-ff4889e22259.jsonl",
+   "threadId": "01a16283-08a2-72c0-9ddb-ff4889e22259",
+   "cliVersion": "0.163.0-alpha.11.1",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "thread_spawn": {
+      "parent_thread_id": "01a1627a-592a-7480-ba6a-6935f3474a3a",
+      "depth": 1,
+      "agent_path": "/root/relay_reviewer",
+      "agent_nickname": "Mendel",
+      "agent_role": null
+     }
+    }
+   },
+   "threadSource": "subagent",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T07:28:37.032Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 76,
+    "response_item": 68,
+    "world_state": 1,
+    "turn_context": 6,
+    "inter_agent_communication_metadata": 6,
+    "token_usage_record": 24
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T11-02-18-01a162a1-e05d-7773-adc9-db8c8199d555.jsonl",
+   "threadId": "01a162a1-e05d-7773-adc9-db8c8199d555",
+   "cliVersion": "0.163.0-alpha.11.1",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T08:02:18.338Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 12,
+    "response_item": 19,
+    "world_state": 1,
+    "turn_context": 2,
+    "token_usage_record": 2
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T11-54-56-01a162d2-10ce-7273-9182-8bed6062d972.jsonl",
+   "threadId": "01a162d2-10ce-7273-9182-8bed6062d972",
+   "cliVersion": "0.163.0-alpha.11.1",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T08:54:56.471Z",
+   "model": "gpt-6-luna",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 49,
+    "response_item": 45,
+    "world_state": 1,
+    "turn_context": 4,
+    "token_usage_record": 11
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T12-02-11-01a162d8-b327-7892-be7f-774df75b9c8f.jsonl",
+   "threadId": "01a162d8-b327-7892-be7f-774df75b9c8f",
+   "cliVersion": "0.163.0-alpha.11.1",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T09:02:11.246Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 18,
+    "response_item": 27,
+    "world_state": 1,
+    "turn_context": 2,
+    "token_usage_record": 4
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T13-32-22-01a1632b-45a3-7853-b156-403977f2a3e1.jsonl",
+   "threadId": "01a1632b-45a3-7853-b156-403977f2a3e1",
+   "cliVersion": "0.163.0-alpha.11.1",
+   "originator": "Codex Desktop",
+   "source": "vscode",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T10:32:22.695Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 227,
+    "response_item": 219,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 70
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T13-33-42-01a1632c-7bf5-7df3-bfbb-37faa7d5de43.jsonl",
+   "threadId": "01a1632c-7bf5-7df3-bfbb-37faa7d5de43",
+   "cliVersion": "0.163.0-alpha.11.1",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T10:33:42.133Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 207,
+    "response_item": 95,
+    "world_state": 1,
+    "turn_context": 31,
+    "token_usage_record": 31
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T13-33-57-01a1632c-b787-7cf0-9db7-e29a21895ef4.jsonl",
+   "threadId": "01a1632c-b787-7cf0-9db7-e29a21895ef4",
+   "cliVersion": "0.163.0-alpha.11.1",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T10:33:57.391Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 20,
+    "response_item": 18,
+    "world_state": 1,
+    "turn_context": 3,
+    "token_usage_record": 3
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T13-35-57-01a1632e-8e03-7911-aa6b-a96b7878d4ab.jsonl",
+   "threadId": "01a1632e-8e03-7911-aa6b-a96b7878d4ab",
+   "cliVersion": "0.163.0-alpha.11.1",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T10:35:57.831Z",
+   "records": {
+    "session_meta": 1,
+    "response_item": 1,
+    "event_msg": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T15-13-30-01a16387-da16-7083-b864-d86d1a33036b.jsonl",
+   "threadId": "01a16387-da16-7083-b864-d86d1a33036b",
+   "cliVersion": "0.163.0",
+   "originator": "codex_exec",
+   "source": "exec",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T12:13:30.024Z",
+   "model": "gpt-6-luna",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 16,
+    "response_item": 15,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 5
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T15-18-13-01a1638c-2d88-7251-8b9c-811294946e1f.jsonl",
+   "threadId": "01a1638c-2d88-7251-8b9c-811294946e1f",
+   "cliVersion": "0.163.0",
+   "originator": "codex_exec",
+   "source": "exec",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T12:18:13.525Z",
+   "model": "gpt-6-luna",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 11,
+    "response_item": 11,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 3
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T15-22-49-01a16390-651f-7bb2-bdee-ec6a0f3086d1.jsonl",
+   "threadId": "01a16390-651f-7bb2-bdee-ec6a0f3086d1",
+   "cliVersion": "0.163.0",
+   "originator": "codex_exec",
+   "source": "exec",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T12:22:49.894Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 14,
+    "response_item": 14,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 4
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T15-27-51-01a16394-fe86-7000-b671-39215e22ef53.jsonl",
+   "threadId": "01a16394-fe86-7000-b671-39215e22ef53",
+   "cliVersion": "0.163.0",
+   "originator": "codex_exec",
+   "source": "exec",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T12:27:51.308Z",
+   "model": "gpt-6-luna",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 15,
+    "response_item": 15,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 5
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T15-32-37-01a16399-5b99-7172-b839-349faac71bf7.jsonl",
+   "threadId": "01a16399-5b99-7172-b839-349faac71bf7",
+   "cliVersion": "0.163.0",
+   "originator": "codex_exec",
+   "source": "exec",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T12:32:37.294Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 21,
+    "response_item": 14,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 4
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T15-37-44-01a1639e-0cbb-7c73-ba5c-18262f02d5b4.jsonl",
+   "threadId": "01a1639e-0cbb-7c73-ba5c-18262f02d5b4",
+   "cliVersion": "0.163.0",
+   "originator": "codex_exec",
+   "source": "exec",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T12:37:44.774Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 16,
+    "response_item": 14,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 4
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T15-42-51-01a163a2-ba09-73a2-b0d0-c758c9a6df86.jsonl",
+   "threadId": "01a163a2-ba09-73a2-b0d0-c758c9a6df86",
+   "cliVersion": "0.163.0",
+   "originator": "codex_exec",
+   "source": "exec",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T12:42:51.280Z",
+   "model": "gpt-6.1-sol",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 15,
+    "response_item": 14,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 4
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T15-47-20-01a163a6-d45f-7130-92f2-b78993fa3ec5.jsonl",
+   "threadId": "01a163a6-d45f-7130-92f2-b78993fa3ec5",
+   "cliVersion": "0.163.0",
+   "originator": "codex_exec",
+   "source": "exec",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T12:47:20.165Z",
+   "model": "gpt-6-astra",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 15,
+    "response_item": 14,
+    "world_state": 1,
+    "turn_context": 1,
+    "token_usage_record": 4
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T15-48-28-01a163a7-e0ac-7722-964f-04875742415e.jsonl",
+   "threadId": "01a163a7-e0ac-7722-964f-04875742415e",
+   "cliVersion": "0.163.0-alpha.11.1",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T12:48:28.851Z",
+   "records": {
+    "session_meta": 1,
+    "response_item": 1,
+    "event_msg": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T15-48-29-01a163a7-e15b-7ac2-a632-5af5158b72b1.jsonl",
+   "threadId": "01a163a7-e15b-7ac2-a632-5af5158b72b1",
+   "cliVersion": "0.163.0-alpha.11.1",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T12:48:29.024Z",
+   "records": {
+    "session_meta": 1,
+    "response_item": 1,
+    "event_msg": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T15-48-36-01a163a7-feeb-7ef2-acb0-636833350598.jsonl",
+   "threadId": "01a163a7-feeb-7ef2-acb0-636833350598",
+   "cliVersion": "0.163.0-alpha.11.1",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T12:48:36.592Z",
+   "records": {
+    "session_meta": 1,
+    "response_item": 1,
+    "event_msg": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T15-50-16-01a163a9-853b-79a1-ac7e-649447f65572.jsonl",
+   "threadId": "01a163a9-853b-79a1-ac7e-649447f65572",
+   "cliVersion": "0.163.0-alpha.11.1",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T12:50:16.512Z",
+   "model": "codex-auto-review",
+   "records": {
+    "session_meta": 1,
+    "response_item": 22,
+    "event_msg": 22,
+    "world_state": 1,
+    "turn_context": 3,
+    "token_usage_record": 3
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T15-50-57-01a163aa-244c-7a30-9a0a-7b16f191d10b.jsonl",
+   "threadId": "01a163aa-244c-7a30-9a0a-7b16f191d10b",
+   "cliVersion": "0.163.0-alpha.11.1",
+   "originator": "Codex Desktop",
+   "source": {
+    "subagent": {
+     "other": "guardian"
+    }
+   },
+   "threadSource": "guardian_review",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T12:50:57.241Z",
+   "records": {
+    "session_meta": 1,
+    "response_item": 1,
+    "event_msg": 1
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T15-52-32-01a163ab-9609-74b2-9558-8c830b4bf773.jsonl",
+   "threadId": "01a163ab-9609-74b2-9558-8c830b4bf773",
+   "cliVersion": "0.163.0",
+   "originator": "codex_exec",
+   "source": "exec",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T12:52:32.390Z",
+   "model": "gpt-6-luna",
+   "records": {
+    "session_meta": 1,
+    "event_msg": 29,
+    "response_item": 31,
+    "world_state": 4,
+    "turn_context": 1,
+    "token_usage_record": 12,
+    "inter_agent_communication_metadata": 3
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T15-52-35-01a163ab-a30e-7830-8261-f9c3813abc7f.jsonl",
+   "threadId": "01a163ab-9609-74b2-9558-8c830b4bf773",
+   "cliVersion": "0.163.0",
+   "originator": "codex_exec",
+   "source": "exec",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T12:52:32.390Z",
+   "model": "gpt-6-luna",
+   "records": {
+    "session_meta": 2,
+    "event_msg": 8,
+    "response_item": 9,
+    "world_state": 2,
+    "turn_context": 2,
+    "inter_agent_communication_metadata": 1,
+    "token_usage_record": 2
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T15-52-36-01a163ab-a769-7212-8249-3eea72e2bad9.jsonl",
+   "threadId": "01a163ab-9609-74b2-9558-8c830b4bf773",
+   "cliVersion": "0.163.0",
+   "originator": "codex_exec",
+   "source": "exec",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T12:52:32.390Z",
+   "model": "gpt-6-luna",
+   "records": {
+    "session_meta": 2,
+    "event_msg": 8,
+    "response_item": 9,
+    "world_state": 3,
+    "turn_context": 2,
+    "inter_agent_communication_metadata": 1,
+    "token_usage_record": 2
+   }
+  },
+  {
+   "file": "$CODEX_HOME/sessions/2026/10/22/rollout-2026-10-22T15-52-38-01a163ab-b011-7133-bd5d-6a28cd8dc143.jsonl",
+   "threadId": "01a163ab-9609-74b2-9558-8c830b4bf773",
+   "cliVersion": "0.163.0",
+   "originator": "codex_exec",
+   "source": "exec",
+   "threadSource": "user",
+   "modelProvider": "openai",
+   "timestamp": "2026-10-22T12:52:32.390Z",
+   "model": "gpt-6-luna",
+   "records": {
+    "session_meta": 2,
+    "event_msg": 8,
+    "response_item": 9,
+    "world_state": 4,
+    "turn_context": 2,
+    "inter_agent_communication_metadata": 1,
+    "token_usage_record": 2
+   }
+  }
+ ]
+}
