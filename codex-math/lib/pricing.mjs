@@ -10,9 +10,20 @@
 import { TIERS } from './harness.mjs';
 
 export function creditRates(harness, model) {
-  const r = harness.pricing.creditsPerMillionTokens[model];
+  const slug = harness.pricing.rateAliases?.[model] ?? model;
+  const r = harness.pricing.creditsPerMillionTokens[slug];
   if (!r) throw new Error(`no credit rates for model "${model}"`);
   return r;
+}
+
+// What a published-rate credit of a model counts for on a subscription's usage windows, relative
+// to gpt-6.1-sol (config/codex-harness.json → pricing.includedMeterWeight; measured on live
+// windows, 1 when unmeasured). Purchased credits are charged at the published rates as they are.
+export function meterWeight(harness, model, metering = 'included') {
+  if (metering !== 'included') return 1;
+  const slug = harness.pricing.rateAliases?.[model] ?? model;
+  const w = harness.pricing.includedMeterWeight?.[slug];
+  return typeof w === 'number' && w > 0 ? w : 1;
 }
 
 // Multiplier on credits for a speed tier. `included` is what a subscription's usage
@@ -40,14 +51,14 @@ export function creditsForTokens(harness, usage, metering = 'included') {
   const cached = Math.min(input, Math.max(0, usage.cachedInputTokens ?? 0));
   const output = Math.max(0, usage.outputTokens ?? 0);
   const raw = ((input - cached) * p.input + cached * p.cachedInput + output * p.output) / 1e6;
-  return raw * speedMultiplier(harness, speed, metering);
+  return raw * speedMultiplier(harness, speed, metering) * meterWeight(harness, model, metering);
 }
 
 // Credits per token at a given mix of (uncached input, cached input, output) shares.
 export function creditsPerToken(harness, model, mix, { speed = 'standard', effortOutputMultiplier = 1, metering = 'included' } = {}) {
   const p = creditRates(harness, model);
   const perMillion = mix.input * p.input + mix.cachedInput * p.cachedInput + mix.output * effortOutputMultiplier * p.output;
-  return (perMillion / 1e6) * speedMultiplier(harness, speed, metering);
+  return (perMillion / 1e6) * speedMultiplier(harness, speed, metering) * meterWeight(harness, model, metering);
 }
 
 // What a tier costs per work unit and how long it takes, with every routing choice applied.

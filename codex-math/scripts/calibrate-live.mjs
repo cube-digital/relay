@@ -11,7 +11,7 @@ import { join, resolve } from 'node:path';
 import { loadHarness, loadCodexRouting, tierOfCodexModel } from '../lib/harness.mjs';
 import { creditsForTokens } from '../lib/pricing.mjs';
 import { fromAppServer } from '../lib/windows.mjs';
-import { capacitySamples, tierSamples, summarize, calibrationFromSummary } from '../lib/calibration.mjs';
+import { accountTimeline, capacitySamples, tierSamples, summarize, calibrationFromSummary } from '../lib/calibration.mjs';
 
 const args = process.argv.slice(2);
 const opt = (name, def) => {
@@ -57,7 +57,9 @@ if (existsSync(runsDir)) {
       readings.push({ at: Date.parse(snapA.updatedAt), windows: win(snapA), credits: cumulativeCredits, label });
     }
     if (credits !== undefined && tier && meta.units > 0) {
-      report.samples.push(...tierSamples([{ tier, units: meta.units, credits, model: meta.model, effort: meta.effort, speed: meta.speed }], harness, { slug: 'live', wave: label }));
+      // a backend estimate is passed as credits (measured: backend); without one the tokens are passed and priced by tierSamples (measured: tokens)
+      const thread = backendCredits !== undefined ? { tier, units: meta.units, credits: backendCredits, model: meta.model, effort: meta.effort, speed: meta.speed } : { tier, units: meta.units, usage, model: meta.model, effort: meta.effort, speed: meta.speed };
+      report.samples.push(...tierSamples([thread], harness, { slug: 'live', wave: label }));
     }
     if (backendCredits !== undefined && ratedCredits !== undefined) report.notes.push(`${label}: backend ${backendCredits.toFixed(3)} credits vs published rates ${ratedCredits.toFixed(3)} (ratio ${(backendCredits / ratedCredits).toFixed(2)})`);
   }
@@ -68,47 +70,28 @@ if (readings.length) {
   report.notes.push(...cap.skipped);
 }
 
-// 2. readings mined from existing rollouts: consecutive token_count events of one thread give the
-// window movement per token delta; credits are computed from the published rates (no backend estimate per turn)
+// 2. readings mined from existing rollouts: the account's pooled credit timeline (every thread's
+// token deltas at the published rates, metered weights applied) against the usage windows the
+// readings carried, for the plan the account is on (readings of other plan types on the same
+// machine are reported, not pooled). One thread alone cannot explain a window's movement when
+// several run at once, so the timeline is pooled over threads (lib/calibration.mjs accountTimeline).
 const rfile = join(live, 'readings.json');
 if (existsSync(rfile)) {
-  const r = read(rfile).readings.filter((x) => x.rateLimits?.primary && x.total && x.model);
-  report.readingsFromRollouts = r.length;
-  const byThread = new Map();
-  for (const x of r) byThread.set(x.threadId, [...(byThread.get(x.threadId) ?? []), x]);
-  const rows = [];
-  const unpriced = new Set();
-  for (const [thread, xs] of byThread) {
-    let prev;
-    for (const x of xs) {
-      let credits;
-      try {
-        credits = creditsForTokens(harness, { model: x.model, inputTokens: x.total.input_tokens, cachedInputTokens: x.total.cached_input_tokens, outputTokens: x.total.output_tokens });
-      } catch {
-        unpriced.add(x.model); // e.g. codex-auto-review: no published rates, so no credit estimate for its readings
-        continue;
-      }
-      const windows = {};
-      for (const id of ['primary', 'secondary']) {
-        const w = x.rateLimits[id];
-        if (w && typeof w.used_percent === 'number') windows[id] = { usedPercent: w.used_percent, resetsAt: typeof w.resets_at === 'number' ? w.resets_at * 1000 : undefined };
-      }
-      rows.push({ at: Date.parse(x.at), windows, credits, thread });
-      prev = x;
-    }
-  }
-  // readings across threads interleave in time; credits must be cumulative over the account, which a single
-  // thread cannot give, so only within-thread consecutive pairs are used
-  for (const [thread, xs] of byThread) {
-    const seq = rows.filter((row) => row.thread === thread).sort((a, b) => a.at - b.at);
-    const cap = capacitySamples(seq, { slug: `rollout:${thread.slice(0, 8)}` });
+  const all = read(rfile).readings;
+  const livePlan = report.runs.find((x) => x.planType)?.planType;
+  const plans = [...new Set(all.map((x) => x.rateLimits?.planType).filter(Boolean))];
+  const planType = livePlan ?? plans.at(-1);
+  report.readingsFromRollouts = all.filter((x) => x.rateLimits?.primary && x.total).length;
+  if (planType) {
+    const tl = accountTimeline(all, harness, { planType });
+    const cap = capacitySamples(tl.readings, { slug: `rollouts:${planType}` });
     report.samples.push(...cap.samples);
+    report.rollouts = { planType, readings: tl.readings.length, threads: tl.threads, streams: tl.streams, windowMinutes: tl.windowMinutes, resets: cap.skipped.filter((x) => /reset in between/.test(x)).length };
+    if (tl.unpricedModels.length) report.notes.push(`rollouts: readings of models without published rates skipped: ${tl.unpricedModels.join(', ')}`);
+    report.planType = planType;
   }
-  if (unpriced.size) report.notes.push(`rollouts: readings of models without published rates skipped: ${[...unpriced].join(", ")}`);
-  const plans = [...new Set(r.map((x) => x.rateLimits.planType).filter(Boolean))];
-  const durations = [...new Set(r.flatMap((x) => [x.rateLimits.primary?.window_minutes, x.rateLimits.secondary?.window_minutes]).filter((v) => v != null))];
-  report.notes.push(`rollouts: plan types ${plans.join(', ') || 'none'}; window minutes seen: ${durations.join(', ') || 'none'}`);
-  if (plans.length) report.planType = plans.at(-1);
+  const others = plans.filter((p) => p !== planType);
+  report.notes.push(`rollouts: plan types ${plans.join(', ') || 'none'}${others.length ? ` (pooled for ${planType}; ${others.join(', ')} left out)` : ''}; window minutes seen: ${[...new Set(all.flatMap((x) => [x.rateLimits?.primary?.window_minutes, x.rateLimits?.secondary?.window_minutes]).filter((v) => v != null))].join(', ') || 'none'}`);
 }
 
 const summary = summarize({ samples: report.samples, planType: report.planType ?? report.runs.find((x) => x.planType)?.planType });

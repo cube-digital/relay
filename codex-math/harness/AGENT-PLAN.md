@@ -1,5 +1,7 @@
 # Plan for a Claude Code agent: collect what the Codex model still needs
 
+> **Executed on 2026-10-22** (Codex 0.146.0 → 0.163.0, plan `self_serve_business_prolite`): `../evidence/RESULTS.md`, `../evidence/live/`, `../evidence/decompile/`. What it changed in the model: `FINDINGS.md` §8–§9, `../config/codex-harness.json` (`pricing.includedMeterWeight`, `pricing.rateAliases`, `context.autoCompactTokenLimit`, `multiAgent.concurrencyDefault`, `rateLimits.capacityMeasured`), `../config/codex-routing.json` priors, and `scripts/calibrate-live.mjs`, which now pools readings over threads (`lib/calibration.mjs` `accountTimeline`). Re-running the plan on another account adds that plan's capacity.
+
 You are running on Marius's machine, inside the `relay` repository, with Codex (`codex`), REA (`rea`), IDA and Node 22+ available. The folder `codex-math/` holds a usage model for the Codex harness built from the binary without a logged-in account. Three things are missing and only this machine can supply them: real usage readings from a ChatGPT-authenticated account, controlled runs that price one task on each model, and two constants that live in compiled code. Work through the phases below in order, write every result under `codex-math/evidence/`, and finish by writing `codex-math/evidence/RESULTS.md`. The results go to another agent that has no access to this machine, so leave nothing in the chat that is not also in a file.
 
 Ground rules:

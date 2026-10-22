@@ -1,5 +1,7 @@
 # Recovering the two numbers the strings do not hold
 
+> **Done on 2026-10-22** without a decompiler engine (REA's Ghidra provider ran out of memory on the 297 MB binary): both numbers were read at the instruction level and cross-checked against the open-source tag `rust-v0.163.0`. Results: `../evidence/decompile/README.md` (compaction = context window × 9/10 = 244,800 tokens; concurrency default 4 threads including the root = 3 children), scripts in `../scripts/decompile/`, folded into `../config/codex-harness.json` and `FINDINGS.md` §3, §4, §8. The runbook below still applies to a future binary.
+
 Two harness defaults are computed in code and were not recovered from the string table: the default auto-compaction threshold (`model_auto_compact_token_limit` when unset; the catalog has `auto_compact_token_limit: null` for every model) and the default subagent concurrency (`agents.max_concurrent_threads_per_session` when unset). Both need a decompiler. This is the runbook for doing it with REA and IDA on a machine that has them; the outputs go into `codex-math/evidence/decompile/` so the findings can be updated from them.
 
 The binary is `node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex` (0.163.0, SHA-256 `399ff69c…c4215`; `npm pack @openai/codex@0.163.0-linux-x64` gets the same file). It is a static-pie ELF whose virtual addresses equal file offsets, so every offset cited in `FINDINGS.md` is also an IDA address with image base 0.

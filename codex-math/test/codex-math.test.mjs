@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { loadCodexRouting, loadHarness, windowsForPlan, effectiveContextWindow, CODEX_MATH_ROOT } from '../lib/harness.mjs';
-import { creditsForTokens, creditsPerToken, speedMultiplier, speedup, tierCreditRatios, tierProfile, windowCapacity } from '../lib/pricing.mjs';
+import { loadCodexRouting, loadHarness, windowsForPlan, effectiveContextWindow, autoCompactTokenLimit, maxConcurrentChildren, CODEX_MATH_ROOT } from '../lib/harness.mjs';
+import { creditsForTokens, creditsPerToken, meterWeight, speedMultiplier, speedup, tierCreditRatios, tierProfile, windowCapacity } from '../lib/pricing.mjs';
 import { fromAppServer, fromRelaySnapshot, fromRolloutJsonl, fromRolloutTokenCount, isStale, describe } from '../lib/windows.mjs';
 import { makespan, simulate } from '../lib/walk.mjs';
 import { capacitySamples, calibrationFromSummary, formatStamp, nnls, parseLedgerLine, summarize, tierSamples, usageFromRolloutJsonl, waveSample, waveSamplesFromLedger } from '../lib/calibration.mjs';
@@ -21,12 +21,17 @@ test('harness facts: the models relay routes to exist with the observed context 
     const slug = routing.tiers[tier].model;
     const m = harness.models.find((x) => x.slug === slug);
     assert.ok(m, `${slug} is in the extracted catalog`);
-    assert.equal(m.contextWindow, 272000);
-    assert.equal(effectiveContextWindow(harness, slug), 258400, 'what task_started.model_context_window reported');
+    assert.equal(m.contextWindow, 272000, 'the static catalog');
+    assert.equal(effectiveContextWindow(harness, slug), slug === 'gpt-6.1-sol' ? 475000 : 258400, 'what token_count.model_context_window reports (the remote catalog gave Sol 6.1 a 500k window)');
+    assert.equal(autoCompactTokenLimit(harness, slug), slug === 'gpt-6.1-sol' ? 450000 : 244800, 'compaction at 90% of the window (decompiled)');
     assert.ok(m.reasoningEfforts.includes(routing.tiers[tier].effort), `${slug} advertises ${routing.tiers[tier].effort}`);
   }
   assert.deepEqual(windowsForPlan(harness, 'plus').map((w) => w.windowMinutes), [300, 10080]);
   assert.deepEqual(windowsForPlan(harness, 'pro').map((w) => w.windowMinutes), [10080]);
+  assert.deepEqual(windowsForPlan(harness, 'self_serve_business_prolite').map((w) => w.windowMinutes), [10080], 'the live Business account: a weekly window only');
+  assert.equal(autoCompactTokenLimit(harness, 'gpt-6-luna', 100000), 100000, 'the user limit wins');
+  assert.equal(maxConcurrentChildren(harness), 3, 'compiled default 4 threads including the root; run 09 saw the 4th spawn fail');
+  assert.equal(maxConcurrentChildren(harness, { max_concurrent_threads_per_session: 6 }), 6);
   assert.deepEqual(windowsForPlan(harness, 'nonsense').map((w) => w.id), ['primary', 'secondary']);
 });
 
@@ -38,13 +43,23 @@ test('pricing: credits follow the published rates, cached input is a subset of i
   assert.equal(creditsForTokens(harness, { model: 'gpt-6.1-sol', inputTokens: 1e6, speed: 'fast' }), 125, 'Fast meters 2.5× included usage');
   assert.equal(creditsForTokens(harness, { model: 'gpt-6.1-sol', inputTokens: 1e6, speed: 'fast' }, 'credits'), 100, 'and 2× purchased credits');
   assert.equal(speedMultiplier(harness, 'ultrafast'), 8);
+  // the subscription meter weighs Astra at half its published rate (fitted on the live weekly window); purchased credits do not
+  assert.equal(meterWeight(harness, 'gpt-6-astra'), 0.5);
+  assert.equal(creditsForTokens(harness, { model: 'gpt-6-astra', outputTokens: 1e6 }), 625);
+  assert.equal(creditsForTokens(harness, { model: 'gpt-6-astra', outputTokens: 1e6 }, 'credits'), 1250);
+  assert.equal(creditsForTokens(harness, { model: 'codex-auto-review', inputTokens: 1e6 }), 50, 'the review model is priced as Sol 6.1');
   assert.equal(speedup(harness, 'gpt-6-astra', 'fast'), 2);
   assert.equal(speedup(harness, 'gpt-6-luna', 'fast'), 1.5);
-  // the tier ladder on this harness is two orders of magnitude, not relay's 1:3:7
+  // the tier ladder on this harness is 1 : 15 : 62 at the measured mix and weights, not relay's 1:3:7
   const r = tierCreditRatios(routing, harness);
   assert.equal(r.cheap, 1);
-  assert.ok(r.mid > 15 && r.mid < 30, `mid/cheap ≈ 22 (got ${r.mid})`);
-  assert.ok(r.strong > 100 && r.strong < 250, `strong/cheap ≈ 163 (got ${r.strong})`);
+  assert.ok(r.mid > 12 && r.mid < 20, `mid/cheap ≈ 15 (got ${r.mid})`);
+  assert.ok(r.strong > 50 && r.strong < 80, `strong/cheap ≈ 62 (got ${r.strong})`);
+  // the priors reproduce what the nine scratch runs measured per unit (evidence/RESULTS.md §D)
+  const unit = Object.fromEntries(['cheap', 'mid', 'strong'].map((t) => [t, tierProfile(routing, harness, t).creditsPerUnit]));
+  assert.ok(unit.cheap > 0.018 && unit.cheap < 0.03, `cheap ≈ 0.02 (got ${unit.cheap})`);
+  assert.ok(unit.mid > 0.3 && unit.mid < 0.5, `mid ≈ 0.4 (got ${unit.mid})`);
+  assert.ok(unit.strong > 0.7 && unit.strong < 2.0, `strong ≈ 0.74–1.65 (got ${unit.strong})`);
   // overriding the speed of a tier changes credits and minutes together
   const std = tierProfile(routing, harness, 'mid');
   const fast = tierProfile(routing, harness, 'mid', { speed: 'fast' });
@@ -55,7 +70,9 @@ test('pricing: credits follow the published rates, cached input is a subset of i
   const onLuna = tierProfile(routing, harness, 'mid', { model: 'gpt-6-luna', effort: 'low' }, cal);
   const expected = 2 * (creditsPerToken(harness, 'gpt-6-luna', routing.forecast.prior.tokenMix) / creditsPerToken(harness, 'gpt-6.1-sol', routing.forecast.prior.tokenMix, { effortOutputMultiplier: 1.5 }));
   assert.ok(Math.abs(onLuna.creditsPerUnit - expected) < 1e-12);
-  assert.equal(windowCapacity(routing, harness, 'primary', 'pro').credits, 4500);
+  assert.equal(windowCapacity(routing, harness, 'primary', 'pro').credits, 15000);
+  assert.equal(windowCapacity(routing, harness, 'primary', 'self_serve_business_prolite').credits, 6200, 'measured on the live account');
+  assert.equal(windowCapacity(routing, harness, 'secondary', 'self_serve_business_prolite').credits, 1400, 'a window the plan does not have falls back to the unknown plan');
   assert.deepEqual(windowCapacity(routing, harness, 'primary', 'plus', { windowCapacityCredits: { primary: 123 } }), { credits: 123, calibrated: true });
 });
 
@@ -232,7 +249,7 @@ test('forecast: credits add up, usage is credits over capacity, the walk and the
   assert.deepEqual([f.tasks, f.lanes, f.waves, f.units], [30, 7, 3, 108.4]);
   const byTier = Object.values(f.credits.byTier).reduce((a, t) => a + t.credits, 0);
   assert.ok(Math.abs(byTier - f.credits.expected) < 0.05);
-  assert.ok(f.credits.byTier.strong.credits / f.credits.expected > 0.8, 'on this harness the strong tier holds most of the credits');
+  assert.ok(f.credits.byTier.strong.credits / f.credits.expected > 0.7, 'on this harness the strong tier holds most of the credits');
   const primary = f.usage.find((u) => u.id === 'primary');
   assert.ok(Math.abs(primary.pct - (f.credits.expected / primary.capacityCredits) * 100) < 0.11);
   assert.equal(f.calibrated.credits, false);
@@ -314,4 +331,61 @@ test('review fixes: identification, zero-credit waves, ISO resets, quantized rea
   assert.deepEqual(stopLinesFor({ id: 'primary', windowMinutes: 10080 }, routing), routing.budget.weekly);
   assert.equal(levelFor({ windows: [{ id: 'primary', usedPercent: 70, windowMinutes: 10080 }] }, routing), 'normal', 'Pro at 70% of the week is not tight');
   assert.equal(levelFor({ windows: [{ id: 'primary', usedPercent: 81, windowMinutes: 10080 }] }, routing), 'tight');
+});
+
+test('live evidence: pooled readings give the Business weekly capacity, stale readings are not resets, the runs price as published', async () => {
+  const { accountTimeline, capacitySamples, summarize } = await import('../lib/calibration.mjs');
+  // 1. interleaved readings of two threads: the percent dips (5 → 4 → 5) without a reset; credits are pooled over both threads
+  const t = (at, u, credits, resetsAt = 7 * 24 * 3600 * 1000) => ({ at, windows: { primary: { usedPercent: u, resetsAt } }, credits });
+  const dip = capacitySamples([t(0, 5, 0), t(1, 5, 10), t(2, 4, 20), t(3, 5, 30), t(4, 6, 40), t(5, 7, 50)]);
+  assert.deepEqual(dip.samples.map((x) => [x.dU, x.dC]), [[1, 40], [1, 10]], 'the dip neither counts as a reset nor as movement; its credits are carried');
+  assert.ok(!dip.skipped.some((x) => /reset/.test(x)));
+  // a reset is a reset time that moved while the window was in use, or a reset time that passed
+  const moved = capacitySamples([t(0, 5, 0), t(1, 6, 10), t(2, 1, 20, 14 * 24 * 3600 * 1000), t(3, 2, 30, 14 * 24 * 3600 * 1000)]);
+  assert.deepEqual(moved.samples.map((x) => [x.dU, x.dC]), [[1, 10], [1, 10]]);
+  assert.ok(moved.skipped.some((x) => /reset in between/.test(x)));
+  // an unused window's reset time slides with the clock: not a reset
+  const slide = capacitySamples([t(0, 0, 0, 1000), t(1, 0, 5, 1001), t(2, 1, 10, 1002)]);
+  assert.deepEqual(slide.samples.map((x) => [x.dU, x.dC]), [[1, 10]]);
+  // 2. a thread whose cumulative total falls opens a new stream instead of counting the drop
+  const r = (at, threadId, model, input, cached, output, u) => ({ at, threadId, model, rateLimits: { planType: 'pro', primary: { used_percent: u, window_minutes: 10080, resets_at: 1800000000 }, secondary: null }, total: { input_tokens: input, cached_input_tokens: cached, output_tokens: output, total_tokens: input + output } });
+  const tl = accountTimeline(
+    [r('2026-10-20T10:00:00Z', 'a', 'gpt-6.1-sol', 1e6, 0, 0, 10), r('2026-10-20T10:01:00Z', 'b', 'gpt-6.1-sol', 2e6, 2e6, 0, 10), r('2026-10-20T10:02:00Z', 'a', 'gpt-6.1-sol', 1e5, 0, 0, 10), r('2026-10-20T10:03:00Z', 'a', 'gpt-6.1-sol', 2e6, 0, 0, 11), r('2026-10-20T10:04:00Z', 'c', 'nonesuch', 5e6, 0, 0, 11)],
+    harness,
+    { planType: 'pro' },
+  );
+  assert.deepEqual(tl.readings.map((x) => Math.round(x.credits * 100) / 100), [50, 55, 60, 110, 110], 'a: 50; b: 5 (cached); a side stream at 0.1M → 5; a continues its 1M stream to 2M → +50; the unpriced model adds nothing');
+  assert.deepEqual([tl.threads, tl.streams, tl.unpricedModels], [3, 4, ['nonesuch']]);
+  assert.equal(summarize({ samples: capacitySamples(tl.readings).samples }).windowCapacityCredits.primary, 6000, 'the 60 credits spent between the first reading (10%) and the first at 11% moved the window one point');
+  // 3. the live evidence: the Business account's weekly window moves ≈ 62 credits per point, consistently over two windows
+  const live = join(CODEX_MATH_ROOT, 'evidence', 'live');
+  if (existsSync(join(live, 'readings.json'))) {
+    const readings = JSON.parse(readFileSync(join(live, 'readings.json'), 'utf8')).readings;
+    const timeline = accountTimeline(readings, harness, { planType: 'self_serve_business_prolite' });
+    assert.deepEqual(timeline.windowMinutes, [10080]);
+    const cap = capacitySamples(timeline.readings, { slug: 'rollouts' });
+    const s = summarize({ samples: cap.samples });
+    assert.equal(s.nCapacity.primary, 29);
+    assert.ok(s.windowCapacityCredits.primary > 5800 && s.windowCapacityCredits.primary < 6600, `Q̂ ≈ 6 176 (got ${s.windowCapacityCredits.primary})`);
+    const perDay = {};
+    for (const x of cap.samples) {
+      const d = (perDay[x.at.slice(0, 10)] = perDay[x.at.slice(0, 10)] ?? { dU: 0, dC: 0 });
+      d.dU += x.dU;
+      d.dC += x.dC;
+    }
+    for (const [day, d] of Object.entries(perDay)) assert.ok(Math.abs((100 * d.dC) / d.dU / s.windowCapacityCredits.primary - 1) < 0.1, `${day} within 10% of the pooled estimate`);
+    assert.equal(windowCapacity(routing, harness, 'primary', 'self_serve_business_prolite').credits, Math.round(s.windowCapacityCredits.primary / 100) * 100, 'the routing prior is the measurement, rounded');
+  }
+  // 4. the nine runs: turn.completed usage priced at the published rates is what RESULTS.md tabulates
+  const runs = join(live, 'runs');
+  if (existsSync(runs)) {
+    // [label, metering, credits]: Fast is 2.5× on the included meter; Astra is weighted 0.5 there and unweighted on purchased credits
+    const expected = [['01-luna-low-mid', 'included', 0.078714], ['03-sol61-medium-mid', 'included', 1.45974], ['07-sol61-medium-fast', 'included', 1.761575], ['08-astra-high-mid', 'credits', 4.42815], ['08-astra-high-mid', 'included', 2.214075]];
+    for (const [label, metering, credits] of expected) {
+      const meta = JSON.parse(readFileSync(join(runs, label, 'meta.json'), 'utf8'));
+      const u = meta.turnCompleted.usage;
+      const rated = creditsForTokens(harness, { model: meta.model, speed: meta.speed, inputTokens: u.input_tokens, cachedInputTokens: u.cached_input_tokens, outputTokens: u.output_tokens }, metering);
+      assert.ok(Math.abs(rated - credits) < 1e-9, `${label} (${metering}): ${rated} credits`);
+    }
+  }
 });

@@ -64,16 +64,33 @@ export function parseLedgerLine(line) {
 
 const resetMs = (resetsAt) => (typeof resetsAt === 'number' ? resetsAt : typeof resetsAt === 'string' ? Date.parse(resetsAt) : NaN);
 
+// A reading's percent can sit below the window's high-water mark without a reset: readings of
+// concurrent threads interleave, each carrying the snapshot its own last response returned, so a
+// pooled timeline shows 5 → 4 → 5. A drop of at most this many points with no reset evidence is
+// a stale snapshot, not a reset. A reset time that moves by more than RESET_SHIFT_MS while the
+// window was in use is a reset (an unused window's reset time slides with the clock by seconds).
+const STALE_DROP_POINTS = 2;
+const RESET_SHIFT_MS = 10 * 60_000;
+
 // Consecutive readings → capacity samples per window. A window's used_percent is an integer in
 // the app-server schema, so an interval that spent credits without moving the percent is not
 // dropped: its credits are carried into the next interval of that window until the percent moves,
-// which keeps Σ dC / Σ dU unbiased. A window that reset in between drops what was carried.
+// which keeps Σ dC / Σ dU unbiased. The percent is read against the window's high-water mark, so
+// stale interleaved readings neither count twice nor pass for a reset. A window that reset in
+// between drops what was carried.
 // readings: [{ at (ms), windows: { primary: { usedPercent, resetsAt? (ms or ISO) }, ... }, credits }]
 export function capacitySamples(readings, { slug, label } = {}) {
   const rows = [...readings].filter((r) => typeof r.credits === 'number').sort((a, b) => a.at - b.at);
   const samples = [];
   const skipped = [];
-  const carried = {}; // window id → { dC, dU } not yet sampled
+  const state = {}; // window id → { hw (high-water used %), resetsAt (ms), dC carried }
+  const track = (id, w) => {
+    const s = state[id];
+    if (!s) return;
+    if (typeof w.usedPercent === 'number' && w.usedPercent > s.hw) s.hw = w.usedPercent;
+    const r = resetMs(w.resetsAt);
+    if (Number.isFinite(r)) s.resetsAt = r;
+  };
   for (let i = 1; i < rows.length; i++) {
     const a = rows[i - 1];
     const b = rows[i];
@@ -86,26 +103,100 @@ export function capacitySamples(readings, { slug, label } = {}) {
     for (const id of Object.keys(b.windows ?? {})) {
       const wa = a.windows?.[id];
       const wb = b.windows[id];
-      if (!wa || typeof wa.usedPercent !== 'number' || typeof wb.usedPercent !== 'number') continue;
-      const reset = resetMs(wa.resetsAt);
-      const crossed = (Number.isFinite(reset) && b.at >= reset) || wb.usedPercent < wa.usedPercent;
-      if (crossed) {
+      if (typeof wb.usedPercent !== 'number') continue;
+      if (!state[id]) {
+        if (!wa || typeof wa.usedPercent !== 'number') continue;
+        state[id] = { hw: wa.usedPercent, resetsAt: resetMs(wa.resetsAt), dC: 0 };
+      } else if (wa) track(id, wa);
+      const s = state[id];
+      const nextReset = resetMs(wb.resetsAt);
+      const timePassed = Number.isFinite(s.resetsAt) && b.at >= s.resetsAt;
+      const timeMoved = Number.isFinite(s.resetsAt) && Number.isFinite(nextReset) && Math.abs(nextReset - s.resetsAt) > RESET_SHIFT_MS && s.hw > 0;
+      const dropped = !Number.isFinite(s.resetsAt) && wb.usedPercent < s.hw - STALE_DROP_POINTS;
+      if (timePassed || timeMoved || dropped) {
         skipped.push(`${name}: the ${id} window reset in between; sample dropped`);
-        delete carried[id];
+        state[id] = { hw: wb.usedPercent, resetsAt: nextReset, dC: 0 };
         continue;
       }
-      const acc = (carried[id] = carried[id] ?? { dC: 0, dU: 0 });
-      acc.dC += dC;
-      acc.dU += wb.usedPercent - wa.usedPercent;
-      if (acc.dU <= 0) {
+      s.dC += dC;
+      const dU = wb.usedPercent - s.hw;
+      if (dU <= 0) {
         if (dC > 0) skipped.push(`${name}: the ${id} window did not move; ${Math.round(dC * 100) / 100} credits carried to the next reading`);
+        if (Number.isFinite(nextReset)) s.resetsAt = nextReset;
         continue;
       }
-      if (acc.dC > 0) samples.push({ v: SAMPLE_VERSION, kind: 'capacity', slug, window: id, dU: acc.dU, dC: acc.dC, at: new Date(b.at).toISOString() });
-      delete carried[id];
+      if (s.dC > 0) samples.push({ v: SAMPLE_VERSION, kind: 'capacity', slug, window: id, dU, dC: s.dC, at: new Date(b.at).toISOString() });
+      s.dC = 0;
+      s.hw = wb.usedPercent;
+      if (Number.isFinite(nextReset)) s.resetsAt = nextReset;
     }
   }
   return { samples, skipped };
+}
+
+// The account's credit timeline from the token_count readings of every rollout on the machine
+// (scripts/extract-readings.mjs): one row per reading with the account's cumulative credits at
+// the published rates and the usage windows the reading carried. Credits are deltas of each
+// thread's cumulative total_token_usage, summed over threads; a thread whose total falls (a
+// forked or resumed rollout, a review stream logged under the same id) opens a new monotone
+// stream rather than counting the drop. Readings of models without published rates are priced
+// through `pricing.rateAliases` when the harness has one, else skipped and reported.
+// readings: [{ at, threadId, model, rateLimits: { planType, primary: { used_percent, resets_at }, secondary }, total: { input_tokens, cached_input_tokens, output_tokens, total_tokens } }]
+export function accountTimeline(readings, harness, { planType, metering = 'included' } = {}) {
+  const rows = [...readings].filter((x) => x?.total && typeof x.total.total_tokens === 'number' && x.threadId).sort((a, b) => Date.parse(a.at) - Date.parse(b.at));
+  const streams = new Map(); // threadId → [{ total_tokens, input_tokens, cached_input_tokens, output_tokens }]
+  const unpriced = new Set();
+  const planTypes = new Set();
+  const windowMinutes = new Set();
+  const out = [];
+  let cumulative = 0;
+  let threads = 0;
+  for (const x of rows) {
+    const t = x.total;
+    const list = streams.get(x.threadId) ?? [];
+    if (!streams.has(x.threadId)) {
+      streams.set(x.threadId, list);
+      threads += 1;
+    }
+    const candidates = list.filter((s) => s.total_tokens <= t.total_tokens);
+    let s = candidates.length ? candidates.reduce((m, c) => (c.total_tokens > m.total_tokens ? c : m)) : undefined;
+    if (!s) {
+      s = { total_tokens: 0, input_tokens: 0, cached_input_tokens: 0, output_tokens: 0 };
+      list.push(s);
+    }
+    const delta = {
+      model: x.model,
+      inputTokens: Math.max(0, (t.input_tokens ?? 0) - s.input_tokens),
+      cachedInputTokens: Math.max(0, (t.cached_input_tokens ?? 0) - s.cached_input_tokens),
+      outputTokens: Math.max(0, (t.output_tokens ?? 0) - s.output_tokens),
+    };
+    s.total_tokens = t.total_tokens;
+    s.input_tokens = t.input_tokens ?? s.input_tokens;
+    s.cached_input_tokens = t.cached_input_tokens ?? s.cached_input_tokens;
+    s.output_tokens = t.output_tokens ?? s.output_tokens;
+    let credits = 0;
+    try {
+      credits = creditsForTokens(harness, delta, metering);
+    } catch {
+      unpriced.add(x.model);
+    }
+    cumulative += credits;
+    const rl = x.rateLimits;
+    if (!rl) continue;
+    if (rl.planType) planTypes.add(rl.planType);
+    if (planType && rl.planType !== planType) continue;
+    const windows = {};
+    for (const id of ['primary', 'secondary']) {
+      const w = rl[id];
+      if (w && typeof w.used_percent === 'number') {
+        windows[id] = { usedPercent: w.used_percent, resetsAt: typeof w.resets_at === 'number' ? w.resets_at * 1000 : undefined };
+        if (typeof w.window_minutes === 'number') windowMinutes.add(w.window_minutes);
+      }
+    }
+    if (!Object.keys(windows).length) continue;
+    out.push({ at: Date.parse(x.at), windows, credits: cumulative, threadId: x.threadId, model: x.model });
+  }
+  return { readings: out, threads, streams: [...streams.values()].reduce((a, l) => a + l.length, 0), unpricedModels: [...unpriced], planTypes: [...planTypes], windowMinutes: [...windowMinutes].sort((a, b) => a - b) };
 }
 
 // Threads attributed to a lane's tier → credits per unit on that tier.
@@ -234,18 +325,32 @@ export function summarize(cal) {
   const creditsPerUnit = {};
   const creditsPerUnitAt = {};
   const nTier = {};
+  // A rate is measured at one (model, effort, speed): samples of a tier that ran at several
+  // settings are grouped and the setting with the most units is the rate's basis; the forecast
+  // rescales it for the tier's routed setting (pricing.mjs tierProfile).
+  const leftOut = {};
   for (const t of TIERS) {
     const rows = tier.filter((x) => x.tier === t);
     if (!rows.length) continue;
-    const units = rows.reduce((a, x) => a + x.units, 0);
-    const credits = rows.reduce((a, x) => a + x.credits, 0);
+    const groups = new Map();
+    for (const x of rows) {
+      const key = x.model ? `${x.model}|${x.effort ?? ''}|${x.speed ?? 'standard'}` : '';
+      groups.set(key, [...(groups.get(key) ?? []), x]);
+    }
+    const [key, best] = [...groups.entries()].reduce((m, g) => (g[1].reduce((a, x) => a + x.units, 0) > m[1].reduce((a, x) => a + x.units, 0) ? g : m));
+    const units = best.reduce((a, x) => a + x.units, 0);
+    const credits = best.reduce((a, x) => a + x.credits, 0);
     if (units > 0) {
       creditsPerUnit[t] = credits / units;
-      nTier[t] = rows.length;
-      const last = rows.at(-1);
-      if (last.model) creditsPerUnitAt[t] = { model: last.model, effort: last.effort, speed: last.speed ?? 'standard' };
+      nTier[t] = best.length;
+      if (key) {
+        const [model, effort, speed] = key.split('|');
+        creditsPerUnitAt[t] = { model, effort: effort || undefined, speed };
+      }
+      if (rows.length > best.length) leftOut[t] = rows.length - best.length;
     }
   }
+  if (Object.keys(leftOut).length) out.tierSamplesAtOtherSettings = leftOut;
   // Wave totals identify the tiers only when the units-per-tier matrix has full column rank
   // (waves with different tier mixes); otherwise the fit would hand one tier the other's credits
   // or a zero, so the priors stay. A coefficient at zero for a tier that ran is rejected too.

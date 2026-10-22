@@ -19,7 +19,23 @@
    "codex app-server generate-json-schema --experimental (the binary emits its own protocol schema)",
    "codex debug models (the binary emits its bundled model catalog)"
   ],
-  "analyzedOn": "2026-10-22"
+  "analyzedOn": "2026-10-22",
+  "liveVerification": {
+   "date": "2026-10-22",
+   "where": "a colleague's Linux machine (ChatGPT auth, plan self_serve_business_prolite), Codex updated 0.146.0 \u2192 0.163.0 before the measurements; binary SHA-256 identical to this target",
+   "results": "evidence/RESULTS.md (phases A\u2013H of harness/AGENT-PLAN.md), evidence/live/, evidence/decompile/",
+   "differencesOn0146": [
+    "account/usage/read {threadId} fails with 'invalid type: map, expected unit' (no per-thread usage request)",
+    "model/list shows only gpt-5.6-sol/terra/luna",
+    "account/read reports planType 'unknown' for the same account that 0.163.0 reports as self_serve_business_prolite"
+   ],
+   "fieldsBeyondThisFile": [
+    "turn.completed.usage carries cache_write_input_tokens (0 in every run)",
+    "account/read adds workspaceRouting { chatgptAccountId, backendOrigin, accountRoutingOverride }",
+    "account/rateLimits/read carries individualLimit: null and rateLimitReachedType: null next to the documented fields",
+    "model/list entries carry serviceTiers [{ id: 'priority', name: 'Fast', description }], defaultServiceTier, additionalSpeedTiers, availabilityNux, upgrade/upgradeInfo"
+   ]
+  }
  },
  "models": [
   {
@@ -112,7 +128,10 @@
     "enabled": false,
     "reminder_threshold_tokens": 6144,
     "auto_compact_fallback_buffer_tokens": 16384
-   }
+   },
+   "observedContextWindow": 500000,
+   "observedEffectiveContextWindow": 475000,
+   "observedContextWindowEvidence": "observed: token_count.info.model_context_window = 475000 (= 500000 \u00d7 95%) in 4 232 rollout readings of gpt-6.1-sol on three plans from 2026-10-14T07:15Z on; 258400 in the 66 readings before that instant. The remote model catalog (models_cache.json) overrides the static 272000 of the binary's built-in catalog; every other model still reports 258400."
   },
   {
    "slug": "gpt-6-sol",
@@ -569,11 +588,23 @@
    "evidence": "community: codex.danielvaughan.com 2026-07-26",
    "thresholdTokens": 272000,
    "inputMultiplier": 2
+  },
+  "rateAliases": {
+   "$comment": "Models without published rates, priced as another model. codex-auto-review (the automatic approval reviewer, 903 readings on one machine) has no published rate; at gpt-6.1-sol rates its usage fits the weekly meter within the rounding noise (weight fit 1.7, weakly identified: 111 credits in 29 points).",
+   "codex-auto-review": "gpt-6.1-sol"
+  },
+  "includedMeterWeight": {
+   "$comment": "What one published-rate credit of a model moves a subscription usage window, relative to gpt-6.1-sol. Fitted on the self_serve_business_prolite weekly window: 29 integer-percent steps over two windows (2026-10-19 \u2192 10-22), cumulative credits per model at the published rates as regressors, non-negative least squares; residual SD 0.19 points (0.64 with a single rate). gpt-6-sol 0.94 \u2248 1 (window 1 only); gpt-6-astra 0.43\u20130.57 (5 steps, 254 credits); gpt-6-luna unidentified (5 credits in the data) and kept at 1. Purchased credits (metering 'credits') are charged at the published rates unweighted.",
+   "evidence": "observed: evidence/live/readings.json (3 623 prolite readings), the fit in harness/FINDINGS.md \u00a79",
+   "gpt-6.1-sol": 1,
+   "gpt-6-sol": 1,
+   "gpt-6-astra": 0.5,
+   "gpt-6-luna": 1
   }
  },
  "rateLimits": {
   "windowsByPlan": {
-   "$comment": "documented: Plus and Standard Business limits are estimated per five-hour period plus a weekly limit; Pro plans currently have no five-hour limit; Enterprise/Edu flexible pricing has no fixed limits (credits). Durations in minutes are what the backend reports in windowDurationMins / window_minutes.",
+   "$comment": "documented: Plus and Standard Business limits are estimated per five-hour period plus a weekly limit; Pro plans currently have no five-hour limit; Enterprise/Edu flexible pricing has no fixed limits (credits). Durations in minutes are what the backend reports in windowDurationMins / window_minutes. Observed in rollouts and app-server probes (evidence/RESULTS.md \u00a7B\u2013C): pro = primary 10080 min, no secondary (1 219 readings); team = primary 300 + secondary 10080 (444 readings); self_serve_business_prolite = primary 10080 min, no secondary (3 623 readings and the live probe); limit_id codex (premium seen on 3 team readings without windows).",
    "evidence": "documented: https://learn.chatgpt.com/docs/pricing; static: status-line items five-hour-limit, weekly-limit at .rodata 0x0e6d6097",
    "plus": [
     {
@@ -625,6 +656,12 @@
     },
     {
      "id": "secondary",
+     "minutes": 10080
+    }
+   ],
+   "self_serve_business_prolite": [
+    {
+     "id": "primary",
      "minutes": 10080
     }
    ]
@@ -715,6 +752,43 @@
   "clientNudges": {
    "evidence": "static: 0x0ec2b902 'rate-limit-switch-prompt \u2026 Uses fewer credits for upcoming turns \u2026 Approaching rate limits'; notice key hide_rate_limit_model_nudge (0x0e779d9b) and hide_rate_limit_warning (packed field table 0x0e5d51d0); memories.min_rate_limit_remaining_percent default 25 (documented)",
    "note": "the TUI itself proposes switching to a cheaper model when approaching limits; memory generation is gated at 25% remaining"
+  },
+  "observedSemantics": {
+   "usedPercent": "an integer (the schema's int32); on a weekly window it moved one point per \u2248 65 published-rate credits of gpt-6.1-sol work on self_serve_business_prolite, so nine small runs (10.3 credits) left it unchanged",
+   "resetsAt": "while a window is unused (0%) resets_at slides with the clock (now + window length, re-sent on every reading); the 7-day clock starts at the first metered use and resets_at then stays fixed; a reset mid-window (observed 2026-10-20 08:32Z, 5% \u2192 0% with a new resets_at) shows up as a changed resets_at, which is what readers should key on",
+   "staleReadings": "readings of concurrent threads interleave, each carrying the snapshot its last response returned, so a pooled timeline shows 5 \u2192 4 \u2192 5; readers keep a high-water mark per window (lib/calibration.mjs capacitySamples)",
+   "credits": "self_serve_business_prolite: credits { hasCredits: false, unlimited: false, balance: null } with one 'Full reset' rate-limit reset credit available",
+   "evidence": "observed: evidence/live/readings.json, probe-baseline-0163.json"
+  },
+  "capacityMeasured": {
+   "$comment": "Credits at the published rates (gpt-6.1-sol mix, included-metering weights applied) that fill 100% of a window: the ratio estimator 100 \u03a3\u0394C/\u03a3\u0394U over the account's pooled credit timeline (lib/calibration.mjs accountTimeline + capacitySamples), per plan as the rollouts on one machine saw it. Usage outside those rollouts (another device, the web) is invisible to it and biases the estimate low.",
+   "self_serve_business_prolite": {
+    "primary": {
+     "windowMinutes": 10080,
+     "credits": "\u2248 6 300 (two windows: 6 353 over 5 points, 6 489 over 24 points, single-rate fit; see FINDINGS \u00a79)",
+     "confidence": "good: 29 points, 1 937 credits, residual SD 0.64 points"
+    }
+   },
+   "team": {
+    "primary": {
+     "windowMinutes": 300,
+     "credits": "\u2248 730 (one window 1 \u2192 99% in 55 min on 717 credits); a second window gave 271 and is likely missing usage from elsewhere",
+     "confidence": "weak"
+    },
+    "secondary": {
+     "windowMinutes": 10080,
+     "credits": "\u2248 4 500 (16 points on 718 credits); the second window gave 1 600",
+     "confidence": "weak"
+    }
+   },
+   "pro": {
+    "primary": {
+     "windowMinutes": 10080,
+     "credits": "13 000 \u2013 18 000 (one window 3 points on 546 credits, another 1 point on 134 credits)",
+     "confidence": "weak"
+    }
+   },
+   "evidence": "observed: evidence/live/readings.json; computed in harness/FINDINGS.md \u00a79"
   }
  },
  "tokenUsage": {
@@ -732,7 +806,8 @@
    "appServer": "thread/tokenUsage/updated {threadId, turnId, tokenUsage{last,total,modelContextWindow}}; turn/completed",
    "stateDb": "$CODEX_HOME/state_5.sqlite threads(id, rollout_path, model, reasoning_effort, tokens_used, agent_role, agent_nickname, agent_path, thread_source, history_mode, \u2026), thread_spawn_edges(parent_thread_id, child_thread_id, status)",
    "threadHistoryDb": "$CODEX_HOME/thread_history_1.sqlite thread_turns(thread_id, turn_id, status, started_at, completed_at, duration_ms, \u2026), thread_items(item_json)",
-   "turnMetrics": "static 0x0e75bb6f: turn analytics fields usage_limit_window_minutes, steer_count, total_tool_call_count, shell_command_count, file_change_count, mcp_tool_call_count, subagent_tool_call_count, time_to_first_token_ms, duration_ms"
+   "turnMetrics": "static 0x0e75bb6f: turn analytics fields usage_limit_window_minutes, steer_count, total_tool_call_count, shell_command_count, file_change_count, mcp_tool_call_count, subagent_tool_call_count, time_to_first_token_ms, duration_ms",
+   "accountUsageRead": "app-server v2 account/usage/read: without a thread \u2192 summary { lifetimeTokens, peakDailyTokens, longestRunningTurnSec, currentStreakDays } and dailyUsageBuckets; with { threadId } \u2192 threadUsage { estimatedUsageCreditsMicros, groups } or null. Observed null for every thread on self_serve_business_prolite (0.163.0): the processor returns None when the backend's /wham/usage/thread_usage/query answers 403 or 404 (app-server/src/request_processors/account_processor.rs:1332-1372), so plans without purchasable credits expose no per-thread credit estimate and the published rates are the only per-thread price (evidence/RESULTS.md \u00a7C)"
   }
  },
  "context": {
@@ -742,7 +817,7 @@
   },
   "configKeys": [
    "model_context_window",
-   "model_auto_compact_token_limit (unset uses model defaults; catalog auto_compact_token_limit is null for every model \u2192 built-in default, number not recovered)",
+   "model_auto_compact_token_limit (unset \u2192 context_window \u00d7 9/10, see autoCompactTokenLimit)",
    "model_auto_compact_token_limit_scope total|body_after_prefix (default total)",
    "model_post_turn_compact_threshold_percent",
    "compact_prompt",
@@ -768,7 +843,18 @@
     "get_context_remaining ('You have N weighted tokens left in the shared session token budget.' static 0x0e540631)"
    ]
   },
-  "asyncCompaction": "feature async_compaction (under development); remote_compaction capability flag in ModelProviderCapabilities"
+  "asyncCompaction": "feature async_compaction (under development); remote_compaction capability flag in ModelProviderCapabilities",
+  "autoCompactTokenLimit": {
+   "default": "min(catalog.auto_compact_token_limit, resolved_context_window \u00d7 9 / 10); the catalog value is null for every model, so the default is 90% of the context window",
+   "values": {
+    "272000-token models": 244800,
+    "gpt-6.1-sol at the remote catalog's 500000": 450000
+   },
+   "notTheHardCap": "the hard cap is context_window \u00d7 effective_context_window_percent / 100 (95% \u2192 258400 / 475000), computed separately (core/src/session/context_window.rs:84-86)",
+   "userOverride": "model_auto_compact_token_limit replaces the model's limit in the body_after_prefix scope (context_window.rs:70-75); scope keys: model_auto_compact_token_limit_scope = total | body_after_prefix; model_post_turn_compact_threshold_percent exists as a key (static strings)",
+   "evidence": "decompiled: ModelInfo::auto_compact_token_limit (protocol/src/openai_models.rs:529) inlined at 0x68aa194\u20130x68aa1ed (lea rax,[rax+rax*8]; imul 0x6666666666666667; sar 2 = \u00d79/10; cmovl = min with the catalog value; cmove = catalog None) and at 0x68aa1fe, 0x75e395c, 0x75e3b4f, 0x762316d \u2014 evidence/decompile/README.md \u00a71, objdump-windows.txt, source-rust-v0.163.0-excerpts.md; verified instruction for instruction against the sandbox copy of the same binary"
+  },
+  "remoteCatalog": "the backend's model catalog (cached in $CODEX_HOME/models_cache.json) overrides the binary's static catalog: gpt-6.1-sol went from 272000 to 500000 tokens of context on 2026-10-14 without a binary change (observed, see models[gpt-6.1-sol].observedContextWindowEvidence)"
  },
  "multiAgent": {
   "version": "v2 for gpt-6-* (multi_agent feature stable; multi_agent_v2 flag off by default but catalog multi_agent_version=v2)",
@@ -799,13 +885,14 @@
   "evidence": "static 0x0e902eb4\u20130x0e903200, 0x0e8d72ed (codex.multi_agent.spawn task_name agent_type fork_turns), 0x0e53bff8",
   "config": {
    "agents.enabled": true,
-   "agents.max_concurrent_threads_per_session": "unset \u2192 harness default (number not recovered; legacy alias max_threads)",
+   "agents.max_concurrent_threads_per_session": "N children allowed (stored internally as N + 1: the root thread counts); unset \u2192 compiled default 4 total = 3 concurrent child threads (legacy alias max_threads)",
    "agents.max_depth": "1 (V1 only; ignored by V2)",
    "agents.default_subagent_model": "documented: unset \u2192 the subagent inherits the parent's model (observed value gpt-6-luna came from the sandbox config.toml)",
    "agents.default_subagent_reasoning_effort": "documented: unset \u2192 the model's default effort when a model is set, else inherited (observed value low came from the sandbox config.toml)",
    "agents.interrupt_message": true,
    "agents.job_max_runtime_seconds": "(agent jobs)",
-   "evidence": "keys: static 0x0e6c33bf; values: observed TUI /debug-config in a sandbox whose user config.toml set default_subagent_model=gpt-6-luna and default_subagent_reasoning_effort=low (those two lines show configured values); inherit semantics: documented"
+   "evidence": "keys: static 0x0e6c33bf; values: observed TUI /debug-config in a sandbox whose user config.toml set default_subagent_model=gpt-6-luna and default_subagent_reasoning_effort=low (those two lines show configured values); inherit semantics: documented",
+   "features.multi_agent_v2.max_concurrent_threads_per_session": "when set, wins over agents.max_concurrent_threads_per_session and is the total (root included)"
   },
   "builtInRoles": {
    "default": "general-purpose",
@@ -844,7 +931,19 @@
   "errors": [
    "general error enum (static 0x0eaf830a) includes AgentLimitReached (the concurrency cap), SessionBudgetExceeded, ContextWindowExceeded, UsageLimitReached, RateLimitExceeded, FlexUnavailable"
   ],
-  "agentJobs": "static: agent_jobs / agent_job_items tables (CSV batch jobs: instruction, input_csv_path, output_csv_path, assigned_thread_id, attempt_count)"
+  "agentJobs": "static: agent_jobs / agent_job_items tables (CSV batch jobs: instruction, input_csv_path, output_csv_path, assigned_thread_id, attempt_count)",
+  "concurrencyDefault": {
+   "totalThreads": 4,
+   "childThreads": 3,
+   "expression": "features.multi_agent_v2.max_concurrent_threads_per_session ?? agents.max_concurrent_threads_per_session.saturating_add(1) ?? 4, enforced by AgentRegistry::reserve_spawn_slot \u2192 try_increment_spawned on the registry's total thread count; the 4th spawn fails with CodexErrorDetails::AgentLimitReached ('collab spawn failed: agent thread limit reached')",
+   "waitTimeoutsMs": {
+    "min": 10000,
+    "max": 3600000,
+    "default": 30000
+   },
+   "evidence": "decompiled: resolve_multi_agent_v2_config (core/src/config/mod.rs:2813) at 0x75950f0, default literal `mov esi,0x4` at 0x759522f, saturating +1 at 0x759523a\u20130x7595244, wait timeouts 0x2710/0x36ee80/0x7530 at 0x759526b\u20130x7595283 \u2014 evidence/decompile/README.md \u00a72, objdump-windows-resolve-v2.txt; verified against the sandbox copy. Observed: evidence/live/runs/09-spawn-limit (gpt-6-luna low, no [agents] table): 3 spawns succeed, the 4th fails 'agent thread limit reached'; state_5.sqlite shows the 3 child threads (thread_source subagent, agent_path /root/explorer1..3) and 3 thread_spawn_edges"
+  },
+  "execJsonNote": "codex exec --json on 0.163.0 emits no item for spawn_agent; collab_tool_call items appear for wait only, and a spawn failure reaches the stream only through the agent's own message (observed, run 09)"
  },
  "hooks": {
   "events": [

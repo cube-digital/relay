@@ -39,24 +39,26 @@
   },
   "lanes": { "maxLaneTasks": 6, "maxParallelLanes": 4 },
   "forecast": {
-    "$comment": "Work units are relay's: weight = tierWeight[tier] × riskFactor[risk], read here as relative token volume of a task. tokensPerUnit turns units into total tokens processed (input + cached input + output summed over a thread's turns); tokenMix splits them; the model's credit rates (config/codex-harness.json → pricing) turn tokens into credits; windowCapacityCredits says how many credits are 100% of a window. Everything under `prior` is a placeholder until calibrated.",
+    "$comment": "Work units are relay's: weight = tierWeight[tier] × riskFactor[risk], read here as relative token volume of a task. tokensPerUnit turns units into total tokens processed (input + cached input + output summed over a thread's turns); tokenMix splits them; the model's credit rates and included-metering weights (config/codex-harness.json → pricing) turn tokens into credits; windowCapacityCredits says how many credits are 100% of a window. Everything under `prior` is replaced by `relay calibrate` samples; the comments say which priors live readings support (evidence/RESULTS.md, harness/FINDINGS.md §9).",
     "tierWeight": { "cheap": 1, "mid": 3, "strong": 7 },
     "riskFactor": { "low": 0.8, "medium": 1.0, "high": 1.4 },
     "fixRoundProbability": { "low": 0.2, "medium": 0.5, "high": 0.8 },
     "fixRoundCost": 0.35,
     "prior": {
+      "$comment": "tokensPerUnit is a scale prior (uncalibrated at relay's unit): at this token mix it reproduces the credits per unit the nine scratch runs measured (cheap 0.018–0.026, mid 0.30–0.49, strong 1.48 at published rates / 0.74 metered). tokenMix is the mix real Codex sessions showed on 2026-10-20 → 22 (326 M tokens of gpt-6.1-sol: 2.6% uncached input, 97.1% cached input, 0.3% output; the scratch runs ran 7–30% uncached and 1% output). effortOutputMultiplier stays a prior: the scratch runs produced 0–148 reasoning tokens, too few to see it.",
       "tokensPerUnit": { "cheap": 70000, "mid": 70000, "strong": 70000 },
-      "tokenMix": { "input": 0.12, "cachedInput": 0.85, "output": 0.03 },
+      "tokenMix": { "input": 0.03, "cachedInput": 0.965, "output": 0.005 },
       "effortOutputMultiplier": { "low": 1.0, "medium": 1.5, "high": 2.5, "xhigh": 4.0, "max": 6.0, "ultra": 8.0 },
       "minutesPerUnit": 4,
       "windowCapacityCredits": {
-        "$comment": "credits that fill 100% of a window; placeholders scaled from OpenAI's 'messages per five hours' estimates for Plus and the plan multipliers quoted for Pro",
-        "plus": { "primary": 150, "secondary": 900 },
-        "business": { "primary": 150, "secondary": 900 },
-        "team": { "primary": 150, "secondary": 900 },
-        "pro": { "primary": 4500 },
-        "promax": { "primary": 18000 },
-        "unknown": { "primary": 150, "secondary": 900 }
+        "$comment": "published-rate credits (gpt-6.1-sol mix, metered weights) that fill 100% of a window, by plan type as account/rateLimits/read reports it. self_serve_business_prolite: measured (29 integer steps of the weekly window over two windows, Q̂ = 6 176, per-day 6 077–6 679). team: two 5-hour windows (1 → 99% on 208 credits, 1 → 44% on 120) give 212 and 277, their weekly window 1 300 and 1 640 (weak: one machine's rollouts, usage elsewhere invisible); plus and business are assumed equal to team (OpenAI documents Plus and Standard Business with the same per-five-hour estimates). pro: 12 600–18 100 from 4 points (weak). promax: 4 × pro (placeholder). unknown: plus.",
+        "plus": { "primary": 210, "secondary": 1400 },
+        "business": { "primary": 210, "secondary": 1400 },
+        "team": { "primary": 210, "secondary": 1400 },
+        "self_serve_business_prolite": { "primary": 6200 },
+        "pro": { "primary": 15000 },
+        "promax": { "primary": 60000 },
+        "unknown": { "primary": 210, "secondary": 1400 }
       }
     },
     "metering": "included"

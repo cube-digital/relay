@@ -54,8 +54,29 @@ export function windowsForPlan(harness, planType) {
   return table[key].map((w) => ({ id: w.id, windowMinutes: w.minutes }));
 }
 
+// The usable context window: the remote catalog's size when one was observed (it overrides the
+// binary's static catalog; gpt-6.1-sol grew to 500k tokens on 2026-10-14), else the static one.
 export function effectiveContextWindow(harness, slug) {
   const m = modelInfo(harness, slug);
   if (!m) return undefined;
-  return Math.floor((m.contextWindow * m.effectiveContextWindowPercent) / 100);
+  return Math.floor(((m.observedContextWindow ?? m.contextWindow) * m.effectiveContextWindowPercent) / 100);
+}
+
+// Where auto-compaction triggers by default: 90% of the context window (decompiled; the catalog's
+// auto_compact_token_limit is null for every model), unless the user sets model_auto_compact_token_limit.
+export function autoCompactTokenLimit(harness, slug, userLimit) {
+  const m = modelInfo(harness, slug);
+  if (!m) return undefined;
+  const contextLimit = Math.floor(((m.observedContextWindow ?? m.contextWindow) * 9) / 10);
+  const catalogLimit = m.autoCompactTokenLimit;
+  const modelLimit = typeof catalogLimit === 'number' ? Math.min(catalogLimit, contextLimit) : contextLimit;
+  return typeof userLimit === 'number' ? userLimit : modelLimit;
+}
+
+// Child threads a session may run at once: [agents].max_concurrent_threads_per_session when set
+// (it counts children), else the compiled default of 4 total threads including the root.
+export function maxConcurrentChildren(harness, agentsConfig = {}) {
+  const n = agentsConfig.max_concurrent_threads_per_session ?? agentsConfig.max_threads;
+  if (typeof n === 'number' && n >= 0) return n;
+  return (harness.multiAgent?.concurrencyDefault?.totalThreads ?? 4) - 1;
 }
