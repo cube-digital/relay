@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { chmodSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { chmodSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -48,6 +48,12 @@ test('run, plan and skills invoke relay as defined on both harnesses, and user t
   assert.equal(codexPlan.argv[1], commandText('plan', `--unattended ${goal}`));
   assert.equal(codexPlan.argv.length, 9);
   assert.equal(codexPlan.argv.filter((a) => a.includes(goal)).length, 1);
+  // the business analyst joins only with a business documentation path inside the repository
+  mkdirSync(join(repo, 'docs', 'business'), { recursive: true });
+  assert.equal(cmd({ action: 'plan', goal, businessDocs: 'docs/business', harness: 'claude' }).argv[1], `/relay:plan --unattended --business-docs docs/business ${goal}`);
+  const docsGuard = (businessDocs) => evaluateGuards(normalizeIntent({ repo, action: 'plan', goal, businessDocs, harness: 'claude' }), { env }).errors;
+  assert.deepEqual(docsGuard('docs/business'), []);
+  for (const bad of ['docs/nowhere', '/etc', '../outside']) assert.ok(docsGuard(bad).includes('business docs must be a path inside the repository'), bad);
   // the mode HQ relies on is defined in the commands themselves
   for (const text of [codexRun.argv[1], codexPlan.argv[1]]) assert.match(text, /\*\*Unattended\.\*\*/);
 

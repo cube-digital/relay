@@ -6,7 +6,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { parseArgs } from '../lib/args.mjs';
 import { ensureExcluded, git, mainRoot } from '../lib/git.mjs';
-import { effectivePiece, fillPlaceholders, LANE_POINTS, loadFlowSet, piecesAt, POINTS, whenSummary } from '../lib/flows.mjs';
+import { effectivePiece, fillPlaceholders, LANE_POINTS, loadFlowSet, piecesAt, POINTS, requiresSummary, whenSummary } from '../lib/flows.mjs';
 import { RELAY_ROOT } from '../lib/routing.mjs';
 import { checkFlow } from './build.mjs';
 import { planLanes, runDir } from './relay-lanes.mjs';
@@ -17,7 +17,7 @@ const USAGE = `usage:
   relay flow list
   relay flow show <flow>
   relay flow at <plan> <point> [--lane <id>] [--json]
-  relay flow at --flow <flow> --slug <slug> <point> [--json]
+  relay flow at --flow <flow> --slug <slug> <point> [--docs <path>] [--json]
   relay flow done <plan> <piece> [--lane <id>] --status pass|findings|blocked --report <path> [--protect <path>...]
   relay flow add <flow> <piece> --at <point>
   relay flow remove <flow> <piece> [--at <point>]`;
@@ -56,7 +56,8 @@ function show(id) {
         continue;
       }
       const p = effectivePiece(flow, raw);
-      console.log(`  ${pid}  ${p.role} · ${p.gate} · when ${whenSummary(p.when)}`);
+      const needs = requiresSummary(p.requires);
+      console.log(`  ${pid}  ${p.role} · ${p.gate} · when ${whenSummary(p.when)}${needs ? ` · requires ${needs}` : ''}`);
     }
   }
   return 0;
@@ -165,7 +166,7 @@ function at(argv) {
   }
   ensureExcluded(root, ['.relay/']); // run files must never be swept into a lane commit
   const laneVar = isLanePoint ? lane : undefined;
-  const vars = { slug, run, lane: laneVar };
+  const vars = { slug, run, lane: laneVar, docs: typeof args.docs === 'string' && args.docs ? args.docs : undefined };
   const { apply, skipped } = piecesAt({ set, flowId, point, tasks, lane: laneVar, vars, exists: (p) => existsSync(resolve(root, p)) });
 
   // outputs of the flow's other pieces, in the order they appear

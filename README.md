@@ -488,8 +488,9 @@ A run passes six points around the chassis (the plan, then each lane, then each 
 The two newest roles each own pieces:
 
 - **Business Analyst:**
-  - `requirements`, before the plan: turns the spec and `docs/requirements/*` into `docs/relay/requirements/<slug>.md`, with requirements R1…Rn and Given / When / Then acceptance criteria;
-  - `requirements-check`, at the end: marks each R met, partial or missing, with evidence.
+  - optional: it joins a plan only when you give it the business documentation, `/relay:plan --business-docs <path> <goal>` (a file or folder in the repository; in HQ, the Business docs field of New plan). Without it both pieces are skipped and the plan runs as before;
+  - `requirements`, before the plan: turns that documentation and the spec into `docs/relay/requirements/<slug>.md` (its first line names the source), with requirements R1…Rn and Given / When / Then acceptance criteria;
+  - `requirements-check`, at the end, when that document exists: marks each R met, partial or missing, with evidence.
 - **Platform Engineer:**
   - builds the tasks the architect marks `"role": "platform-engineer"` (infra, CI/CD, deploy, configuration, observability);
   - `platform-review`, after a lane that touches infra: checks rollout and rollback, secrets, migrations, and logs, metrics and health checks. It is read-only, and `relay flow done` blocks it if it commits.
@@ -935,7 +936,7 @@ Type `/relay` in Claude Code to see them. They run only when you call them, so t
 
 | Command | What it does |
 |---|---|
-| `/relay:plan [--unattended] [--flow <flow>] <what to build \| spec>` | From an idea to a plan: scouts the code, asks at most three questions, writes a short spec, has the architect write the plan, then shows the tasks, lanes and forecast. Writes no code. `--unattended` (how relay HQ launches it) asks nothing and lists its assumptions. |
+| `/relay:plan [--unattended] [--flow <flow>] [--business-docs <path>] <what to build \| spec>` | From an idea to a plan: scouts the code, asks at most three questions, writes a short spec, has the architect write the plan, then shows the tasks, lanes and forecast. Writes no code. `--unattended` (how relay HQ launches it) asks nothing and lists its assumptions; `--business-docs` brings in the Business Analyst with that documentation. |
 | `/relay:run [--unattended] [plan]` | Runs the plan now: the conductor works through the waves in the background while you keep using the session. `--unattended` (how relay HQ launches it) asks nothing, waits for the conductor and ends with a `RELAY_LEG` line. |
 | `/relay:status [plan]` | Where a run is: waves, lanes, fix rounds, rulings, budget, and the marathon if one is running. |
 | `/relay:board [plan]` | The roadmap as traffic lights, in the chat and as a page in your browser that follows the run. |
@@ -974,7 +975,7 @@ Without a plan argument, they use the newest plan in `docs/relay/plans/`. The us
 | `reviewer` | mid | Read-only. Reviews a lane per task against the spec, and audits its tests. |
 | `architect` | strong | Writes the plan and does the final review of the branch. |
 | `conductor` | mid | Runs a whole plan, so coordination happens on Sonnet. |
-| `business-analyst` | strong | Turns a goal into a requirements document before the plan is written. |
+| `business-analyst` | strong | Turns business documentation (`--business-docs`) and the spec into a requirements document before the plan is written; only when given. |
 | `platform-engineer` | mid | Builds infrastructure and deployment work in its lane. |
 
 Every worker writes its full report to a file and returns at most eight lines: a status (`DONE`, `DONE_WITH_CONCERNS`, `NEEDS_CONTEXT` or `BLOCKED`), its commits, its test counts, the report path and any concern. The conductor's context stays small however long the run.
