@@ -6,7 +6,7 @@ model: sonnet
 effort: medium
 tools: Read, Edit, Write, Bash, Grep, Glob
 maxTurns: 80
-color: green
+color: orange
 ---
 ## Understands
 - Infrastructure as code, CI/CD pipelines, deploys and rollbacks, secrets and configuration, logs, metrics and health checks.

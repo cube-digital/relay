@@ -41,3 +41,23 @@ test('a repository summary carries the board lights and a blocked lane as an att
   assert.ok(detail.lanes.a.latestReview.path.endsWith('lane-a.review.md'));
   assert.ok(!JSON.stringify(detail).includes('PACKAGE_DIFF_MARKER'));
 });
+
+test('a "plan: merged" ledger line takes a finished plan off ready-to-merge (squash merges leave no ancestor)', () => {
+  process.env.RELAY_HOME = mkdtempSync(join(tmpdir(), 'relay-hq-repo-'));
+  const { dir, git } = tempRepo();
+  const planPath = copyFixture('plan-basic.md', dir);
+  git('add', '-A');
+  git('commit', '-qm', 'plan');
+  const relay = (...args) => assert.equal(runCli(args, { cwd: dir }).code, 0);
+  relay('ledger', planPath, 'start: 6 tasks, 4 lanes, 2 waves');
+  relay('worktrees', 'sync', planPath, '--wave', '1');
+  const int = JSON.parse(readFileSync(join(dir, '.relay', 'lanes', 'active.json'), 'utf8')).integration.worktree;
+  writeFileSync(join(int, 'work.txt'), 'x\n'); // the integration branch is ahead of the current branch, as after a squash merge
+  git('-C', int, 'add', '-A');
+  git('-C', int, 'commit', '-qm', 'T1: Export schema');
+  relay('ledger', planPath, 'plan: complete (relay/billing-export/integration @ abc)');
+  const ready = () => repoSummary(dir).attention.some((a) => a.kind === 'ready-to-merge');
+  assert.ok(ready());
+  relay('ledger', planPath, 'plan: merged (squashed in a PR)');
+  assert.ok(!ready());
+});

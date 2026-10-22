@@ -1,12 +1,14 @@
 ---
 description: Turn what you want built into a relay plan — spec, tasks with tiers and tests, lanes, forecast — ready to run.
-argument-hint: "<what to build, or a spec path>"
+argument-hint: "[--unattended] [--flow <flow>] <what to build, or a spec path>"
 allowed-tools: Bash(relay *) Bash(ls *) Bash(git status*) Bash(git log*) Bash(mkdir *)
 disable-model-invocation: true
 ---
 Goal: $ARGUMENTS
 
 Produce a plan; do not write code. `relay` is on your PATH: run it by name, one command per call.
+
+**Unattended.** When the goal starts with `--unattended` (a launch from relay HQ: nobody can answer, and the process ends with your turn), drop that flag: skip step 2 and list the defaults you took as assumptions in the spec, and dispatch every agent in the foreground and wait for it. `--flow <name>` before the goal sets the flow in step 1.
 
 1. **Understand.** If the goal is empty, ask what to build and stop. If it is a path, read that spec. Dispatch scout agents (cheap) to find the files, conventions and test commands involved; do not read the codebase yourself. Choose the flow: `bugfix` when the goal is to fix a defect, `feature` otherwise (`relay flow list` shows every flow).
 2. **Ask once, briefly.** At most three questions, in one message, and only where the answer changes the plan (scope, acceptance behavior, a risky choice). For everything else, pick the sensible default and list it as an assumption. If the user does not answer, go on with the assumptions.

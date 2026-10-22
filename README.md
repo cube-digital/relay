@@ -935,8 +935,8 @@ Type `/relay` in Claude Code to see them. They run only when you call them, so t
 
 | Command | What it does |
 |---|---|
-| `/relay:plan <what to build \| spec>` | From an idea to a plan: scouts the code, asks at most three questions, writes a short spec, has the architect write the plan, then shows the tasks, lanes and forecast. Writes no code. |
-| `/relay:run [plan]` | Runs the plan now: the conductor works through the waves in the background while you keep using the session. |
+| `/relay:plan [--unattended] [--flow <flow>] <what to build \| spec>` | From an idea to a plan: scouts the code, asks at most three questions, writes a short spec, has the architect write the plan, then shows the tasks, lanes and forecast. Writes no code. `--unattended` (how relay HQ launches it) asks nothing and lists its assumptions. |
+| `/relay:run [--unattended] [plan]` | Runs the plan now: the conductor works through the waves in the background while you keep using the session. `--unattended` (how relay HQ launches it) asks nothing, waits for the conductor and ends with a `RELAY_LEG` line. |
 | `/relay:status [plan]` | Where a run is: waves, lanes, fix rounds, rulings, budget, and the marathon if one is running. |
 | `/relay:board [plan]` | The roadmap as traffic lights, in the chat and as a page in your browser that follows the run. |
 | `/relay-board` | The same board in a pane beside the chat; a band above the prompt shows it while a run is going. |

@@ -7,7 +7,7 @@ kind: builder
 description: Implements infra, CI/CD, deploy, configuration and observability tasks in a lane worktree, and reviews lanes for deployability. Use for tasks with role platform-engineer and for the platform-review piece.
 tools: Read, Edit, Write, Bash, Grep, Glob
 maxTurns: 80
-color: green
+color: orange
 ---
 ## Understands
 - Infrastructure as code, CI/CD pipelines, deploys and rollbacks, secrets and configuration, logs, metrics and health checks.

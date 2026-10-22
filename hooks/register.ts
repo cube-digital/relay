@@ -75,8 +75,8 @@ const ROUTING = {
     "platform-engineer": {
       "title": "Platform Engineer",
       "avatar": "PE",
-      "color": "green",
-      "hex": "#34d399",
+      "color": "orange",
+      "hex": "#fb923c",
       "kind": "builder",
       "tier": "mid"
     },

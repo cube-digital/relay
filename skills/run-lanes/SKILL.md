@@ -52,7 +52,7 @@ Which extra steps run, where and when, is data in `flows/` and `pieces/`; the CL
 
 ## Unattended runs
 
-Inside `relay marathon` nobody can answer questions. Rule and continue on everything but the four reasons under **Stop**; at critical budget finish in-flight lanes, merge, write the handoff and end your turn. End your final message with one line, `RELAY_LEG: DONE | PAUSED | BLOCKED — <reason>`, so the marathon knows whether to wait for the next window, start the next leg, or hand the problem to the human.
+Inside `relay marathon`, and in a run started with `--unattended` (a launch from relay HQ), nobody can answer questions. Rule and continue on everything but the four reasons under **Stop**; at critical budget finish in-flight lanes, merge, write the handoff and end your turn. End your final message with one line, `RELAY_LEG: DONE | PAUSED | BLOCKED — <reason>`, so the marathon or HQ knows whether to wait for the next window, start the next leg, or hand the problem to the human.
 
 ## Budget during the run
 
