@@ -1,0 +1,14 @@
+{
+  "id": "acceptance-tests",
+  "title": "Acceptance tests first",
+  "role": "test-author",
+  "slots": ["lane.before"],
+  "skills": ["qa-mindset"],
+  "when": { "risk": ["medium", "high"], "testsAtLeast": 1 },
+  "requires": [],
+  "brief": "Write the lane's acceptance tests before any implementation, from the spec and the behaviors in the lane brief, within each task's new-test budget. Do not read the implementation. Commit them on their own as \"<task id>: acceptance tests\" and list every test path you wrote after protect: in your return.",
+  "output": "{run}/lane-{lane}.acceptance-tests.md",
+  "gate": "blocking",
+  "readonly": false,
+  "protect": true
+}

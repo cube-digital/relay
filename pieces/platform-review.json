@@ -1,0 +1,13 @@
+{
+  "id": "platform-review",
+  "title": "Deployability review",
+  "role": "platform-engineer",
+  "slots": ["lane.after"],
+  "skills": [],
+  "when": { "any": [{ "files": ["infra/**", ".github/workflows/**", "**/Dockerfile", "**/*.tf", "k8s/**", "deploy/**"] }, { "tags": ["infra"] }] },
+  "requires": [],
+  "brief": "Review the lane's changes for deployability: rollout and rollback, secrets and configuration, reversible migrations, and logs, metrics and health checks for what was added. Do not edit files.",
+  "output": "{run}/lane-{lane}.platform-review.md",
+  "gate": "blocking",
+  "readonly": true
+}

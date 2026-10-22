@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'claude-code/testing'
-import { boardSummary, routeModel, showsBand, tierOfModel } from './register.ts'
+import { boardSummary, routeModel, showsBand, tierOfModel, trackComplete, trackSpawn, trackStep, workingAgents } from './register.ts'
 import type { Board } from './register.ts'
 
 const CONTEXT = { window: 200_000 }
@@ -141,5 +141,64 @@ describe('the board', () => {
     expect(await pane.find({ type: 'Text', text: /CSV writer/ })).toBeTruthy()
     expect(await pane.find({ type: 'Text', text: /fix round 2\/5/ })).toBeTruthy()
     await pane.unmount()
+  })
+})
+
+describe('the team', () => {
+  test('a spawn is working, steps add tokens, complete is done, and the band shows the avatar', async ($, on) => {
+    // pure tracking, on a local map (the mod's own state lives in the engine's module instance)
+    const local = new Map()
+    trackSpawn(local, { agentId: 'p1', name: 'lane-a', subagentType: 'relay:implementer', model: 'sonnet' }, 1000)
+    trackStep(local, 'p1', { input: 100, output: 20, cacheRead: 1000, cacheWrite: 5 })
+    trackStep(local, 'p1', { input: 50, output: 10, cacheRead: 2000, cacheWrite: 0 })
+    const pure = local.get('p1')
+    expect(pure.role).toBe('implementer')
+    expect(pure.lane).toBe('a')
+    expect(pure.avatar).toBe('SE')
+    expect(pure.state).toBe('working')
+    expect(pure.tokens).toEqual({ input: 150, output: 30, cacheRead: 3000, cacheWrite: 5 })
+    trackComplete(local, 'p1', 5000)
+    expect(local.get('p1').state).toBe('done')
+    expect(local.get('p1').endedAt).toBe(5000)
+    expect(workingAgents(local)).toEqual([])
+
+    // through the engine: spawn, two steps, complete, observed in the mounted band and pane
+    const usage = (i: number, o: number) => ({ input_tokens: i, output_tokens: o, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 })
+    on('agent.spawn', ($, e) => ({ model: e.model ?? 'sonnet', agentId: 'team-1' }))
+    on('turn.step', async function* ($, e) {
+      yield { kind: 'stop', stopReason: 'end_turn', usage: e.index === 0 ? usage(1000, 200) : usage(500, 100) }
+      return { turnId: e.turnId, index: e.index, answer: '', toolUses: [] }
+    })
+    on('turn.complete', ($, e) => ({ text: '' }))
+    on('command.register', () => ({ value: { command: 'relay-team' } }))
+    on('session.root', () => ({ value: '/repo' }))
+    on('fs.stat', () => ({ value: undefined }))
+    on('clock.every', () => ({ value: undefined }))
+    on('ui.open', () => ({ value: { isPlaced: true } }))
+    on('session.start', (_, e) => ({ cwd: e.cwd }))
+    await $.session.start({ cwd: '/repo', surface: 'terminal', isInteractive: true })
+    await $.agent.spawn(spawnInput('relay:implementer', { name: 'lane-a' }))
+    for (const index of [0, 1]) {
+      for await (const _chunk of $.turn.step({ turnId: 't1', index, messageCount: 1, agentId: 'team-1', model: 'sonnet' })) {
+        // drain
+      }
+    }
+
+    const bandProps = { hasSurvey: false, isWorking: false, maxRows: 10, bodyColumns: 120, scroll: { offset: 0, bodyRows: 10 }, view: {} }
+    const paneProps = { title: 'relay · team', isFocused: false, bodyColumns: 100, placement: 'dock' as const, scroll: { offset: 0, bodyRows: 30 }, view: {} }
+    const band = await $.ui.mount({ plugin: 'relay', component: 'AbovePrompt', requestId: 'band', surface: 'terminal', props: bandProps })
+    expect((await band.find({ type: 'Text', text: /^SE$/ }))?.text).toBe('SE')
+    await band.unmount()
+    const pane = await $.ui.mount({ plugin: 'relay', component: 'Pane', requestId: 'relay-team', surface: 'desktop', props: paneProps })
+    expect(await pane.find({ type: 'Text', text: /lane a/ })).toBeTruthy()
+    expect(await pane.find({ type: 'Text', text: /1\.8k tok/ })).toBeTruthy()
+    expect(await pane.find({ type: 'Text', text: /working/ })).toBeTruthy()
+    await pane.unmount()
+
+    await $.turn.complete({ turnId: 't1', agentId: 'team-1', answer: 'ok', usage: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 } })
+    const done = await $.ui.mount({ plugin: 'relay', component: 'Pane', requestId: 'relay-team', surface: 'desktop', props: paneProps })
+    expect(await done.find({ type: 'Text', text: /done/ })).toBeTruthy()
+    expect(await done.find({ type: 'Text', text: /working/ })).toBeUndefined()
+    await done.unmount()
   })
 })

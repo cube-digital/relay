@@ -1,0 +1,16 @@
+{
+  "id": "weekly-report",
+  "title": "Weekly report",
+  "kind": "active",
+  "type": "check",
+  "check": "weekly-report",
+  "schedule": { "days": ["fri"], "at": "16:00" },
+  "options": { "days": 7, "suggestWeeks": 4, "suggestMinRepeats": 3 },
+  "judgment": {
+    "tier": "cheap",
+    "maxInputChars": 6000,
+    "heading": "Suggested routines",
+    "ask": "Propose at most 3 new relay routines (id, kind, schedule, what it checks, which repeated action it replaces) from the repeated launches below. One line each: `- <id> · <passive|active> · <days> <HH:MM> · <what it checks> · replaces <action>`, days as mon,tue,… Answer \"none\" when nothing repeats."
+  },
+  "cap": { "runsPerWeek": 2 }
+}

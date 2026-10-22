@@ -6,9 +6,11 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { parseArgs } from '../lib/args.mjs';
 import { mainRoot } from '../lib/git.mjs';
+import { attachPieces, loadFlowSet, planFlowProblems } from '../lib/flows.mjs';
 import { agentName, computeLanes } from '../lib/lanes.mjs';
 import { parsePlan, validatePlan } from '../lib/plan.mjs';
 import { loadRouting } from '../lib/routing.mjs';
+import { loadTeam } from '../lib/team.mjs';
 
 export function runDir(planPath, slug) {
   const root = mainRoot(dirname(resolve(planPath))) ?? dirname(resolve(planPath));
@@ -18,13 +20,19 @@ export function runDir(planPath, slug) {
 export function planLanes(planPath, opts = {}) {
   const text = readFileSync(planPath, 'utf8');
   const plan = parsePlan(text);
-  const { errors, warnings } = validatePlan(plan);
+  const validated = validatePlan(plan);
+  const set = loadFlowSet();
+  const team = loadTeam();
+  const flowCheck = planFlowProblems(plan, set, team);
+  const errors = [...validated.errors, ...flowCheck.errors];
+  const warnings = [...validated.warnings, ...flowCheck.warnings];
   if (errors.length) return { plan, errors, warnings };
   const cfg = loadRouting().lanes ?? {};
   const lanes = computeLanes(plan, {
     maxLaneTasks: Number(opts.maxLaneTasks ?? cfg.maxLaneTasks ?? 6),
     maxParallelLanes: Number(opts.maxLanes ?? cfg.maxParallelLanes ?? 4),
   });
+  attachPieces(plan, lanes, set, team);
   return { plan, errors, warnings: [...warnings, ...lanes.warnings], lanes, specLine: /^\*\*Spec:\*\*\s*(.+)$/m.exec(text)?.[1]?.trim() };
 }
 
@@ -39,6 +47,7 @@ export function renderBrief({ plan, planPath, lane, dir, specLine }) {
   out.push(`Plan: ${resolve(planPath)}`);
   if (specLine) out.push(`Spec: ${specLine}`);
   out.push(`Tier: ${lane.tier} · Risk: ${lane.risk} · Tasks: ${lane.tasks.join(' → ')}`);
+  out.push(`Flow: ${plan.flow}`);
   out.push(`Report: ${join(dir, `lane-${lane.id}.report.md`)}`, '');
   if (lane.segments.length > 1) {
     out.push('This lane is split between agents that work in the same worktree, one after the other:');
@@ -52,6 +61,8 @@ export function renderBrief({ plan, planPath, lane, dir, specLine }) {
     out.push(plan.sections[t.id] ?? `### ${t.id}: ${t.title}`, '');
     out.push('Relay metadata:');
     out.push(`- tier: ${t.tier} · risk: ${t.risk} · code in plan: ${t.code}`);
+    if (t.role) out.push(`- role: ${t.role}`);
+    if (t.tags?.length) out.push(`- tags: ${t.tags.join(', ')}`);
     out.push(`- files: ${t.files.join(', ')}`);
     if (t.deps.length) out.push(`- depends on: ${t.deps.join(', ')}`);
     out.push(`- new-test budget: ${t.tests}${t.behaviors.length ? ` · behaviors: ${t.behaviors.map((b) => `"${b}"`).join('; ')}` : ''}`);
@@ -91,10 +102,12 @@ export function main(argv) {
   }
   const laneCount = lanes.waves.reduce((n, w) => n + w.lanes.length, 0);
   console.log(`plan ${plan.slug}: ${plan.tasks.length} tasks → ${laneCount} lanes in ${lanes.waves.length} wave(s)`);
+  console.log(`flow ${lanes.flow}`);
   for (const w of lanes.waves) {
     console.log(`wave ${w.wave}`);
     for (const l of w.lanes) {
-      console.log(`  lane ${l.id}  [risk ${l.risk}, new tests ≤ ${l.tests}]  ${describeSegments(l)}`);
+      const pieces = l.pieces?.length ? ` · pieces ${l.pieces.map((p) => p.piece).join(', ')}` : '';
+      console.log(`  lane ${l.id}  [risk ${l.risk}, new tests ≤ ${l.tests}]  ${describeSegments(l)}${pieces}`);
     }
   }
   for (const w of res.warnings) console.log(`! ${w}`);

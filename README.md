@@ -22,7 +22,9 @@ It builds on [superpowers](https://github.com/obra/superpowers) by Jesse Vincent
   - [7. Claude Code and Codex together](#7-claude-code-and-codex-together)
   - [8. Forecast, then run for hours](#8-forecast-then-run-for-hours)
   - [9. The board: what is done, at a glance](#9-the-board-what-is-done-at-a-glance)
+  - [10. Flows, pieces and the team](#10-flows-pieces-and-the-team)
 - [Workflows, step by step](#workflows-step-by-step)
+- [relay HQ: how to use it](#relay-hq-how-to-use-it)
 - [Installation](#installation)
 - [What's inside](#whats-inside)
 - [Configuration](#configuration)
@@ -464,6 +466,39 @@ Three places show it:
 
 From a terminal: `relay board <plan> --html --open`.
 
+### 10. Flows, pieces and the team
+
+A run passes six points around the chassis (the plan, then each lane, then each wave, then the final review): `plan.before`, `plan.after`, `lane.before`, `lane.after`, `wave.after`, `final`. Extra work hangs off those points as **pieces**: a piece is one file in `pieces/` naming its role, its brief, its output and when it applies. A **flow** is one file in `flows/` that places pieces at points. `feature` is the default; `bugfix` is the other. A task can set `role` and `tags` in the plan, so a piece can apply only to the tasks that match.
+
+`relay flow at <plan> <point>` lists the pieces that apply at a point, and `relay flow done` records each result in the ledger. `relay flow list` and `relay flow show <flow>` read the flows.
+
+| Role | Title | Avatar | Kind | Tier | Colour |
+|---|---|---|---|---|---|
+| scout | Code Scout | SC | finder | cheap | cyan |
+| architect | Software Architect | AR | planner | strong | red |
+| conductor | Delivery Lead | DL | coordinator | mid | pink |
+| implementer-fast | Engineer | EN | builder | cheap | green |
+| implementer | Software Engineer | SE | builder | mid | blue |
+| implementer-deep | Senior Engineer | SR | builder | strong | purple |
+| test-author | Test Engineer | TE | builder | mid | yellow |
+| reviewer | Code Reviewer | CR | reviewer | mid | orange |
+| business-analyst | Business Analyst | BA | planner | strong | cyan |
+| platform-engineer | Platform Engineer | PE | builder | mid | green |
+
+The two newest roles each own pieces:
+
+- **Business Analyst:**
+  - optional: it joins a plan only when you give it the business documentation, `/relay:plan --business-docs <path> <goal>` (a file or folder in the repository; in HQ, the Business docs field of New plan). Without it both pieces are skipped and the plan runs as before;
+  - `requirements`, before the plan: turns that documentation and the spec into `docs/relay/requirements/<slug>.md` (its first line names the source), with requirements R1…Rn and Given / When / Then acceptance criteria;
+  - `requirements-check`, at the end, when that document exists: marks each R met, partial or missing, with evidence.
+- **Platform Engineer:**
+  - builds the tasks the architect marks `"role": "platform-engineer"` (infra, CI/CD, deploy, configuration, observability);
+  - `platform-review`, after a lane that touches infra: checks rollout and rollback, secrets, migrations, and logs, metrics and health checks. It is read-only, and `relay flow done` blocks it if it commits.
+
+Each role file in `roles/` has a profile (Understands, Receives, Delivers, Never) that is part of the agent's prompt. `relay role new` and `relay piece new` scaffold new ones, and `relay flow add` places a piece in a flow.
+
+The mod's team pane, `/relay-team`, shows who is working on which lane, on which model, with how many tokens. In HQ, the **Team** and **Flows** tabs of the Brain show the same roster and the flows with their pieces.
+
 ## Workflows, step by step
 
 The examples below show what you type and what relay does. Agent output is shortened.
@@ -624,6 +659,164 @@ Leg 1 worked until the window was nearly spent, merged what was clean and wrote 
 
 **From a terminal instead.** With the `relay` command installed in your shell (see [In your own terminal](#in-your-own-terminal)), `relay marathon <plan> --hours 20` does the same under `tmux` or `screen`, and `--status` and `--stop` work the same way.
 
+## relay HQ: how to use it
+
+relay HQ is a local page in your browser for all of your relay work. It shows, across every repository you add:
+
+- what is waiting on you;
+- what is running;
+- every plan down to the task;
+- what your Claude Code and Codex can reach: connectors, API keys, skills and agents.
+
+From the same page you can start work on either tool. Everything on it is read from files on disk, so looking at it costs no tokens. Only a launch spends usage, and it asks first.
+
+### 1. Start it
+
+- **Claude Code:** `/relay:hq`.
+- **Codex, or any terminal:** `relay hq`.
+
+Your browser opens on `http://127.0.0.1:4747`. Running it again reuses the server that is already up.
+
+```text
+relay hq                  start (or reuse) the server and open the browser
+relay hq --port 4800      use another port (the next 10 are tried when one is taken)
+relay hq --no-open        print the URL instead of opening it
+relay hq stop             stop the server
+```
+
+The URL carries a fresh token every time the server starts. Open HQ through `relay hq`, not from a bookmark.
+
+### 2. Add your repositories
+
+Nothing is added for you: you choose which repositories HQ shows. A **project** is a named group of repositories, for example a client's `web`, `api` and `infra`.
+
+- **In the page:** **Add repository** on Home or on a project's page. Type the path, pick a project (or create one), Add.
+- **In a terminal:**
+
+```bash
+relay hq add ~/code/polaris-web --project Polaris
+```
+
+Any path inside a repository works, including a lane worktree: HQ registers the main checkout. A repository can belong to one project at a time.
+
+- **A project's ⋯ menu** (on Home and on its page) has Rename, Add repository and Delete project. Deleting a project moves its repositories to Unassigned; nothing on disk changes.
+- **To move a repository** to another project, use the selector on its card.
+- **Hide** keeps a repository off the dashboard; `relay hq rm <path>` forgets it.
+
+### 3. Read Home from the top
+
+| Section | What is in it |
+|---|---|
+| **Waiting on you** | A blocked lane (with its fix round). A wave whose suite failed. A marathon that ended BLOCKED. A finished plan whose integration branch is not merged yet. Red CI on a branch or PR. A PR asking for your review. Each row opens the place to act. |
+| **Running now** | Every running plan and every launch from HQ: progress bar, wave, harness, model, elapsed time. |
+| **Projects** | One line per project: repositories, running plans, its worst signal. |
+| **Activity** | Ledger lines, commits by relay agents and launches, grouped by repository and plan. Only the newest group starts open. An open group shows its latest three events, and **Show N more** reveals the rest. Groups stay as you leave them while the page refreshes. |
+
+GitHub rows need the `gh` CLI, signed in (`gh auth login`); without it those parts say "not connected". The budget in the top bar comes from your latest Claude Code session; "budget unknown" means there is no recent reading yet.
+
+### 4. Go down to the task
+
+**Home → project → plan → task.**
+
+- **A project's page** shows one card per repository: branch, uncommitted files, ahead/behind, lane worktrees left on disk, its plans with their progress, and its open PRs with CI.
+- **A plan** opens its board, the same as `/relay:board`: waves, lanes and a light on every task.
+- **A task** opens its panel:
+  - tier, risk, test budget, behaviours, files, done check;
+  - the reviewer's latest findings for its lane;
+  - links to the brief, the report, the review package and the worktree;
+  - **Open in editor**.
+
+### 5. Start work from the page
+
+| Button | Where | What it starts |
+|---|---|---|
+| **+ New plan** | a repository card | `/relay:plan` with your goal; runs without questions and writes its assumptions into the spec |
+| **Run** | a plan | the plan, start to finish; a blocked or quiet plan resumes from its ledger |
+| **Marathon** | a plan | `relay marathon` for N hours (Claude Code only) |
+| **Run a skill** | Home | one skill with your prompt |
+| **Status**, **Stop** | a plan, a launch | where it is; stop a launch |
+
+Every button opens a dialog first:
+
+- **Choose** the harness (Claude Code or Codex), the model and effort (default: the `mid` tier from `config/routing.json`) and the permission mode.
+- **Check** the forecast, the current budget and the exact command.
+- **Then** press **Start**, or **Copy command** to run it yourself.
+
+**Start is disabled, with the reason, when:**
+- the plan is already running;
+- the budget is critical;
+- the harness is not installed;
+- a field is out of range.
+
+**Launches** lists everything started from HQ, with its log, its result and, for runs, the outcome line (`DONE`, `PAUSED` or `BLOCKED`). Progress shows up on the plan's board as the run writes its ledger.
+
+**For Codex launches:**
+- install `codex`;
+- install relay's agents in that repository: the dialog offers **Set up Codex**, which runs `relay setup codex <repo>`.
+
+Marathon is Claude Code only for now.
+
+### 6. The Brain
+
+| Tab | What it shows |
+|---|---|
+| **Connectors** | One widget per connector, with its source, tool count, status and harness. Filters: All, Claude, Codex, Needs action. Below: API connections (services used through a key, such as Exa, Parallel or OpenAI) and the CLIs on your PATH. |
+| **API keys** | Every key a connector or skill needs: set, missing, or written into a file. Values are never shown. |
+| **Skills** | Every skill relay, Claude Code and Codex can load, with its description, what references it and, for Claude, how often it was used. |
+| **Team** | relay's roles with their tier and model on both tools, their profile, their tools and where they are generated from, plus your other agents. |
+| **Flows** | relay's flows and the pieces at each point (from `flows/` and `pieces/`), what is generated from what (and whether it is in sync), and which command uses which skill and agent. |
+
+**Where connectors come from:**
+- **Read from disk, always current:**
+  - `~/.claude.json` (user scope);
+  - installed Claude Code plugins;
+  - `~/.codex/config.toml`.
+- **claude.ai account connectors** (Linear, Slack, Notion, and so on) are not on disk. To record them, run `/relay:connectors` once in a Claude Code session. **Refresh** in the Connectors tab runs it for you in the background, but a background run may miss connectors that only the desktop app has; in that case run it in an open session.
+
+**Verify** asks Claude Code and Codex for each server's live status (`claude mcp list`, `codex mcp list`).
+
+### Good to know
+
+- **Security:**
+  - the server listens on 127.0.0.1 only;
+  - every API call needs that start's token, and requests from other sites are refused;
+  - the page sends only intents, never commands: the server builds every command itself.
+- **Files:** `~/.relay/hq/` (mode 0700) holds:
+  - `registry.json` (your projects and repositories);
+  - `server.json` (port, pid, token; mode 0600);
+  - `connectors.json` (the last connector snapshot per tool);
+  - `launches/<id>/` (each launch's command, log and result).
+- **Not in this version:**
+  - token usage per project;
+  - connectors defined inside a single project (`<repo>/.mcp.json`);
+  - marathon on Codex;
+  - a shared team server.
+- **Trying it from a branch, before a release:** the `relay` on your PATH is the installed plugin, so run the checkout directly:
+
+```bash
+claude --plugin-dir ~/Workspaces/relay
+```
+
+```bash
+node ~/Workspaces/relay/bin/relay hq
+```
+
+## Routines
+
+Scheduled engineering checks, run by the harness you choose. The checks are relay CLI work at zero tokens; the one judgment step uses the cheap tier on bounded data.
+
+| Routine | Kind | Default schedule | What it does |
+|---|---|---|---|
+| `pr-hygiene` | passive | mon-fri 09:00 | stale PRs, review requests, approved but unmerged PRs, leftover relay branches and lane worktrees, old merged branches; only what is new, with the command to run |
+| `weekly-report` | active | fri 16:00 | the week across projects: plans, green tasks, rulings, blocked lanes, pieces, launches; up to three suggested routines |
+
+    relay routine enable pr-hygiene --harness codex --project polaris
+    /relay:routine enable weekly-report --all              # in the Claude desktop app
+    relay routine list
+    relay routine new standup-notes --prompt "Summarise yesterday's merged PRs" --kind active --days mon --at 08:30
+
+On Codex, relay writes `~/.codex/automations/relay-<instance>/` and nothing else there. On Claude, `/relay:routine` creates a desktop scheduled task: it runs while the app is open, on the app's default model. Routines never delete, close, comment or push. Caps: runs per week, and the judgment step's data cut to `maxInputChars`. HQ → Routines shows the week, findings, reports and an Enable dialog.
+
 ## Installation
 
 You need a recent **Claude Code** (run `claude update`), **git**, and **Node 20 or newer**. Relay's hooks and its `relay` command run on Node.
@@ -743,8 +936,8 @@ Type `/relay` in Claude Code to see them. They run only when you call them, so t
 
 | Command | What it does |
 |---|---|
-| `/relay:plan <what to build \| spec>` | From an idea to a plan: scouts the code, asks at most three questions, writes a short spec, has the architect write the plan, then shows the tasks, lanes and forecast. Writes no code. |
-| `/relay:run [plan]` | Runs the plan now: the conductor works through the waves in the background while you keep using the session. |
+| `/relay:plan [--unattended] [--flow <flow>] [--business-docs <path>] <what to build \| spec>` | From an idea to a plan: scouts the code, asks at most three questions, writes a short spec, has the architect write the plan, then shows the tasks, lanes and forecast. Writes no code. `--unattended` (how relay HQ launches it) asks nothing and lists its assumptions; `--business-docs` brings in the Business Analyst with that documentation. |
+| `/relay:run [--unattended] [plan]` | Runs the plan now: the conductor works through the waves in the background while you keep using the session. `--unattended` (how relay HQ launches it) asks nothing, waits for the conductor and ends with a `RELAY_LEG` line. |
 | `/relay:status [plan]` | Where a run is: waves, lanes, fix rounds, rulings, budget, and the marathon if one is running. |
 | `/relay:board [plan]` | The roadmap as traffic lights, in the chat and as a page in your browser that follows the run. |
 | `/relay-board` | The same board in a pane beside the chat; a band above the prompt shows it while a run is going. |
@@ -754,6 +947,8 @@ Type `/relay` in Claude Code to see them. They run only when you call them, so t
 | `/relay:marathon status \| stop [now]` | Where a marathon is (leg, wait, last outcome, ledger tail), or end it. |
 | `/relay:calibrate [plan]` | Learns your account's real usage and speed from a finished run; without a plan, shows the current calibration. |
 | `/relay:budget` | The 5-hour and weekly level relay routes by: normal, tight or critical. |
+| `/relay:hq` | Opens relay HQ in your browser: what is waiting on you across every project, running plans, each plan's board down to the task, launches on Claude Code or Codex, your routines, and the Brain (connectors, API keys, skills, the team, flows and their pieces). Looking costs no tokens. |
+| `/relay:connectors` | Records which MCP connectors this session reaches, including claude.ai account connectors, for HQ's Brain. |
 
 Without a plan argument, they use the newest plan in `docs/relay/plans/`. The usual path is `/relay:plan` → read the plan → `/relay:run` (or `/relay:marathon` when it spans more than one window) → `/relay:status` while it runs. Plain words work too: "plan this with relay", then "run it".
 
@@ -780,6 +975,8 @@ Without a plan argument, they use the newest plan in `docs/relay/plans/`. The us
 | `reviewer` | mid | Read-only. Reviews a lane per task against the spec, and audits its tests. |
 | `architect` | strong | Writes the plan and does the final review of the branch. |
 | `conductor` | mid | Runs a whole plan, so coordination happens on Sonnet. |
+| `business-analyst` | strong | Turns business documentation (`--business-docs`) and the spec into a requirements document before the plan is written; only when given. |
+| `platform-engineer` | mid | Builds infrastructure and deployment work in its lane. |
 
 Every worker writes its full report to a file and returns at most eight lines: a status (`DONE`, `DONE_WITH_CONCERNS`, `NEEDS_CONTEXT` or `BLOCKED`), its commits, its test counts, the report path and any concern. The conductor's context stays small however long the run.
 
@@ -790,7 +987,7 @@ Every worker writes its full report to a file and returns at most eight lines: a
 | `session-start` | Claude Code, Codex | Loads the `using-relay` rules and the current budget level into every new session. |
 | `retest-guard` | Claude Code, Codex | Refuses a test command on code that has not changed since its last run. |
 | `protect-tests` | Claude Code, Codex | Refuses edits, from editors or the shell, to protected acceptance tests. |
-| mod (`hooks/register.ts`) | Claude Code | Model routing, budget readings, budget caps, putting `lane-*` agents into their worktrees, and the board's band and pane. |
+| mod (`hooks/register.ts`) | Claude Code | Model routing, budget readings, budget caps, putting `lane-*` agents into their worktrees, the board's band and pane, and `/relay-team`. |
 
 All hooks fail open: if one crashes, the tool call goes ahead as if relay were not installed.
 
@@ -798,8 +995,18 @@ All hooks fail open: if one crashes, the tool call goes ahead as if relay were n
 
 ```text
 relay lanes <plan> [--write]                  validate a plan, show lanes and waves, write briefs
+relay flow list | show <flow>                 the flows relay runs, and the pieces in each
+relay flow at <plan> <point> [--lane <id>]    the pieces that apply at a point, with their briefs
+relay flow done <plan> <piece> --status S --report R  record a piece's result in the ledger
+relay flow add | remove <flow> <piece>        place a piece at a point, or take it out
+relay piece new <id> --role <role> --slot <point>  scaffold a piece
+relay role new <name> --kind K --tier T --title "T"  scaffold a role
 relay forecast <plan>                         agents, worktrees, usage windows and hours the run will take
 relay board <plan> [--html] [--open]          traffic lights for every task, lane and wave; the roadmap page
+relay hq [--port N] [--no-open]               the command centre in your browser; reuses a running server
+relay hq stop | add <path> [--project P]      stop it; register a repository, optionally into a project
+relay hq hide | unhide | rm <path>            keep a repository off the dashboard, or forget it
+relay hq connectors --record [--harness H]    store a connector snapshot (JSON on stdin)
 relay marathon <plan> --hours N [--dry-run]   run the plan unattended across usage windows
 relay marathon <plan> --status | --stop [--now]  where a marathon is, or end it
 relay calibrate <plan> | --show               learn real usage and time rates from a finished run
@@ -880,9 +1087,12 @@ Still to confirm on a real install:
 - [ ] Codex accepts the generated hooks file as written.
 - [ ] The Codex model names in `config/routing.json` match the current ones (they change often).
 - [ ] `relay budget --codex` reads Codex's usage window; it relies on an undocumented file.
+- [ ] relay HQ's Codex launches match `codex exec --help` (`-m`, `-c model_reasoning_effort`, `--sandbox`, `--json`) and `codex mcp list`.
+- [ ] Headless `claude -p` runs `/relay:*` commands and sees the claude.ai account connectors (if not, run `/relay:connectors` once in an open session).
 
 Next:
 
+- relay HQ's next sub-projects: flows as building blocks, the team, the project contract, and routines;
 - a budget bar above the prompt in Claude Code;
 - Codex taking reviews during a marathon's waits, so the other window is not idle;
 - reading the Codex budget through a documented interface;

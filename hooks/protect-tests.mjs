@@ -5,8 +5,8 @@
 // skip or delete them to get green: they report BLOCKED with evidence instead.
 
 import { existsSync, readFileSync } from 'node:fs';
-import { isAbsolute, join, relative, resolve } from 'node:path';
-import { relayDir, worktreeRoot } from '../lib/git.mjs';
+import { isAbsolute, join, resolve } from 'node:path';
+import { relayDir, repoPath, worktreeRoot } from '../lib/git.mjs';
 import { matchesAny } from '../lib/glob.mjs';
 import { literalPrefix, protectedMessage, shellWritesTo } from '../lib/guards.mjs';
 import { allow, block, commandOf, editedPaths, readInput } from '../lib/hookio.mjs';
@@ -23,7 +23,7 @@ try {
     .filter((l) => l && !l.startsWith('#'));
   if (!globs.length) allow();
   const root = worktreeRoot(cwd) ?? cwd;
-  const rel = (p) => relative(root, isAbsolute(p) ? p : resolve(cwd, p)).split('\\').join('/');
+  const rel = (p) => repoPath(root, isAbsolute(p) ? p : resolve(cwd, p)).split('\\').join('/');
 
   for (const p of editedPaths(input.tool_input)) {
     const r = rel(p);

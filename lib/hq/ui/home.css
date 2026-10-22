@@ -1,0 +1,74 @@
+/* The Home view (home.js): three columns around the orb. Every selector is scoped under
+   .hq-home so nothing leaks into the other pages. Colours come from the app.css tokens. */
+.hq-home{font-size:13px;line-height:1.45}
+.hq-home .grid{display:grid;grid-template-columns:330px minmax(0,1fr) 380px;gap:0;min-height:calc(100vh - 48px)}
+.hq-home .col{border-right:1px solid var(--line);padding:18px 16px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.hq-home .col.r{border-right:0;border-left:1px solid var(--line)}
+.hq-home a{text-decoration:none}
+.hq-home .btn{padding:5px 8px}
+.hq-home .list{margin-top:10px}
+.hq-home .list .it{display:flex;gap:10px;align-items:flex-start;padding:7px 4px;border-bottom:1px solid var(--line)}
+.hq-home .list .it:hover{background:var(--soft)}
+.hq-home .it b{display:block;font-size:13px}
+.hq-home .it small{color:var(--mute);font-size:11px}
+.hq-home .red{color:var(--red)}
+.hq-home .empty{margin:8px 0;font-size:12px}
+.hq-home .today>div:last-child{margin-top:8px}
+.hq-home .today .row{display:grid;grid-template-columns:52px 1fr auto;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line);align-items:center}
+.hq-home .t{font:600 11px/1 var(--mono);color:var(--ink2)}
+.hq-home .t.now{color:var(--on-accent);background:var(--accent);border-radius:4px;padding:3px 4px;text-align:center}
+/* centre */
+.hq-home .centre{position:relative;display:flex;flex-direction:column;align-items:center;padding-top:18px;overflow:hidden;min-width:0}
+.hq-home .mark{font-size:34px;font-weight:800;letter-spacing:.01em}
+.hq-home .mark span{color:var(--accent);font-weight:500}
+.hq-home .mark .hex{display:inline-block;width:22px;height:22px;border:2px solid var(--accent);border-radius:5px;transform:rotate(30deg);margin-right:12px;vertical-align:4px}
+.hq-home .sub{letter-spacing:.32em;color:var(--ink2);font-size:12px;margin-top:2px}
+.hq-home .icons{display:flex;gap:8px;margin-top:12px;align-items:center}
+.hq-home .icons button{font:600 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink2);background:var(--panel);border:1px solid var(--line2);border-radius:5px;padding:7px 10px;cursor:pointer}
+.hq-home .icons button:hover{color:var(--accent);border-color:var(--accent-line)}
+.hq-home .stage{position:relative;width:min(440px,84%);aspect-ratio:1/1;container-type:inline-size;margin:26px 0 48px;flex:none}
+.hq-home .orb{position:absolute;left:50%;top:50%;width:62%;height:62%;transform:translate(-50%,-50%)}
+.hq-home .ring{position:absolute;inset:0}
+.hq-home .rb{position:absolute;width:clamp(58px,15cqw,78px);height:clamp(58px,15cqw,78px);translate:-50% -50%;padding:0;border-radius:50%;border:1px solid var(--line2);background:radial-gradient(circle at 50% 35%,var(--tile),var(--panel));display:grid;place-items:center;color:var(--ink);font:clamp(20px,5.4cqw,28px)/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;box-shadow:0 0 0 3px var(--bg);cursor:pointer;text-decoration:none}
+.hq-home .rb:hover{border-color:var(--accent-line)}
+.hq-home .rb.hot{border-color:var(--accent);box-shadow:0 0 14px color-mix(in srgb,var(--accent) 35%,transparent),0 0 0 3px var(--bg)}
+.hq-home .rb .rl{position:absolute;top:calc(100% + 8px);left:50%;translate:-50% 0;display:flex;flex-direction:column;align-items:center;gap:4px;white-space:nowrap;pointer-events:none}
+.hq-home .rb .rl b{font:600 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
+.hq-home .rb .rl small{font:500 11px/1 var(--mono);color:var(--mute)}
+.hq-home .rb.hot .rl small{color:var(--accent)}
+.hq-home .core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
+.hq-home .core b{display:block;font-size:44px;color:var(--accent);text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
+.hq-home .core small{letter-spacing:.24em;color:var(--ink2);font-size:10px;text-transform:uppercase}
+/* running now */
+.hq-home .running{width:min(620px,92%);margin:0 auto 22px}
+.hq-home .ptabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
+.hq-home .ptabs button{font:600 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;padding:6px 9px;border-radius:5px;border:1px solid var(--line2);background:var(--panel);color:var(--ink2);cursor:pointer}
+.hq-home .ptabs button[aria-selected=true]{color:var(--accent);border-color:var(--accent-line);background:var(--accent-bg)}
+.hq-home .agents.idle{width:min(620px,92%);margin:0 auto 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.hq-home .agents.idle .empty{margin:0}
+/* right */
+.hq-home .waiting{margin-top:8px}
+.hq-home .mix{display:flex;gap:3px;margin-top:10px}
+.hq-home .mix span{height:6px;border-radius:3px;background:var(--line2)}
+.hq-home .mix span.red{background:var(--red)}
+.hq-home .mixl{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:5px;font:600 9px/1 var(--mono);letter-spacing:.12em;color:var(--mute);text-transform:uppercase}
+.hq-home table.rt{width:100%;border-collapse:collapse;margin-top:6px}
+.hq-home .rt th{font:600 9px/1 var(--mono);letter-spacing:.16em;color:var(--mute);text-align:left;padding:4px 0}
+.hq-home .rt td{padding:6px 4px 6px 0;border-top:1px solid var(--line);font-size:12px}
+.hq-home .deck{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.hq-home .deck .card{border:1px solid var(--line2);border-radius:9px;padding:9px;margin:0;background:var(--panel)}
+.hq-home .deck .card b{font-size:13px;overflow-wrap:anywhere}
+.hq-home .deck .mdl{font:700 10px/1.2 var(--mono);letter-spacing:.16em;margin:3px 0 7px;color:var(--ink2)}
+.hq-home .deck .acts{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.hq-home .deck .acts .btn{min-width:26px;height:22px;padding:0 6px;display:inline-grid;place-items:center;font-size:11px;letter-spacing:0}
+@media (max-width:1100px){
+  .hq-home .grid{grid-template-columns:minmax(0,1fr)}
+  .hq-home .centre{order:-1;border-bottom:1px solid var(--line)}
+  .hq-home .col,.hq-home .col.r{border:0;border-bottom:1px solid var(--line)}
+}
+.hq-home .waiting{margin-top:10px}
+.hq-home .need{padding:7px 9px;gap:8px}
+.hq-home .need .nmain b{font-size:12px}
+.hq-home .need .btn{padding:5px 7px}
+.hq-home .waiting .btn.more{margin-top:6px}
+@media (max-width:700px){.hq-home .mark{font-size:26px}}
