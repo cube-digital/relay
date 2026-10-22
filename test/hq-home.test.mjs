@@ -28,7 +28,7 @@ const restore = (key, value) => {
 
 const stamp = (d) => d.toISOString().slice(0, 16).replace('T', ' ');
 
-test('GET /api/home returns today rows with START, running lane segments matching the board, and a 14-item ring', async () => {
+test('GET /api/home returns today rows with START, running lane segments matching the board, and a six-section ring', async () => {
   const saved = { RELAY_HOME: process.env.RELAY_HOME, HOME: process.env.HOME };
   process.env.RELAY_HOME = mkdtempSync(join(tmpdir(), 'relay-hq-home-'));
   process.env.HOME = mkdtempSync(join(tmpdir(), 'relay-hq-fakehome-'));
@@ -69,7 +69,19 @@ test('GET /api/home returns today rows with START, running lane segments matchin
     assert.ok(segments.length > 0);
     assert.ok(segments.every((s) => field('title').has(s.title) && field('kind').has(s.kind)), JSON.stringify(segments));
 
-    assert.equal(home.ring.length, 14);
+    assert.deepEqual(home.ring.map((r) => r.id), ['projects', 'plans', 'recos', 'routines', 'activity', 'brain']);
+    // every section button opens its own page
+    assert.equal(new Set(home.ring.map((r) => r.href)).size, home.ring.length);
+
+    // the project page carries what is running and what waits, the Plans page every plan with its project
+    addRepo(dir, { project: 'Billing' });
+    const proj = (await get(port, token, '/api/projects/billing')).body;
+    assert.equal(proj.running.length, 1);
+    assert.equal(proj.running[0].slug, 'billing-export');
+    assert.ok(Array.isArray(proj.attention));
+    const { plans } = (await get(port, token, '/api/plans')).body;
+    assert.deepEqual(plans.map((p) => [p.slug, p.project, p.status]), [['billing-export', 'billing', 'running']]);
+    assert.equal(plans[0].board, undefined, 'the Plans list does not ship whole boards');
   } finally {
     server.close();
     restore('RELAY_HOME', saved.RELAY_HOME);
