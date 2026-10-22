@@ -1,0 +1,999 @@
+{
+ "$comment": "Facts about the Codex (ChatGPT) coding harness that relay's math depends on, extracted with REA 6.7.0 from @openai/codex 0.163.0 (linux-x64). Every entry carries `evidence`: how it was established. Kinds: observed (REA process capture of the real binary), static (string in the binary's .rodata, file offset given), documented (OpenAI docs, URL given), community (unofficial, unverified), prior (our assumption, to be calibrated).",
+ "target": {
+  "package": "@openai/codex",
+  "version": "0.163.0",
+  "platformPackage": "@openai/codex@0.163.0-linux-x64",
+  "binary": "vendor/x86_64-unknown-linux-musl/bin/codex",
+  "sha256": "399ff69c431c066e40de318fba45c2b07f45a76b19939d247ee4828fc70c4215",
+  "bytes": 296865480,
+  "format": "ELF64 x86-64 static-pie, stripped, musl",
+  "compiler": "rustc 1.95.0 (59807616e 2026-04-14), GCC 9.4.0",
+  "rodataFileOffset": "0xe4fd000",
+  "rodataBytes": 15048396,
+  "reaVersion": "6.7.0",
+  "methods": [
+   "rea capture-process (PTY captures of codex subcommands, app-server JSON-RPC over stdio, the TUI)",
+   "rea execute-rizin-command with REA_RIZIN_COMMAND=radare2 5.5.0 (rizin fork-compatible one-shot profile) on the binary and on its .rodata slice",
+   "rea inspect-with-objdump file_headers/section_headers",
+   "codex app-server generate-json-schema --experimental (the binary emits its own protocol schema)",
+   "codex debug models (the binary emits its bundled model catalog)"
+  ],
+  "analyzedOn": "2026-10-22"
+ },
+ "models": [
+  {
+   "slug": "gpt-6-astra",
+   "displayName": "GPT-6-Astra",
+   "description": "Frontier intelligence for the most demanding work.",
+   "visibility": "list",
+   "priority": 2,
+   "contextWindow": 272000,
+   "maxContextWindow": 872000,
+   "effectiveContextWindowPercent": 95,
+   "effectiveContextWindow": 258400,
+   "autoCompactTokenLimit": null,
+   "defaultReasoningEffort": "low",
+   "reasoningEfforts": [
+    "low",
+    "medium",
+    "high",
+    "xhigh",
+    "max",
+    "ultra"
+   ],
+   "supportsReasoningEffortUpdates": true,
+   "serviceTiers": [
+    {
+     "id": "priority",
+     "name": "Fast",
+     "description": "2x speed, increased usage"
+    }
+   ],
+   "defaultServiceTier": null,
+   "additionalSpeedTiers": [
+    "fast"
+   ],
+   "multiAgentVersion": "v2",
+   "multiAgentReasoningEffort": "xhigh",
+   "truncationPolicy": {
+    "mode": "tokens",
+    "limit": 10000
+   },
+   "toolMode": "code_mode_only",
+   "upgradeTo": null,
+   "tokenBudget": {
+    "enabled": false,
+    "reminder_threshold_tokens": 6144,
+    "auto_compact_fallback_buffer_tokens": 16384
+   }
+  },
+  {
+   "slug": "gpt-6.1-sol",
+   "displayName": "GPT-6.1-Sol",
+   "description": "Latest workhorse model for coding and everyday work.",
+   "visibility": "list",
+   "priority": 1,
+   "contextWindow": 272000,
+   "maxContextWindow": 872000,
+   "effectiveContextWindowPercent": 95,
+   "effectiveContextWindow": 258400,
+   "autoCompactTokenLimit": null,
+   "defaultReasoningEffort": "low",
+   "reasoningEfforts": [
+    "low",
+    "medium",
+    "high",
+    "xhigh",
+    "max",
+    "ultra"
+   ],
+   "supportsReasoningEffortUpdates": true,
+   "serviceTiers": [
+    {
+     "id": "priority",
+     "name": "Fast",
+     "description": "2x speed, increased usage"
+    }
+   ],
+   "defaultServiceTier": null,
+   "additionalSpeedTiers": [
+    "fast"
+   ],
+   "multiAgentVersion": "v2",
+   "multiAgentReasoningEffort": "xhigh",
+   "truncationPolicy": {
+    "mode": "tokens",
+    "limit": 10000
+   },
+   "toolMode": "code_mode_only",
+   "upgradeTo": null,
+   "tokenBudget": {
+    "enabled": false,
+    "reminder_threshold_tokens": 6144,
+    "auto_compact_fallback_buffer_tokens": 16384
+   }
+  },
+  {
+   "slug": "gpt-6-sol",
+   "displayName": "GPT-6-Sol",
+   "description": "Previous generation workhorse model.",
+   "visibility": "list",
+   "priority": 3,
+   "contextWindow": 272000,
+   "maxContextWindow": 872000,
+   "effectiveContextWindowPercent": 95,
+   "effectiveContextWindow": 258400,
+   "autoCompactTokenLimit": null,
+   "defaultReasoningEffort": "medium",
+   "reasoningEfforts": [
+    "low",
+    "medium",
+    "high",
+    "xhigh",
+    "max",
+    "ultra"
+   ],
+   "supportsReasoningEffortUpdates": false,
+   "serviceTiers": [
+    {
+     "id": "priority",
+     "name": "Fast",
+     "description": "1.5x speed"
+    }
+   ],
+   "defaultServiceTier": "priority",
+   "additionalSpeedTiers": [
+    "fast"
+   ],
+   "multiAgentVersion": "v2",
+   "multiAgentReasoningEffort": null,
+   "truncationPolicy": {
+    "mode": "tokens",
+    "limit": 10000
+   },
+   "toolMode": "code_mode_only",
+   "upgradeTo": null,
+   "tokenBudget": {
+    "enabled": false,
+    "reminder_threshold_tokens": 6144,
+    "auto_compact_fallback_buffer_tokens": 16384
+   }
+  },
+  {
+   "slug": "gpt-6-luna",
+   "displayName": "GPT-6-Luna",
+   "description": "Fast and affordable model for easier tasks.",
+   "visibility": "list",
+   "priority": 4,
+   "contextWindow": 272000,
+   "maxContextWindow": 872000,
+   "effectiveContextWindowPercent": 95,
+   "effectiveContextWindow": 258400,
+   "autoCompactTokenLimit": null,
+   "defaultReasoningEffort": "medium",
+   "reasoningEfforts": [
+    "low",
+    "medium",
+    "high",
+    "xhigh",
+    "max"
+   ],
+   "supportsReasoningEffortUpdates": false,
+   "serviceTiers": [
+    {
+     "id": "priority",
+     "name": "Fast",
+     "description": "1.5x speed"
+    }
+   ],
+   "defaultServiceTier": "priority",
+   "additionalSpeedTiers": [
+    "fast"
+   ],
+   "multiAgentVersion": "v2",
+   "multiAgentReasoningEffort": null,
+   "truncationPolicy": {
+    "mode": "tokens",
+    "limit": 10000
+   },
+   "toolMode": "code_mode_only",
+   "upgradeTo": null,
+   "tokenBudget": {
+    "enabled": false,
+    "reminder_threshold_tokens": 6144,
+    "auto_compact_fallback_buffer_tokens": 16384
+   }
+  },
+  {
+   "slug": "gpt-5.6-sol",
+   "displayName": "GPT-5.6-Sol",
+   "description": "Older generation workhorse model.",
+   "visibility": "list",
+   "priority": 5,
+   "contextWindow": 272000,
+   "maxContextWindow": 872000,
+   "effectiveContextWindowPercent": 95,
+   "effectiveContextWindow": 258400,
+   "autoCompactTokenLimit": null,
+   "defaultReasoningEffort": "low",
+   "reasoningEfforts": [
+    "low",
+    "medium",
+    "high",
+    "xhigh",
+    "max",
+    "ultra"
+   ],
+   "supportsReasoningEffortUpdates": false,
+   "serviceTiers": [
+    {
+     "id": "priority",
+     "name": "Fast",
+     "description": "1.5x speed, increased usage"
+    }
+   ],
+   "defaultServiceTier": null,
+   "additionalSpeedTiers": [
+    "fast"
+   ],
+   "multiAgentVersion": "v2",
+   "multiAgentReasoningEffort": null,
+   "truncationPolicy": {
+    "mode": "tokens",
+    "limit": 10000
+   },
+   "toolMode": "code_mode_only",
+   "upgradeTo": "gpt-6-sol",
+   "tokenBudget": {
+    "enabled": false,
+    "reminder_threshold_tokens": 6144,
+    "auto_compact_fallback_buffer_tokens": 16384
+   }
+  },
+  {
+   "slug": "gpt-5.6-terra",
+   "displayName": "GPT-5.6-Terra",
+   "description": "Older balanced model for straightforward work.",
+   "visibility": "list",
+   "priority": 8,
+   "contextWindow": 272000,
+   "maxContextWindow": 872000,
+   "effectiveContextWindowPercent": 95,
+   "effectiveContextWindow": 258400,
+   "autoCompactTokenLimit": null,
+   "defaultReasoningEffort": "medium",
+   "reasoningEfforts": [
+    "low",
+    "medium",
+    "high",
+    "xhigh",
+    "max",
+    "ultra"
+   ],
+   "supportsReasoningEffortUpdates": false,
+   "serviceTiers": [
+    {
+     "id": "priority",
+     "name": "Fast",
+     "description": "1.5x speed, increased usage"
+    }
+   ],
+   "defaultServiceTier": null,
+   "additionalSpeedTiers": [
+    "fast"
+   ],
+   "multiAgentVersion": "v2",
+   "multiAgentReasoningEffort": null,
+   "truncationPolicy": {
+    "mode": "tokens",
+    "limit": 10000
+   },
+   "toolMode": "code_mode_only",
+   "upgradeTo": "gpt-6-sol",
+   "tokenBudget": {
+    "enabled": false,
+    "reminder_threshold_tokens": 6144,
+    "auto_compact_fallback_buffer_tokens": 16384
+   }
+  },
+  {
+   "slug": "gpt-5.6-luna",
+   "displayName": "GPT-5.6-Luna",
+   "description": "Older fast and efficient model.",
+   "visibility": "list",
+   "priority": 9,
+   "contextWindow": 272000,
+   "maxContextWindow": 872000,
+   "effectiveContextWindowPercent": 95,
+   "effectiveContextWindow": 258400,
+   "autoCompactTokenLimit": null,
+   "defaultReasoningEffort": "medium",
+   "reasoningEfforts": [
+    "low",
+    "medium",
+    "high",
+    "xhigh",
+    "max"
+   ],
+   "supportsReasoningEffortUpdates": false,
+   "serviceTiers": [
+    {
+     "id": "priority",
+     "name": "Fast",
+     "description": "1.5x speed, increased usage"
+    }
+   ],
+   "defaultServiceTier": null,
+   "additionalSpeedTiers": [
+    "fast"
+   ],
+   "multiAgentVersion": "v1",
+   "multiAgentReasoningEffort": null,
+   "truncationPolicy": {
+    "mode": "tokens",
+    "limit": 10000
+   },
+   "toolMode": "code_mode_only",
+   "upgradeTo": "gpt-6-luna",
+   "tokenBudget": {
+    "enabled": false,
+    "reminder_threshold_tokens": 6144,
+    "auto_compact_fallback_buffer_tokens": 16384
+   }
+  },
+  {
+   "slug": "gpt-daybreak-blue-latest",
+   "displayName": "Daybreak Blue",
+   "description": "Latest frontier agentic coding model for broad defensive cybersecurity work.",
+   "visibility": "hide",
+   "priority": 11,
+   "contextWindow": 272000,
+   "maxContextWindow": 872000,
+   "effectiveContextWindowPercent": 95,
+   "effectiveContextWindow": 258400,
+   "autoCompactTokenLimit": null,
+   "defaultReasoningEffort": "low",
+   "reasoningEfforts": [
+    "low",
+    "medium",
+    "high",
+    "xhigh",
+    "max",
+    "ultra"
+   ],
+   "supportsReasoningEffortUpdates": false,
+   "serviceTiers": [],
+   "defaultServiceTier": null,
+   "additionalSpeedTiers": [],
+   "multiAgentVersion": "v2",
+   "multiAgentReasoningEffort": null,
+   "truncationPolicy": {
+    "mode": "tokens",
+    "limit": 10000
+   },
+   "toolMode": "code_mode_only",
+   "upgradeTo": null,
+   "tokenBudget": {
+    "enabled": false,
+    "reminder_threshold_tokens": 6144,
+    "auto_compact_fallback_buffer_tokens": 16384
+   }
+  },
+  {
+   "slug": "gpt-daybreak-red-latest",
+   "displayName": "Daybreak Red",
+   "description": "Cyber-permissive variant of our latest frontier agentic coding model for advanced, authorized cybersecurity research.",
+   "visibility": "hide",
+   "priority": 12,
+   "contextWindow": 372000,
+   "maxContextWindow": 372000,
+   "effectiveContextWindowPercent": 95,
+   "effectiveContextWindow": 353400,
+   "autoCompactTokenLimit": null,
+   "defaultReasoningEffort": "medium",
+   "reasoningEfforts": [
+    "low",
+    "medium",
+    "high",
+    "xhigh",
+    "max",
+    "ultra"
+   ],
+   "supportsReasoningEffortUpdates": false,
+   "serviceTiers": [],
+   "defaultServiceTier": null,
+   "additionalSpeedTiers": [],
+   "multiAgentVersion": "v2",
+   "multiAgentReasoningEffort": null,
+   "truncationPolicy": {
+    "mode": "tokens",
+    "limit": 10000
+   },
+   "toolMode": "code_mode_only",
+   "upgradeTo": null,
+   "tokenBudget": {}
+  },
+  {
+   "slug": "gpt-5.5",
+   "displayName": "GPT-5.5",
+   "description": "Legacy coding model.",
+   "visibility": "list",
+   "priority": 13,
+   "contextWindow": 272000,
+   "maxContextWindow": 272000,
+   "effectiveContextWindowPercent": 95,
+   "effectiveContextWindow": 258400,
+   "autoCompactTokenLimit": null,
+   "defaultReasoningEffort": "medium",
+   "reasoningEfforts": [
+    "low",
+    "medium",
+    "high",
+    "xhigh"
+   ],
+   "supportsReasoningEffortUpdates": false,
+   "serviceTiers": [
+    {
+     "id": "priority",
+     "name": "Fast",
+     "description": "1.5x speed, increased usage"
+    }
+   ],
+   "defaultServiceTier": null,
+   "additionalSpeedTiers": [
+    "fast"
+   ],
+   "multiAgentVersion": null,
+   "multiAgentReasoningEffort": null,
+   "truncationPolicy": {
+    "mode": "tokens",
+    "limit": 10000
+   },
+   "toolMode": null,
+   "upgradeTo": "gpt-6-sol",
+   "tokenBudget": {}
+  },
+  {
+   "slug": "codex-auto-review",
+   "displayName": "Codex Auto Review",
+   "description": "Automatic approval review model for Codex.",
+   "visibility": "hide",
+   "priority": 43,
+   "contextWindow": 272000,
+   "maxContextWindow": 872000,
+   "effectiveContextWindowPercent": 95,
+   "effectiveContextWindow": 258400,
+   "autoCompactTokenLimit": null,
+   "defaultReasoningEffort": "medium",
+   "reasoningEfforts": [
+    "low",
+    "medium",
+    "high",
+    "xhigh",
+    "max"
+   ],
+   "supportsReasoningEffortUpdates": false,
+   "serviceTiers": [
+    {
+     "id": "priority",
+     "name": "Fast",
+     "description": "1.5x speed, increased usage"
+    }
+   ],
+   "defaultServiceTier": null,
+   "additionalSpeedTiers": [
+    "fast"
+   ],
+   "multiAgentVersion": "v1",
+   "multiAgentReasoningEffort": null,
+   "truncationPolicy": {
+    "mode": "tokens",
+    "limit": 10000
+   },
+   "toolMode": "code_mode_only",
+   "upgradeTo": null,
+   "tokenBudget": {}
+  }
+ ],
+ "pricing": {
+  "$comment": "Credits per 1M tokens at Standard speed, input / cached input / output. Reasoning tokens are output tokens. Codex has no separate cache-write charge.",
+  "evidence": "documented: https://learn.chatgpt.com/docs/pricing (read 2026-10-22)",
+  "creditsPerMillionTokens": {
+   "gpt-6-astra": {
+    "input": 250,
+    "cachedInput": 25,
+    "output": 1250
+   },
+   "gpt-6.1-sol": {
+    "input": 50,
+    "cachedInput": 2.5,
+    "output": 250
+   },
+   "gpt-6-sol": {
+    "input": 50,
+    "cachedInput": 5,
+    "output": 250
+   },
+   "gpt-6-luna": {
+    "input": 2.5,
+    "cachedInput": 0.25,
+    "output": 12.5
+   }
+  },
+  "speedMultipliers": {
+   "$comment": "Relative to Standard. `included` applies to subscription usage limits; `credits` to purchased credits / pay-as-you-go. The catalog describes the Fast tier as '2x speed, increased usage' (astra, sol 6.1) and '1.5x speed' (sol 6, luna; fast is their default_service_tier).",
+   "standard": {
+    "included": 1,
+    "credits": 1,
+    "speedup": 1
+   },
+   "fast": {
+    "included": 2.5,
+    "credits": 2,
+    "speedup": {
+     "gpt-6-astra": 2,
+     "gpt-6.1-sol": 2,
+     "gpt-6-sol": 1.5,
+     "gpt-6-luna": 1.5
+    }
+   },
+   "ultrafast": {
+    "included": 8,
+    "credits": 6,
+    "speedup": null,
+    "availability": "Pro $500 and eligible Enterprise/Edu"
+   }
+  },
+  "messagesPerFiveHoursPlus": {
+   "$comment": "OpenAI's own estimate of local messages per 5-hour period on Plus / Standard Business; an ordering check for the credit weights.",
+   "gpt-6-astra": [
+    5,
+    45
+   ],
+   "gpt-6.1-sol": [
+    15,
+    160
+   ],
+   "gpt-6-sol": [
+    15,
+    150
+   ],
+   "gpt-6-luna": [
+    350,
+    3000
+   ]
+  },
+  "extendedContext": {
+   "$comment": "community: requests above 272,000 input tokens are priced at 2x input (matches catalog max_context_window 872000 vs context_window 272000)",
+   "evidence": "community: codex.danielvaughan.com 2026-07-26",
+   "thresholdTokens": 272000,
+   "inputMultiplier": 2
+  }
+ },
+ "rateLimits": {
+  "windowsByPlan": {
+   "$comment": "documented: Plus and Standard Business limits are estimated per five-hour period plus a weekly limit; Pro plans currently have no five-hour limit; Enterprise/Edu flexible pricing has no fixed limits (credits). Durations in minutes are what the backend reports in windowDurationMins / window_minutes.",
+   "evidence": "documented: https://learn.chatgpt.com/docs/pricing; static: status-line items five-hour-limit, weekly-limit at .rodata 0x0e6d6097",
+   "plus": [
+    {
+     "id": "primary",
+     "minutes": 300
+    },
+    {
+     "id": "secondary",
+     "minutes": 10080
+    }
+   ],
+   "business": [
+    {
+     "id": "primary",
+     "minutes": 300
+    },
+    {
+     "id": "secondary",
+     "minutes": 10080
+    }
+   ],
+   "team": [
+    {
+     "id": "primary",
+     "minutes": 300
+    },
+    {
+     "id": "secondary",
+     "minutes": 10080
+    }
+   ],
+   "pro": [
+    {
+     "id": "primary",
+     "minutes": 10080
+    }
+   ],
+   "promax": [
+    {
+     "id": "primary",
+     "minutes": 10080
+    }
+   ],
+   "enterprise": [],
+   "unknown": [
+    {
+     "id": "primary",
+     "minutes": 300
+    },
+    {
+     "id": "secondary",
+     "minutes": 10080
+    }
+   ]
+  },
+  "planTypes": [
+   "free",
+   "go",
+   "plus",
+   "pro",
+   "prolite",
+   "promax",
+   "team",
+   "self_serve_business_prolite",
+   "self_serve_business_usage_based",
+   "business",
+   "ent26",
+   "enterprise_cbp_automation",
+   "enterprise_cbp_usage_based",
+   "enterprise",
+   "edu",
+   "edu_plus",
+   "edu_pro",
+   "unknown"
+  ],
+  "appServerV2": {
+   "evidence": "observed: codex app-server generate-json-schema --experimental \u2192 v2/GetAccountRateLimitsResponse.json, AccountRateLimitsUpdatedNotification.json; observed: account/rateLimits/read over stdio returns -32600 'codex account authentication required to read rate limits' without ChatGPT auth",
+   "readMethod": "account/rateLimits/read",
+   "updateNotification": "account/rateLimits/updated (sparse rolling update; merge into the last read)",
+   "window": {
+    "usedPercent": "int32",
+    "resetsAt": "unix seconds | null",
+    "windowDurationMins": "int64 | null"
+   },
+   "snapshot": [
+    "primary",
+    "secondary",
+    "planType",
+    "limitId",
+    "limitName",
+    "normalModelSlug",
+    "credits{hasCredits,unlimited,balance}",
+    "individualLimit{limit,used,remainingPercent,resetsAt}",
+    "spendControlReached",
+    "rateLimitReachedType"
+   ],
+   "response": [
+    "rateLimits (single-bucket view)",
+    "rateLimitsByLimitId (multi-bucket view keyed by metered limit_id, e.g. codex)",
+    "rateLimitResetCredits{availableCount,credits[]}",
+    "ordinaryUsageAllowed",
+    "accountId",
+    "rateLimitUpsell"
+   ],
+   "resetCredits": {
+    "consume": "account/rateLimitResetCredit/consume {idempotencyKey, creditId?} \u2192 outcome reset | nothingToReset | noCredit | alreadyRedeemed",
+    "credit": [
+     "id",
+     "resetType codexRateLimits",
+     "status available|redeeming|redeemed",
+     "grantedAt",
+     "expiresAt",
+     "title",
+     "description"
+    ]
+   },
+   "authRequired": "ChatGPT (codex account) auth; API-key sessions get no rate-limit data (TUI /status shows 'Limits: data not available yet')"
+  },
+  "coreProtocol": {
+   "evidence": "static: TokenCountEvent{info,rate_limits}, RateLimitWindow{used_percent,window_minutes,resets_at}, RateLimitSnapshot name at 0x0e776da3 and its field list (limit_name,normal_model_slug,primary,secondary,credits,spend_control_reached,plan_type,rate_limit_reached_type) at 0x0e94db3c; TokenCountEvent 'with 2 elements' at 0x0eb212a2; `resets_in_seconds` no longer exists (0 occurrences)",
+   "rolloutEvent": "event_msg payload type token_count: {info: {total_token_usage, last_token_usage, model_context_window}, rate_limits: {...snake_case...}}",
+   "window": {
+    "used_percent": "number",
+    "window_minutes": "number | null",
+    "resets_at": "unix seconds | null"
+   }
+  },
+  "backend": {
+   "evidence": "static: endpoints at .rodata 0x0e5331b4 (/wham/usage), 0x0e52fabe (/wham/usage/thread-estimates/query), 0x0e533181 (/wham/usage/thread_usage/query), 0x0e5331e9 (/wham/rate-limit-reset-credits), 0x0e533237 (/consume); base https://chatgpt.com/backend-api/codex (0x0e73d508); RateLimitStatusDetails{used_percent,limit_window_seconds,reset_after_seconds} 0x0e70990a",
+   "usageRead": "GET /wham/usage \u2192 plan_type, rate_limit{primary_window,...}, credits, spend_control, additional_rate_limits[{limit_name,metered_feature,...}], rate_limit_reached_type",
+   "threadEstimates": "POST /wham/usage/thread-estimates/query \u2192 estimated_usage_credits_micros, estimated_usage_usd_micros, native_usage_usd_micros, groups[{model, reasoning_effort, speed, net_new_input_tokens, cached_input_tokens, input_tokens, output_tokens, total_tokens, estimated_usage_credits_micros, usage_limit, credit_type}]",
+   "appServerUsageRead": "account/usage/read {threadId?} \u2192 summary{lifetimeTokens,peakDailyTokens,...}, dailyUsageBuckets, threadUsage"
+  },
+  "purchasedResets": {
+   "evidence": "documented: https://help.openai.com/en/articles/20001507-paid-weekly-work-and-codex-rate-limit-resets",
+   "effect": "restores both the 5-hour and the weekly usage immediately; pulls the weekly allowance forward (no extra usage); the new weekly period starts at the first request after the reset; Plus and Pro personal accounts only; cannot be banked",
+   "bankedResets": "community: Codex app 26.609 added banked resets (expire 30 days after grant); protocol: rateLimitResetCredits"
+  },
+  "clientNudges": {
+   "evidence": "static: 0x0ec2b902 'rate-limit-switch-prompt \u2026 Uses fewer credits for upcoming turns \u2026 Approaching rate limits'; notice key hide_rate_limit_model_nudge (0x0e779d9b) and hide_rate_limit_warning (packed field table 0x0e5d51d0); memories.min_rate_limit_remaining_percent default 25 (documented)",
+   "note": "the TUI itself proposes switching to a cheaper model when approaching limits; memory generation is gated at 25% remaining"
+  }
+ },
+ "tokenUsage": {
+  "breakdown": [
+   "input_tokens",
+   "cached_input_tokens",
+   "cache_write_input_tokens (default 0; no charge)",
+   "output_tokens",
+   "reasoning_output_tokens",
+   "total_tokens"
+  ],
+  "sources": {
+   "rolloutTokenCount": "sessions/YYYY/MM/DD/rollout-<ts>-<thread>.jsonl: event_msg/token_count (info + rate_limits); task_started carries model_context_window",
+   "execJson": "codex exec --json: thread.started, turn.started (observed), turn.completed{usage{input_tokens,cached_input_tokens,cache_write_input_tokens,output_tokens,reasoning_output_tokens}}, turn.failed, item.started|updated|completed, error (static 0x0e967814; no turn completed in the sandbox)",
+   "appServer": "thread/tokenUsage/updated {threadId, turnId, tokenUsage{last,total,modelContextWindow}}; turn/completed",
+   "stateDb": "$CODEX_HOME/state_5.sqlite threads(id, rollout_path, model, reasoning_effort, tokens_used, agent_role, agent_nickname, agent_path, thread_source, history_mode, \u2026), thread_spawn_edges(parent_thread_id, child_thread_id, status)",
+   "threadHistoryDb": "$CODEX_HOME/thread_history_1.sqlite thread_turns(thread_id, turn_id, status, started_at, completed_at, duration_ms, \u2026), thread_items(item_json)",
+   "turnMetrics": "static 0x0e75bb6f: turn analytics fields usage_limit_window_minutes, steer_count, total_tool_call_count, shell_command_count, file_change_count, mcp_tool_call_count, subagent_tool_call_count, time_to_first_token_ms, duration_ms"
+  }
+ },
+ "context": {
+  "effectiveContextWindow": {
+   "value": 258400,
+   "evidence": "observed: task_started.model_context_window in the exec rollout = 258400 = 272000 \u00d7 95% (catalog effective_context_window_percent)"
+  },
+  "configKeys": [
+   "model_context_window",
+   "model_auto_compact_token_limit (unset uses model defaults; catalog auto_compact_token_limit is null for every model \u2192 built-in default, number not recovered)",
+   "model_auto_compact_token_limit_scope total|body_after_prefix (default total)",
+   "model_post_turn_compact_threshold_percent",
+   "compact_prompt",
+   "experimental_compact_prompt_file"
+  ],
+  "toolOutputTruncation": {
+   "mode": "tokens",
+   "limit": 10000,
+   "evidence": "catalog truncation_policy"
+  },
+  "compactionHooks": [
+   "PreCompact",
+   "PostCompact (input: trigger, transcript_path)"
+  ],
+  "tokenBudgetMode": {
+   "evidence": "catalog model_messages.token_budget (feature token_budget under development, disabled)",
+   "reminderThresholdTokens": 6144,
+   "autoCompactFallbackBufferTokens": 16384,
+   "tools": [
+    "notes",
+    "history",
+    "new_context",
+    "get_context_remaining ('You have N weighted tokens left in the shared session token budget.' static 0x0e540631)"
+   ]
+  },
+  "asyncCompaction": "feature async_compaction (under development); remote_compaction capability flag in ModelProviderCapabilities"
+ },
+ "multiAgent": {
+  "version": "v2 for gpt-6-* (multi_agent feature stable; multi_agent_v2 flag off by default but catalog multi_agent_version=v2)",
+  "tools": {
+   "spawn_agent": [
+    "task_name",
+    "agent_type",
+    "fork_turns none|all",
+    "items|message",
+    "model (override; 'Pick model overrides from the latest <model_catalog> listing'; reasoning effort and service tier are validated against the child model)"
+   ],
+   "send_input": [
+    "agent id",
+    "message|items",
+    "interrupt"
+   ],
+   "followup_task": [],
+   "wait_agent": [
+    "agent ids (first to finish)"
+   ],
+   "wait (mailbox)": [],
+   "close_agent": [
+    "Completed agents remain open and count toward the concurrency limit until closed"
+   ],
+   "interrupt_agent": [],
+   "list_agents": []
+  },
+  "evidence": "static 0x0e902eb4\u20130x0e903200, 0x0e8d72ed (codex.multi_agent.spawn task_name agent_type fork_turns), 0x0e53bff8",
+  "config": {
+   "agents.enabled": true,
+   "agents.max_concurrent_threads_per_session": "unset \u2192 harness default (number not recovered; legacy alias max_threads)",
+   "agents.max_depth": "1 (V1 only; ignored by V2)",
+   "agents.default_subagent_model": "documented: unset \u2192 the subagent inherits the parent's model (observed value gpt-6-luna came from the sandbox config.toml)",
+   "agents.default_subagent_reasoning_effort": "documented: unset \u2192 the model's default effort when a model is set, else inherited (observed value low came from the sandbox config.toml)",
+   "agents.interrupt_message": true,
+   "agents.job_max_runtime_seconds": "(agent jobs)",
+   "evidence": "keys: static 0x0e6c33bf; values: observed TUI /debug-config in a sandbox whose user config.toml set default_subagent_model=gpt-6-luna and default_subagent_reasoning_effort=low (those two lines show configured values); inherit semantics: documented"
+  },
+  "builtInRoles": {
+   "default": "general-purpose",
+   "worker": "execution and production work",
+   "explorer": "read-heavy codebase questions, 'fast and authoritative', spawn several in parallel",
+   "awaiter": "model_reasoning_effort=low, background_terminal_max_timeout=3600000 (static 0x0e9224a7)"
+  },
+  "agentToml": {
+   "fields": [
+    "name",
+    "description",
+    "developer_instructions",
+    "model",
+    "model_reasoning_effort",
+    "model_reasoning_summary",
+    "model_verbosity",
+    "features.*",
+    "skills.*",
+    "nickname_candidates",
+    "config_file"
+   ],
+   "notOverridable": [
+    "sandbox_mode",
+    "approval_policy",
+    "model_provider",
+    "mcp_servers"
+   ],
+   "locations": [
+    "~/.codex/agents/",
+    "<project>/.codex/agents/"
+   ],
+   "evidence": "documented: learn.chatgpt.com/docs/agent-configuration/subagents; static AgentRoleToml{description,config_file,nickname_candidates} 0x0e75197e"
+  },
+  "persistence": "every subagent is its own thread (own rollout, own row in threads with agent_role/agent_path, edge in thread_spawn_edges) \u2192 per-agent token and credit attribution is exact",
+  "serviceTier": "subagents follow the root session's service tier (documented)",
+  "errors": [
+   "general error enum (static 0x0eaf830a) includes AgentLimitReached (the concurrency cap), SessionBudgetExceeded, ContextWindowExceeded, UsageLimitReached, RateLimitExceeded, FlexUnavailable"
+  ],
+  "agentJobs": "static: agent_jobs / agent_job_items tables (CSV batch jobs: instruction, input_csv_path, output_csv_path, assigned_thread_id, attempt_count)"
+ },
+ "hooks": {
+  "events": [
+   "PreToolUse",
+   "PermissionRequest",
+   "PostToolUse",
+   "PreCompact",
+   "PostCompact",
+   "SessionStart",
+   "SessionEnd",
+   "SubagentStart",
+   "SubagentStop",
+   "UserPromptSubmit",
+   "Stop",
+   "Interrupt"
+  ],
+  "evidence": "static: 23 embedded JSON schemas (12 inputs, 11 outputs) at .rodata 0x0e9c8ed8\u20130x0e9cf775 (evidence/hook-input-output-schemas.json); the HookEventsToml enum run at 0x0e9b2476 lists ten names (UserPromptSubmit and Stop appear only through their schemas); observed: TUI /hooks table (first eight events visible)",
+  "input": [
+   "session_id",
+   "transcript_path",
+   "cwd",
+   "hook_event_name",
+   "model",
+   "permission_mode default|acceptEdits|plan|dontAsk|bypassPermissions",
+   "turn_id",
+   "agent_id",
+   "agent_type",
+   "tool_name",
+   "tool_input",
+   "tool_use_id",
+   "tool_response",
+   "prompt",
+   "trigger",
+   "reason",
+   "last_assistant_message",
+   "stop_hook_active"
+  ],
+  "output": [
+   "continue",
+   "stopReason",
+   "suppressOutput",
+   "systemMessage",
+   "decision",
+   "reason",
+   "hookSpecificOutput{permissionDecision allow|deny|ask, permissionDecisionReason, updatedInput, additionalContext, updatedMCPToolOutput}"
+  ],
+  "handler": {
+   "types": [
+    "command",
+    "http",
+    "async"
+   ],
+   "keys": [
+    "matcher",
+    "timeout",
+    "statusMessage",
+    "additionalContextLimit (documented default 2500)",
+    "async (documented default false)"
+   ]
+  },
+  "trust": "hooks.json must be trusted (/hooks, hooks.state.<hash>.trusted_hash) or run with --dangerously-bypass-hook-trust",
+  "relayNote": "PreToolUse on spawn_agent can rewrite the spawn input (updatedInput with permissionDecision allow): model, reasoning effort, task name \u2014 the Codex equivalent of relay's agent.spawn mod"
+ },
+ "persistence": {
+  "codexHome": [
+   "config.toml",
+   "auth.json",
+   "sessions/YYYY/MM/DD/rollout-<ISO ts>-<uuid>.jsonl (and rollout-<ts>-<uuid>_<window>.jsonl for later context windows)",
+   "archived_sessions/",
+   "state_5.sqlite",
+   "thread_history_1.sqlite (paginated history mode)",
+   "goals_1.sqlite",
+   "queue_1.sqlite",
+   "memories_1.sqlite",
+   "logs_2.sqlite",
+   "models_cache.json",
+   "shell_snapshots/",
+   "thread-writer-locks/"
+  ],
+  "rolloutItems": [
+   "session_meta",
+   "response_item",
+   "event_msg",
+   "turn_context",
+   "compacted",
+   "token_usage_record",
+   "world_state",
+   "inter_agent_communication",
+   "security_risk_score",
+   "realtime_item",
+   "replacement_history",
+   "mcp_resource_origins"
+  ],
+  "evidence": "observed: exec rollout (evidence/captures/rollout-exec-json-sample.jsonl), doctor state section; static 0x0e727727, 0x0ea04cab, SQL at 0x0eb967f3\u20260x0eb9da29",
+  "migration": "codex migrate-rollouts: legacy rollouts \u2192 paginated thread history (thread_turns/thread_items); threads.history_mode = legacy|paginated"
+ },
+ "goals": {
+  "evidence": "observed: TUI /goal usage line; static: thread_goals(token_budget, tokens_used, time_used_seconds, status active|paused|blocked|usage_limited|budget_limited|complete), goals.max_goal_token_budget, templates goals/continuation.md, goals/budget_limit.md, 'continue active goal for idle thread', thread_goal_continuation_deferrals; feature goals stable, on by default",
+  "command": "/goal [<objective>|clear|edit|pause|resume]",
+  "appServer": [
+   "thread/goal/set",
+   "thread/goal/get",
+   "thread/goal/clear",
+   "thread/goal/updated",
+   "thread/goal/cleared"
+  ],
+  "semantics": "a goal keeps continuing turns on an idle thread until the objective is met, the token budget is spent (budget_limited) or the account is usage limited (usage_limited); relay's marathon maps onto it"
+ },
+ "exec": {
+  "flags": [
+   "--json",
+   "-o/--output-last-message",
+   "--ephemeral (no session files: avoid, it loses calibration data)",
+   "--worktree",
+   "-C",
+   "-m",
+   "-p profile",
+   "-c key=value",
+   "-s sandbox",
+   "--skip-git-repo-check",
+   "--output-schema",
+   "--ignore-user-config",
+   "--dangerously-bypass-hook-trust",
+   "resume <id>|--last",
+   "fork <id>"
+  ],
+  "retries": {
+   "evidence": "observed: 'Reconnecting... 2/5 \u2026 5/5' then 'Falling back from WebSockets to HTTPS transport' then unbounded 'Reconnecting... waiting for network' (feature unbounded_connection_retries); documented defaults stream_max_retries 5, request_max_retries 4, stream_idle_timeout_ms 300000",
+   "backoffObservedSeconds": [
+    0.49,
+    0.67,
+    1.0,
+    1.72
+   ]
+  },
+  "transport": "Responses API over WebSocket (wss://api.openai.com/v1/responses or chatgpt.com/backend-api/codex) with HTTPS fallback; responses-lite for gpt-6 models"
+ },
+ "statusLine": {
+  "items": [
+   "context-remaining",
+   "context-used",
+   "five-hour-limit",
+   "weekly-limit",
+   "thread-credits",
+   "estimated-thread-cost",
+   "codex-version",
+   "used-tokens",
+   "total-input-tokens\u2026"
+  ],
+  "evidence": "static 0x0e6d6097"
+ }
+}

@@ -1,0 +1,64 @@
+{
+  "$comment": "Routing and budget policy for relay on the Codex (ChatGPT) harness. Same shape of decisions as config/routing.json, with the three things the Codex harness adds: a speed tier per spawn, per-window stop lines keyed by the window the account actually has (primary / secondary, from account/rateLimits/read), and a reset-credit rule. Priors marked `prior` are to be replaced by `relay calibrate` samples.",
+  "tiers": {
+    "cheap": { "model": "gpt-6-luna", "effort": "low", "speed": "standard" },
+    "mid": { "model": "gpt-6.1-sol", "effort": "medium", "speed": "standard" },
+    "strong": { "model": "gpt-6-astra", "effort": "high", "speed": "standard" }
+  },
+  "defaultSubagentTier": "mid",
+  "roles": {
+    "architect": "strong",
+    "conductor": "mid",
+    "implementer-deep": "strong",
+    "implementer-fast": "cheap",
+    "implementer": "mid",
+    "reviewer": "mid",
+    "scout": "cheap",
+    "test-author": "mid"
+  },
+  "budget": {
+    "$comment": "Stop lines by window: `windows` is keyed by position (primary, secondary) for accounts with a short primary window; `weekly` applies to any window of seven days or more whatever its position, so a Pro account (weekly window only, reported as primary) is gated by the weekly lines.",
+    "windows": {
+      "primary": { "tight": 60, "critical": 85 },
+      "secondary": { "tight": 80, "critical": 95 }
+    },
+    "weekly": { "tight": 80, "critical": 95 },
+    "staleAfterMinutes": 360,
+    "degradeOrder": ["speed", "effort", "model"],
+    "tight": { "speedTo": "standard", "effortCap": "medium", "capStrongTo": "mid", "exempt": ["architect"] },
+    "critical": {
+      "speedTo": "standard",
+      "effortCap": "medium",
+      "capStrongTo": "mid",
+      "exempt": [],
+      "denyNewSpawns": ["implementer", "implementer-fast", "implementer-deep", "test-author"],
+      "hide": ["implementer-deep"]
+    },
+    "resetCredit": { "consumeWhenWaitMinutesAtLeast": 60, "keepAtLeast": 0 },
+    "creditsExhaustedIsCritical": true
+  },
+  "lanes": { "maxLaneTasks": 6, "maxParallelLanes": 4 },
+  "forecast": {
+    "$comment": "Work units are relay's: weight = tierWeight[tier] × riskFactor[risk], read here as relative token volume of a task. tokensPerUnit turns units into total tokens processed (input + cached input + output summed over a thread's turns); tokenMix splits them; the model's credit rates (config/codex-harness.json → pricing) turn tokens into credits; windowCapacityCredits says how many credits are 100% of a window. Everything under `prior` is a placeholder until calibrated.",
+    "tierWeight": { "cheap": 1, "mid": 3, "strong": 7 },
+    "riskFactor": { "low": 0.8, "medium": 1.0, "high": 1.4 },
+    "fixRoundProbability": { "low": 0.2, "medium": 0.5, "high": 0.8 },
+    "fixRoundCost": 0.35,
+    "prior": {
+      "tokensPerUnit": { "cheap": 70000, "mid": 70000, "strong": 70000 },
+      "tokenMix": { "input": 0.12, "cachedInput": 0.85, "output": 0.03 },
+      "effortOutputMultiplier": { "low": 1.0, "medium": 1.5, "high": 2.5, "xhigh": 4.0, "max": 6.0, "ultra": 8.0 },
+      "minutesPerUnit": 4,
+      "windowCapacityCredits": {
+        "$comment": "credits that fill 100% of a window; placeholders scaled from OpenAI's 'messages per five hours' estimates for Plus and the plan multipliers quoted for Pro",
+        "plus": { "primary": 150, "secondary": 900 },
+        "business": { "primary": 150, "secondary": 900 },
+        "team": { "primary": 150, "secondary": 900 },
+        "pro": { "primary": 4500 },
+        "promax": { "primary": 18000 },
+        "unknown": { "primary": 150, "secondary": 900 }
+      }
+    },
+    "metering": "included"
+  }
+}

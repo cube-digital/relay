@@ -1,0 +1,42 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { test } from 'node:test';
+import { CODEX_MATH_ROOT, loadCodexRouting, loadHarness } from '../lib/harness.mjs';
+import { tierCreditRatios } from '../lib/pricing.mjs';
+import { forecast } from '../lib/forecast.mjs';
+import { parsePlan } from '../../lib/plan.mjs';
+import { computeLanes } from '../../lib/lanes.mjs';
+
+// The whitepaper quotes these numbers; if the model or the priors change, rebuild the page (docs/whitepaper/README.md).
+test('the Codex whitepaper numbers are what the model computes', () => {
+  const dir = join(CODEX_MATH_ROOT, 'docs', 'whitepaper');
+  const harness = loadHarness();
+  const routing = loadCodexRouting();
+  const plan = parsePlan(readFileSync(join(dir, 'example-plan.md'), 'utf8'));
+  const lanes = computeLanes(plan);
+  const windows = [{ id: 'primary', usedPercent: 0, windowMinutes: 300 }, { id: 'secondary', usedPercent: 0, windowMinutes: 10080 }];
+  const f = forecast({ plan, lanes, routing, harness, snapshot: { planType: 'plus', updatedAt: new Date().toISOString(), windows } });
+  assert.deepEqual([f.lanes, f.waves, f.units, f.agents.expectedFixRounds], [7, 3, 108.4, 4.7]);
+  assert.deepEqual([f.credits.base, f.credits.expected, f.credits.sd], [568.59, 726.91, 49.13]);
+  const r = tierCreditRatios(routing, harness);
+  assert.deepEqual([Math.round(r.mid * 10) / 10, Math.round(r.strong)], [21.8, 163]);
+  const primary = f.usage.find((u) => u.id === 'primary');
+  const secondary = f.usage.find((u) => u.id === 'secondary');
+  assert.deepEqual([primary.capacityCredits, primary.pct, primary.windowsUsed], [150, 484.6, 6]);
+  assert.deepEqual([secondary.capacityCredits, secondary.pct, secondary.windowsUsed], [900, 80.8, 1]);
+  assert.deepEqual([f.time.workMinutes, f.time.waitMinutes, f.time.totalMinutes], [351, 1196, 1547]);
+  assert.deepEqual(f.fastLane.map((x) => [x.wave, x.minutesSaved, Math.round(x.extraCredits)]), [[1, 32, 33], [2, 93, 603], [3, 34, 199]]);
+  const sol = structuredClone(routing);
+  sol.tiers.strong = { model: 'gpt-6.1-sol', effort: 'xhigh', speed: 'standard' };
+  const g = forecast({ plan, lanes, routing: sol, harness, snapshot: { planType: 'plus', updatedAt: new Date().toISOString(), windows } });
+  assert.deepEqual([g.credits.expected, g.usage[0].windowsUsed, g.time.totalMinutes], [257.68, 3, 605]);
+  const data = JSON.parse(readFileSync(join(dir, 'data.json'), 'utf8'));
+  assert.equal(Math.round(data.credits.mean * 100) / 100, f.credits.expected, 'data.json is current');
+  assert.ok(Math.abs(data.credits.sd - data.credits.sdFormula) < 1e-9, 'exact SD over all outcomes equals the closed form');
+  assert.equal(data.expected.totalMinutes, f.time.totalMinutes);
+  assert.equal(data.lastWaitCapacity, 740);
+  assert.equal(data.harness.version, harness.target.version);
+  const tex = readFileSync(join(dir, 'whitepaper.tex'), 'utf8');
+  for (const s of ['1:21.8:163', '727 credits', '5\\,h\\,51\\,min', '25\\,h\\,47\\,min', '258 credits', '10\\,h\\,05\\,min', '0.062, 1.36 and 10.15', 'SD}=49', '740']) assert.ok(tex.includes(s), `the page quotes ${s}`);
+});

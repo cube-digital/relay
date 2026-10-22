@@ -1,0 +1,153 @@
+Codex Doctor v0.163.0 · linux-x86_64
+
+Notes
+   ✗ auth         no Codex credentials were found - Run codex login or provide an API key through a supported auth env var.
+   ⚠ updates      update configuration is locally consistent
+   ⚠ websocket    Responses WebSocket failed; HTTPS fallback may still work - Check proxy, VPN, firewall, DNS, custom CA, and WebSocket policy support.
+   ✗ reachability one or more required provider endpoints are unreachable over HTTP - Check proxy, VPN, firewall, DNS, and custom CA configuration.
+─────────────────────────────────────────────────────────────
+
+Environment
+  ✓ system       unavailable
+      os                       Ubuntu 24.4.0 (noble) [64-bit]
+      OS language              unavailable
+      VISUAL                   not set
+      EDITOR                   not set
+  ✓ disk         sufficient free disk space (28.5 GiB)
+      warning threshold        5.0 GiB
+      failure threshold        1.0 GiB
+      CODEX_HOME available     28.5 GiB
+      worktree available       28.5 GiB
+  ✓ security     endpoint protection is not inspected on this platform
+      endpoint products        not inspected on this platform
+  ✓ runtime      other (package /home/claude/targets/codex/plat/package/vendor/x86_64-unknown-linux-musl, bin /home/claude/targets/codex/plat/package/vendor/x86_64-unknown-linux-musl/bin, resources /home/claude/targets/codex/plat/package/vendor/x86_64-unknown-linux-musl/codex-resources, path /home/claude/targets/codex/plat/package/vendor/x86_64-unknown-linux-musl/codex-path)
+      version                  0.163.0
+      install method           other (package /home/claude/targets/codex/plat/package/vendor/x86_64-unknown-linux-musl, bin /home/claude/targets/codex/plat/package/vendor/x86_64-unknown-linux-musl/bin, resources /home/claude/targets/codex/plat/package/vendor/x86_64-unknown-linux-musl/codex-resources, path /home/claude/targets/codex/plat/package/vendor/x86_64-unknown-linux-musl/codex-path)
+      commit                   unknown
+      executable               /home/claude/targets/cod…wn-linux-musl/bin/codex
+  ✓ install      consistent
+      context                  other (package /home/claude/targets/codex/plat/package/vendor/x86_64-unknown-linux-musl, bin /home/claude/targets/codex/plat/package/vendor/x86_64-unknown-linux-musl/bin, resources /home/claude/targets/codex/plat/package/vendor/x86_64-unknown-linux-musl/codex-resources, path /home/claude/targets/codex/plat/package/vendor/x86_64-unknown-linux-musl/codex-path)
+      managed by               npm: no · bun: no · pnpm: no · Vite+: no · package root —
+  ✓ search       file exists (bundled, `/home/claude/targets/codex/plat/package/vendor/x86_64-unknown-linux-musl/codex-path/rg`)
+      search command           /home/claude/targets/cod…inux-musl/codex-path/rg
+      search provider          bundled
+      search command readiness file exists
+  ✓ git          git executable found; execution not verified
+      selected git             /usr/bin/git
+      repo detected            false
+      PATH entries (2)         /usr/bin/git
+                               /bin/git
+      git execution            not inspected (PATH helpers are not executed)
+  ✓ terminal     unknown · TERM=xterm-256color
+      terminal                 unknown
+      TERM                     xterm-256color
+      stdin is terminal        true
+      stdout is terminal       false
+      stderr is terminal       false
+      terminal size            200x50
+      color output             disabled (NO_COLOR)
+      NO_COLOR                 1
+  ✓ title        default · project work
+      title source             default
+      title items              activity, project-name
+      activity item            true
+      project source           cwd
+      project value            work
+  ✓ state        state paths and databases are inspectable
+      CODEX_HOME               ~/.codex (dir)
+      log dir                  ~/.codex/log (missing)
+      sqlite home              ~/.codex (dir)
+      state DB                 ~/.codex/state_5.sqlite (missing) · integrity skipped (missing)
+      log DB                   ~/.codex/logs_2.sqlite (missing) · integrity skipped (missing)
+      goals DB                 ~/.codex/goals_1.sqlite (missing) · integrity skipped (missing)
+      memories DB              ~/.codex/memories_1.sqlite (missing) · integrity skipped (missing)
+      active rollouts          0 files · 0 B (avg 0 B)
+      archived rollouts        0 files · 0 B (avg 0 B)
+      memories v2 DB           ~/.codex/memories_v2_1.sqlite (missing)
+      memories v2 DB integrity skipped (missing)
+      queue DB                 ~/.codex/queue_1.sqlite (missing)
+      queue DB integrity       skipped (missing)
+      thread history DB        ~/.codex/thread_history_1.sqlite (missing)
+      thread history DB integrity skipped (missing)
+  ✓ threads      no rollout/state DB inventory to compare
+      default model provider   openai
+      rollout DB active files  0
+      rollout DB archived files 0
+      rollout DB scan errors   0
+      rollout DB malformed file names 0
+      rollout DB scan cap reached false
+      rollout DB rows          skipped (state DB missing)
+
+Configuration
+  ✓ config       loaded
+      model                    <default> · openai
+      cwd                      ~/work
+      config.toml              ~/.codex/config.toml
+      MCP servers              0
+      feature flags            59 enabled · 0 overridden
+      enabled flags            daemon_auto_start, shell_tool, view_image, sleep_tool, unified_exec, unified_exec_tty, shell_snapshot, content_item_kinds, code_mode_host, code_mode_interrupt, instant_interrupt, terminal_resize_reflow, sqlite, write_stdin_approval, hooks, api_key_model_discovery, cli_daybreak, api_key_cyber_access_programs, enable_request_compression, unbounded_connection_retries, worktrees, system_proxy_fallback, multi_agent, apps, tool_search_always_defer_mcp_tools, tool_suggest, plugins, in_app_browser, browser_annotation_api, in_app_chat, in_app_dictation, in_app_voice, in_app_local_automation, in_app_updates, browser_use, browser_use_full_cdp_access, browser_use_external, computer_use, remote_plugin, plugin_sharing, image_generation, resize_all_images, item_ids, skill_mcp_dependency_install, skill_search, mentions_v2, steer, guardian_approval, guardian_reuse_parent_compaction, goals, collaboration_modes, tool_call_mcp_elicitation, auth_elicitation, fast_mode, ultrafast_mode, realtime_conversation, tui_app_server, compaction_image_budget, workspace_dependencies
+      configuration scope      invocation config, including cloud-managed policy
+      active thread overrides  not inspected
+      configured TUI mode      fullscreen
+      configuration load ms    4
+  ✗ auth         no Codex credentials were found — Run codex login or provide an API key through a supported auth env var.
+      auth storage mode        File
+      auth.json path (file backend/fallback) ~/.codex/auth.json
+  ✓ mcp          no MCP servers configured
+  ✓ sandbox      restricted fs + restricted network · approval OnRequest
+      approval policy          OnRequest
+      filesystem sandbox       restricted
+      denied-read rules        0
+      denied-read glob rules   0
+      glob scan max depth      unbounded
+      managed filesystem source none
+      network sandbox          restricted
+      linux helper             ~/.codex/tmp/arg0-linux/…2MD/codex-linux-sandbox
+  ✓ sandbox      no explicit filesystem paths to probe
+
+Updates
+  ⚠ updates      update configuration is locally consistent
+      startup update check     true
+      update action            manual or unknown
+      version cache            ~/.codex/version.json
+      version cache            missing
+      latest version probe     HTTP 403 Forbidden
+
+Connectivity
+  ✓ network      network-related environment looks readable
+      proxy env vars present   HTTPS_PROXY, NO_PROXY, https_proxy, no_proxy
+      respect system proxy     disabled
+      managed proxy            not configured
+      SSL_CERT_FILE            readable file /root/.ccr/ca-bundle.crt
+  ⚠ websocket    Responses WebSocket failed; HTTPS fallback may still work — Check proxy, VPN, firewall, DNS, custom CA, and WebSocket policy support.
+      model provider           openai
+      provider name            OpenAI
+      wire API                 responses
+      supports websockets      true
+      proxy env vars present   HTTPS_PROXY, NO_PROXY, https_proxy, no_proxy
+      connect timeout          15000 ms
+      auth mode                none
+      endpoint                 wss://api.openai.com/v1/<redacted>
+      DNS                      lookup failed (failed to lookup address information: Name does not resolve)
+      handshake transport error network error: URL error: Proxy connection failed: HTTP CONNECT failed with status 403
+  ✗ reachability one or more required provider endpoints are unreachable over HTTP — Check proxy, VPN, firewall, DNS, and custom CA configuration.
+      reachability mode        ChatGPT auth
+      ChatGPT inference URL    https://chatgpt.com/backend-api/<redacted> connect failed (required)
+
+Background Server
+  ○ app-server   not running (ephemeral mode)
+      daemon state dir         ~/.codex/app-server-daemon
+      settings                 ~/.codex/app-server-daemon/settings.json (missing)
+      pid file                 ~/.codex/app-server-daemon/app-server.pid (missing)
+      update-loop pid file     ~/.codex/app-server-daem…/app-server-updater.pid (missing)
+      dedicated pid file       ~/.codex/app-server-daemon/daemon.pid (missing)
+      dedicated update-loop pid file ~/.codex/app-server-daemon/daemon-updater.pid (missing)
+      control socket           ~/.codex/app-server-cont…app-server-control.sock
+      status                   not running
+      mode                     ephemeral
+
+─────────────────────────────────────────────────────────────
+16 ok · 1 idle · 4 notes · 2 warn · 2 fail failed
+
+--summary compact output           --all expand truncated lists
+--json redacted report

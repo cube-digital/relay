@@ -1,0 +1,87 @@
+% relay on Codex whitepaper: one page. Build: see README.md in this folder.
+\documentclass[9pt,a4paper]{extarticle}
+\usepackage[a4paper,top=10mm,bottom=10mm,left=14mm,right=14mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[sc]{mathpazo}
+\usepackage[scaled=0.9]{helvet}
+\usepackage{amsmath,amssymb}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+
+\definecolor{ink}{HTML}{0B0B0B}
+\definecolor{ink2}{HTML}{52514E}
+\definecolor{accent}{HTML}{2A78D6}
+\color{ink}
+\hypersetup{pdftitle={Relay on Codex: running coding-agent plans across ChatGPT usage windows},pdfauthor={cube-digital}}
+
+\setlength{\columnsep}{6mm}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1.6pt}
+\linespread{1.0}
+\titleformat{\section}{\sffamily\bfseries\fontsize{9.2}{11}\selectfont}{\color{accent}\thesection}{0.5em}{}
+\titlespacing*{\section}{0pt}{3.5pt}{1pt}
+\setlist{nosep,leftmargin=1.05em,labelsep=0.45em}
+\newcommand{\para}[1]{\textsf{\textbf{#1}}\enspace}
+\pagestyle{empty}
+
+\begin{document}
+
+{\sffamily\bfseries\fontsize{15.5}{18}\selectfont Relay on Codex: running coding-agent plans across ChatGPT usage windows\par}
+\vspace{2pt}
+{\sffamily\small\color{ink2} cube-digital \enspace·\enspace relay codex-math v0.1 \enspace·\enspace October 2026 \enspace·\enspace Codex CLI 0.163.0, read with REA 6.7.0 \enspace·\enspace \href{https://github.com/cube-digital/relay}{github.com/cube-digital/relay}\par}
+\vspace{5pt}
+
+{\small Relay turns a written plan into parallel work for the cheapest model that can do each task and keeps the plan running across usage windows. This page is the Codex counterpart of the relay whitepaper: what the Codex harness meters and exposes (recovered from the binary, not assumed), what that changes in relay's mechanism, and the model behind the Codex forecast and its calibration. The harness facts and their evidence are in \textsf{codex-math/config/codex-harness.json}; the model code in \textsf{codex-math/lib/}.\par}
+
+\vspace{4pt}
+\includegraphics[width=\textwidth]{figure.pdf}
+{\footnotesize\color{ink2} \textbf{Figure 1.} The relay whitepaper's 30-task plan (7 lanes, 3 waves, 108.4 units, 4.7 expected fix rounds) on Codex at the priors. (a)~Credits per unit by tier: Luna\,:\,Sol~6.1\,:\,Astra is $1:21.8:163$ where relay's Claude prior was $1:3:7$; the plan's strong tasks are 45\% of its units and 88\% of its 727 credits. (b)~The walk on a Plus account (5-hour and weekly windows) at the placeholder capacities $Q_1=150$, $Q_2=900$ credits: six 5-hour windows, 5\,h\,51\,min of work, 25\,h\,47\,min in all. (c)~Hours against the capacity $\hat Q_1$ that calibration supplies first: no pause above 740 credits; with the strong tier on Sol~6.1/xhigh the plan costs 258 credits and takes 10\,h\,05\,min at the placeholder. Computed by \textsf{data.mjs} with the model code.\par}
+\vspace{1pt}
+
+\begin{multicols}{2}
+\fontsize{8.5}{10.1}\selectfont
+
+\section{What the harness meters}
+Read from \textsf{@openai/codex} 0.163.0 with REA: process captures of the binary (help, \textsf{doctor}, \textsf{exec -{}-json}, the TUI, the app-server over stdio), its own protocol schema (\textsf{app-server generate-json-schema}) and model catalog (\textsf{debug models}), and the strings of its 15\,MB \textsf{.rodata}; the credit rates are OpenAI's published ones.
+\begin{itemize}
+\item \para{Windows are plan-shaped, not fixed.} A reading is a \textsf{RateLimitSnapshot}: \textsf{primary} and \textsf{secondary} windows with \textsf{usedPercent}, \textsf{resetsAt} and \textsf{windowDurationMins}, plus \textsf{planType}, \textsf{credits}, a per-pool view keyed by \textsf{limit\_id}, and \textsf{rateLimitReachedType}. Plus and Business meter a 5-hour and a weekly window; Pro only the weekly one. Readings come from \textsf{account/rateLimits/read} (and \textsf{/updated}) on the app-server and from the \textsf{token\_count} event in each session's rollout file; API-key sessions get none.
+\item \para{Credits are the unit.} The backend estimates every thread in credits (\textsf{/wham/usage/thread-estimates/query}, grouped by model, effort and speed with token counts). Published rates per million tokens, input\,/\,cached\,/\,output: Luna 2.5\,/\,0.25\,/\,12.5, Sol~6.1 50\,/\,2.5\,/\,250, Astra 250\,/\,25\,/\,1250. Fast meters $2.5\times$ the included usage ($2\times$ purchased credits) for a 1.5--2$\times$ speedup; Ultrafast $8\times$.
+\item \para{Tokens are attributable.} Every subagent is its own thread: \textsf{state\_5.sqlite} holds its model, effort and token total, \textsf{thread\_spawn\_edges} its parent; \textsf{exec -{}-json} ends with \textsf{turn.completed.usage}. The effective context is 95\% of 272\,k = 258\,400 tokens; tool output is cut at 10\,000 tokens; compaction is configurable and hookable (\textsf{PreCompact}, \textsf{PostCompact}).
+\item \para{Levers relay did not have.} Spawns take \textsf{model}, effort and speed; \textsf{[agents]} sets the subagent defaults; a \textsf{PreToolUse} hook can rewrite a \textsf{spawn\_agent} call through \textsf{updatedInput} (the Codex form of relay's mod); reset credits restore every window at once (\textsf{account/rateLimitResetCredit/consume}); a thread \emph{goal} with a token budget keeps an idle thread going until it is \textsf{budget\_limited} or \textsf{usage\_limited} (relay's marathon, built in).
+\end{itemize}
+
+\section{What changes in the mechanism}
+Tiers keep their roles, but the ladder is two orders of magnitude, so the cheap tier is nearly free: Luna costs $1/22$ of Sol per unit and still $1/7$ at three times the turns, and Astra is spent only where the plan says strong. Budget gates degrade in price order: speed to standard, effort to medium, then strong to mid; the architect is exempt at tight. A reset credit is spent when the next pause exceeds an hour. The ledger stamp carries the windows the account has and the credits spent: \textsf{[primary 23.4\% resets 16:30 · secondary 41\% · credits 12.5]}.
+
+\section{The model}
+\para{Units.} As in relay, task $t$ weighs $w_t=T(\text{tier}_t)R(\text{risk}_t)$ with $T=(1,3,7)$, $R=(0.8,1,1.4)$, read now as relative token volume. On tier $\tau$ a unit processes $\nu_\tau$ tokens (prior 70\,k) in shares $\alpha=(0.12,0.85,0.03)$ of uncached input, cached input and output; with the model's rates $p_\tau$, the speed multiplier $s_\tau$ and the effort multiplier $e_\tau$ on output, a unit costs
+\[
+c_\tau=s_\tau\,\nu_\tau\,(\alpha_{\mathrm{in}}p^{\mathrm{in}}_\tau+\alpha_{\mathrm{c}}p^{\mathrm{c}}_\tau+\alpha_{\mathrm{out}}e_\tau p^{\mathrm{out}}_\tau)/10^6
+\]
+credits: 0.062, 1.36 and 10.15 at the priors. Lane $l$ costs $C_l=\sum_{t\in l}w_t c_{\tau(t)}$.
+
+\para{Fix rounds.} Unchanged: lane $l$ needs a fix round with probability $p_l\in\{0.2,0.5,0.8\}$ re-working $\kappa=0.35$ of it, so $\tilde C_l=C_l(1+\kappa p_l)$, $\mathrm{E}[C]=\sum_l\tilde C_l=727$ and $\mathrm{Var}[C]=\kappa^2\sum_l C_l^2p_l(1-p_l)$, $\mathrm{SD}=49$; the exact distribution over the $2^7$ outcomes agrees.
+
+\para{Windows.} Window $j$ holds $Q_j$ credits, so the plan uses $U_j=\mathrm{E}[C]/Q_j$ of it. The walk runs a wave while every window is below its stop line ($85\%$ primary, $95\%$ secondary), spends credits and time linearly, pauses at a line until that window resets, rolls windows over on their own schedule, and spends a reset credit instead of a pause when one is available and the pause is long. Wave time is $m\,M_k$ with $M_k$ the makespan of the lanes' expected units on four slots; Fast divides a lane's minutes by its speedup and multiplies its credits by 2.5, which prices the trade per wave (Fig.~1 plan: wave 1 saves 32\,min for 33 credits, wave 2 saves 93\,min for 603).
+
+\para{Calibration} has two layers that never share a parameter. Capacity: between two readings with no reset, the credits spent and the points the window moved give $\hat Q_j=100\sum\Delta C/\sum\Delta u_j$, a ratio estimator over all such intervals, independent of the plan. Price per unit: every lane thread's credits are known, so $\hat c_\tau=\sum C/\sum w$ over the threads on tier $\tau$; with only wave totals, non-negative least squares of $\Delta C_k$ on the units per tier. Time: $\hat m=\sum\Delta t_k/\sum M_k$ as before. Each estimate replaces its prior from the first sample; $\hat Q_j$ is the number that moves the hours (Fig.~1c), and one clean wave gives it.
+
+\section{What is not claimed}
+\begin{itemize}
+\item $Q_j$, $\nu_\tau$, $\alpha$, $e_\tau$, $T$, $R$, $p_l$ and $\kappa$ are priors; the capacities were scaled from OpenAI's ``messages per five hours'' and must be calibrated before a Codex forecast means anything. \textsf{used\_percent} is the backend's and an integer, so capacity samples carry credits across readings that did not move it; the rates may change with the catalog.
+\item Not recovered from the binary: the default auto-compaction limit (null in the catalog, computed in code) and the default subagent concurrency; both are configurable. Codex caches input only while the prefix is stable, so a mid-thread model, effort or speed change re-reads the context at the uncached rate.
+\item Lanes are independent and front-load usage less than real runs do; the walk ignores spend controls and pools other than the primary \textsf{limit\_id}.
+\item Savings are not measured yet. Next: ten calibrated waves, then an A/B of the same plans on Codex plain, with the Sol~6.1 strong tier, and with relay.
+\end{itemize}
+
+\vspace{1pt}
+{\scriptsize\color{ink2}
+Evidence: \textsf{codex-math/evidence/} (REA captures, protocol schemas, catalog, hook schemas, SQLite DDL, \textsf{.rodata} strings with offsets). Docs: learn.chatgpt.com/docs/pricing, /docs/agent-configuration/subagents, /docs/config-file/config-reference; help.openai.com/20001507. Rebuild: \textsf{codex-math/docs/whitepaper/README.md}.\par}
+
+\end{multicols}
+\end{document}
