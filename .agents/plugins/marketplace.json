@@ -1,6 +1,6 @@
 {
-  "name": "relay-local",
-  "interface": { "displayName": "Relay local" },
+  "name": "relay",
+  "interface": { "displayName": "Relay" },
   "plugins": [
     {
       "name": "relay",

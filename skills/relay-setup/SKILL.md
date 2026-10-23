@@ -16,7 +16,7 @@ Fallback without native plugin hooks: run `setup codex <absolute-project>` to in
 
 Run `doctor --harness codex --project <absolute-project>` for read-only executable, resources, agent discovery and hook configuration diagnostics. `--codex-bin <absolute-executable>` or `RELAY_CODEX_BIN` handles an app-bundled executable absent from PATH. Doctor reports trust as unknown; verify it in `/hooks`. `budget --harness codex` reads the account's actual windows; unknown usage means act as tight.
 
-For a local marketplace use `codex plugin marketplace add <absolute-relay-root>` and `codex plugin add relay@relay-local`. The local marketplace is named `relay-local` to avoid the remote marketplace name. Installation copies into Codex's plugin cache; source edits are not live. Refresh/reinstall the local plugin and start a new chat after changes. Hook-bearing plugins currently use manual/local desktop installation; follow the host's native trust flow.
+For a local marketplace use `codex plugin marketplace add <absolute-relay-root>` and `codex plugin add relay@relay`. Keep the marketplace name `relay` across Git and local sources. Switch a registered source by removing and re-adding that marketplace; use `--ref` for a Git branch or tag. Installation copies into Codex's plugin cache; source edits are not live. Refresh/reinstall the plugin and start a new chat after changes. Hook-bearing plugins currently use manual/local desktop installation; follow the host's native trust flow.
 
 ## Claude Code
 

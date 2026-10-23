@@ -709,14 +709,16 @@ relay --help
 
 Relay ships its CLI, roles, skills and command hooks in one portable payload. Invoke the CLI by its absolute plugin path; `npm link` is optional.
 
-For a local checkout (including hook changes), use a separate local marketplace:
+For a local checkout (including hook changes), use Relay's canonical marketplace:
 
 ```bash
 codex plugin marketplace add /absolute/path/to/relay
-codex plugin add relay@relay-local
+codex plugin add relay@relay
 node /absolute/path/to/installed/relay/bin/relay setup codex /path/to/project --plugin
 node /absolute/path/to/installed/relay/bin/relay doctor --harness codex --project /path/to/project
 ```
+
+Keep the marketplace name `relay` for Git and local installations, so the plugin remains `relay@relay`. To switch a registered marketplace to another checkout or Git ref, remove that marketplace source and add the desired source, using `--ref` for a branch or tag.
 
 Use the installed cache path for setup, as shown by Codex's plugin details. If Codex is bundled with the desktop app and absent from PATH, invoke its absolute executable path; `RELAY_CODEX_BIN` or `--codex-bin` also selects that executable for Relay diagnostics and long runs. No global settings changes are required.
 
