@@ -6,6 +6,9 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { parseArgs } from '../lib/args.mjs';
 import { calibrationPath, readCalibration, summarize, waveSamples, writeCalibration } from '../lib/calibration.mjs';
+import { resolveHarness } from '../lib/harness.mjs';
+import { codexWaveSamples, summarizeCodex } from '../lib/codex-integration.mjs';
+import { readBudget } from './relay-budget.mjs';
 import { loadRouting } from '../lib/routing.mjs';
 import { ledgerPath } from './relay-ledger.mjs';
 import { planLanes } from './relay-lanes.mjs';
@@ -19,12 +22,21 @@ export function describeCalibration(cal) {
 }
 
 export function main(argv) {
-  const args = parseArgs(argv, { booleans: ['show'] });
+  const args = parseArgs(argv, { booleans: ['show', 'codex'] });
+  const harness = resolveHarness({ harness: args.harness, codex: args.codex });
+  const calPath = calibrationPath(harness);
+  const describe = cal => {
+    if (harness !== 'codex') return describeCalibration(cal);
+    const summary = summarizeCodex(cal);
+    const windows = Object.entries(summary.nUsage).map(([id, count]) => `${id}: ${count} usage sample(s)`).join(', ');
+    return `Codex calibration: ${summary.n} sample(s), ${summary.nTime ?? 0} timed wave(s)` +
+      (windows ? `; ${windows}; measured usage with credit and tier mix priors` : '; usage remains a prior');
+  };
   const planPath = args._[0];
   if (args.show || !planPath) {
     if (!planPath && !args.show) console.error('usage: relay calibrate <plan.md> | relay calibrate --show');
-    console.log(describeCalibration(readCalibration()));
-    console.log(`file: ${calibrationPath()}`);
+    console.log(describe(readCalibration(calPath)));
+    console.log(`file: ${calPath}`);
     return planPath || args.show ? 0 : 64;
   }
   const res = planLanes(planPath);
@@ -39,14 +51,18 @@ export function main(argv) {
   }
   const taskById = Object.fromEntries(res.plan.tasks.map((t) => [t.id, t]));
   const routing = loadRouting();
-  const { samples, skipped } = waveSamples(readFileSync(path, 'utf8'), res.lanes, res.plan.slug, routing.forecast, taskById, routing.lanes.maxParallelLanes);
-  const cal = readCalibration();
-  const existing = new Set(cal.samples.map((x) => `${x.slug}#${x.wave}#${x.at}`));
-  const fresh = samples.filter((x) => !existing.has(`${x.slug}#${x.wave}#${x.at}`));
+  const text = readFileSync(path, 'utf8');
+  const { samples, skipped } = harness === 'codex'
+    ? codexWaveSamples(text, res.lanes, res.plan.slug, taskById, readBudget({ harness }).snapshot)
+    : waveSamples(text, res.lanes, res.plan.slug, routing.forecast, taskById, routing.lanes.maxParallelLanes);
+  const cal = readCalibration(calPath);
+  const sampleKey = sample => [sample.slug, sample.wave, sample.kind ?? 'claude', sample.window ?? '', sample.at].join('#');
+  const existing = new Set(cal.samples.map(sampleKey));
+  const fresh = samples.filter(sample => !existing.has(sampleKey(sample)));
   cal.samples.push(...fresh);
-  writeCalibration(cal);
+  writeCalibration(cal, calPath);
   for (const w of skipped) console.log(`! ${w}`);
-  console.log(`${fresh.length} new sample(s) from ${samples.length} merged wave(s)`);
-  console.log(describeCalibration(cal));
+  console.log(`${fresh.length} new sample(s) from ${new Set(samples.map(sample => sample.wave)).size} merged wave(s)`);
+  console.log(describe(cal));
   return 0;
 }

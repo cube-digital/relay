@@ -1,19 +1,11 @@
 {
-  "name": "relay",
-  "interface": {
-    "displayName": "Relay"
-  },
+  "name": "relay-local",
+  "interface": { "displayName": "Relay local" },
   "plugins": [
     {
       "name": "relay",
-      "source": {
-        "source": "url",
-        "url": "./"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
+      "source": { "source": "local", "path": "./" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
       "category": "Developer Tools"
     }
   ]

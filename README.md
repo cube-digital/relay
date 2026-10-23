@@ -430,7 +430,7 @@ time         ~2h 3m of work — from placeholder rates
 
 ```mermaid
 flowchart LR
-    start(["/relay:marathon plan.md 20"]) --> leg["leg N<br/>a fresh headless session on Sonnet<br/>continues the plan from the ledger"]
+    start(["/relay:marathon plan.md 20"]) --> leg["leg N<br/>a headless session in the selected harness<br/>continues the plan from saved state"]
     leg --> q{"how did the leg end?"}
     q -- "plan complete" --> done(["stop: done<br/>relay calibrate"])
     q -- "budget critical<br/>or usage limit" --> wait["wait for the<br/>window reset"]
@@ -442,7 +442,16 @@ flowchart LR
     q -- "no progress<br/>twice in a row" --> stop3(["stop: stalled"])
 ```
 
-Each leg is a short `claude -p` session with an empty context, so a 20-hour run never carries a 20-hour conversation: the state lives in the ledger, the lane branches and the worktrees. Legs run with `--permission-mode auto --permission-prompts none`, the documented pattern for unattended work: a classifier approves routine actions, and anything that would need a person is refused, so the run never hangs on a prompt. At the end you get the same thing as after an interactive run: one integration branch, the test counts, and every ruling the agents made.
+Marathon supports both harnesses. Claude legs use short `claude -p` sessions with empty context, continuing from the ledger, lane branches and worktrees. They use `--permission-mode auto --permission-prompts none`. Codex legs use `codex exec` and resume the saved thread on subsequent legs or after a restart. The controller shares the same deadline, ledger, reset waits, stop requests and stall detection across both backends.
+
+Select Codex explicitly and inspect the dry run before starting:
+
+```bash
+node /absolute/path/to/installed/relay/bin/relay marathon plan.md --hours 20 --harness codex --dry-run
+node /absolute/path/to/installed/relay/bin/relay marathon plan.md --hours 20 --harness codex
+```
+
+Codex uses its native `workspace-write` sandbox and `--approve-for-me` approval flow, loads installed plugins, and selects the conductor model/effort from Relay's mid tier. Use `--codex-bin /absolute/path/to/codex` or `RELAY_CODEX_BIN` when the executable is absent from PATH. Claude-only flags (`--permission-mode`, `--allowed-tools`, `--plugin-dir`, `--max-turns`) are rejected for Codex. Account readings and calibration remain separate per harness; waits use the actual blocking window resets. At the end you get an integration branch, test counts and every recorded ruling.
 
 **Where a marathon runs.** `/relay:marathon plan.md 20` starts it from the chat as a background task of the session. You can keep working in the same session; `/relay:marathon status` shows the current leg or how long until the window resets, and `/relay:marathon stop` ends it after the current leg (`stop now` ends that leg too). A background task lives as long as the session, so keep Claude Code open and the computer awake. If the session closes anyway, the same command continues from the ledger. On macOS, `/relay:marathon plan.md 20 terminal` opens the run in its own Terminal window instead, and it keeps going after you close Claude Code.
 
@@ -559,14 +568,14 @@ With Codex installed, the conductor sends reviews of high-risk lanes to Codex, a
 
 ```bash
 codex exec --sandbox read-only -o .relay/runs/billing-export/lane-d.codex-review.md \
-  "Review per roles/reviewer.md: brief <path>, report <path>, package <path>"
+  "Review per /absolute/path/to/installed/relay/roles/reviewer.md: brief <path>, report <path>, package <path>"
 ```
 
 The review lands in a file, the conductor reads its verdicts, and the fix loop continues as usual. The review is paid from your Codex window.
 
 ### Workflow 6: running relay inside Codex
 
-The same skills work in Codex. Invoke them by name, for example `$plan-with-tiers` and `$run-lanes`, or just describe what you want. The conductor spawns `relay-implementer`, `relay-reviewer` and the other agents installed by `relay setup codex`, always naming the model and reasoning effort. Each lane's dispatch starts with the absolute path of its worktree.
+The same workflows work in Codex. Invoke `$relay-plan` or `$relay-run`, or describe what you want; the engine skills `$plan-with-tiers` and `$run-lanes` remain available. The conductor spawns `relay-implementer`, `relay-reviewer` and the other agents installed by `relay setup codex`, always naming the model and reasoning effort. Each lane's dispatch starts with the absolute path of its worktree.
 
 ### Workflow 7: run for 20 hours while you sleep
 
@@ -698,30 +707,26 @@ relay --help
 
 ### Codex
 
-**1. Install the skills** from the marketplace:
+Relay ships its CLI, roles, skills and command hooks in one portable payload. Invoke the CLI by its absolute plugin path; `npm link` is optional.
+
+For a local checkout (including hook changes), use a separate local marketplace:
 
 ```bash
-codex plugin marketplace add cube-digital/relay
+codex plugin marketplace add /absolute/path/to/relay
+codex plugin add relay@relay-local
+node /absolute/path/to/installed/relay/bin/relay setup codex /path/to/project --plugin
+node /absolute/path/to/installed/relay/bin/relay doctor --harness codex --project /path/to/project
 ```
 
-Then open Codex, run `/plugins` and enable relay.
+Use the installed cache path for setup, as shown by Codex's plugin details. If Codex is bundled with the desktop app and absent from PATH, invoke its absolute executable path; `RELAY_CODEX_BIN` or `--codex-bin` also selects that executable for Relay diagnostics and long runs. No global settings changes are required.
 
-**2. Install the `relay` command.** Codex plugins cannot ship a command-line tool, so clone the repository and link it:
+The manifest's native onboarding skill guides project setup. `--plugin` copies project agents and adds `[agents]` defaults only when project config is absent. Existing config stays intact; merge any printed missing defaults. Profiles leave model and effort to explicit dispatch and the spawn guard, preventing a role profile from overriding budget routing. Start a new chat after setup so agents are discovered, and inspect `/hooks` to approve native hooks. Files on disk do not prove trust; doctor reports it as unknown.
 
-```bash
-git clone https://github.com/cube-digital/relay ~/relay
-cd ~/relay && npm link
-```
+Local installation copies the payload into `~/.codex/plugins/cache/<marketplace>/<plugin>/local`. Source edits are **not live**: refresh/reinstall the local plugin, then start a new chat. Hook-containing plugins currently use manual/local desktop installation rather than the public plugin directory. See the official [plugin development guide](https://developers.openai.com/plugins/build/plugins) and [command hooks guide](https://learn.chatgpt.com/docs/hooks).
 
-**3. Set up each project once:**
+Without native plugin hooks, use `node /absolute/path/to/relay/bin/relay setup codex /path/to/project` for project agent profiles, project hooks and `.agents/skills/` discovery links. Existing differing hooks are preserved with a separate merge candidate. **Choose one hook installation:** do not install fallback project hooks alongside enabled native Relay hooks. Setup rejects an existing Relay project-hook file when `--plugin` is requested; remove only Relay entries during migration and keep unrelated hooks.
 
-```bash
-relay setup codex /path/to/your/project
-```
-
-This writes three things into the project's `.codex/` folder: one agent file per role with its model and reasoning effort, a `hooks.json` with relay's hooks, and an `[agents]` default so a helper started without a model never inherits the most expensive one.
-
-**4. Trust the hooks.** Open Codex in the project and approve relay's hooks with `/hooks`. Codex does not run project hooks until you do.
+The nine shared entrypoints are `$relay-plan`, `$relay-run`, `$relay-status`, `$relay-board`, `$relay-lanes`, `$relay-forecast`, `$relay-calibrate`, `$relay-budget` and `$relay-marathon`. Their six engine skills remain available. Per-harness references explain actual dispatch tools, installed resource paths and sandbox/report handling. Use `--harness codex` for budget, forecast, calibration, ledger and marathon so Claude and Codex readings stay separate.
 
 ### Trying relay without installing it
 
@@ -812,7 +817,8 @@ relay ledger <plan> ["line"] [--rulings]      the run's memory on disk
 relay protect add | remove | list <paths>     acceptance tests the implementers may not change
 relay budget [--codex] [--json]               5-hour and weekly level: normal, tight, critical
 relay build [--check]                         regenerate agents and hooks for both tools
-relay setup claude | codex                    settings a plugin cannot set for itself
+relay setup claude | codex                    project settings and discovery (--plugin: native Codex hooks)
+relay doctor --harness codex                  read-only executable, resource, discovery and hook diagnostics
 ```
 
 Claude runs these for you; the commands above are the ones worth calling yourself. Mechanical work runs in this command and costs no tokens: checking plans, grouping lanes, managing worktrees, building review packages.

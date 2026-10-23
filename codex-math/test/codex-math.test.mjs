@@ -174,7 +174,7 @@ test('calibration: capacity ratio estimator, attributed tiers, NNLS over waves, 
   assert.deepEqual(Object.keys(cal).sort(), ['creditsPerUnit', 'creditsPerUnitAt', 'minutesPerUnit', 'planType', 'windowCapacityCredits']);
   // stamps
   const stamp = formatStamp({ windows: [{ id: 'primary', usedPercent: 23.4, resetsAt: '2026-10-19T16:30:00.000Z' }, { id: 'secondary', usedPercent: 41 }] }, 12.345);
-  assert.equal(stamp, ' [primary 23.4% resets 16:30 · secondary 41% · credits 12.35]');
+  assert.equal(stamp, ' [primary 23.4% resets 2026-10-19T16:30:00.000Z · secondary 41% · credits 12.35]');
   const line = parseLedgerLine(`- 2026-10-19 14:02${stamp} wave 1: merged @ abc, suite pass`);
   assert.equal(line.windows.primary.usedPercent, 23.4);
   assert.equal(line.windows.primary.resetsAt, Date.parse('2026-10-19T16:30:00.000Z'));

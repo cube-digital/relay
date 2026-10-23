@@ -18,15 +18,15 @@ test('claude agent gets model, effort and read-only guard from the routing table
   const md = claudeAgent(role, routing);
   assert.match(md, /^model: sonnet$/m);
   assert.match(md, /^effort: medium$/m);
-  assert.match(md, /^disallowedTools: Edit, Write, NotebookEdit$/m);
+  assert.match(md, /^disallowedTools: Edit, NotebookEdit$/m);
   assert.match(md, /^description: "Reviews: lanes"$/m);
 });
 
-test('codex agent gets the codex model and a read-only instruction', () => {
+test('codex agent leaves dispatch model precedence intact and permits assigned report output', () => {
   const toml = codexAgent(role, routing);
   assert.match(toml, /^name = "relay-reviewer"$/m);
-  assert.match(toml, /^model = "gpt-6\.1-sol"$/m);
-  assert.match(toml, /^model_reasoning_effort = "medium"$/m);
+  assert.doesNotMatch(toml, /^model(?:_reasoning_effort)? =/m);
+  assert.match(toml, /expressly assigned report output/);
   assert.match(toml, /You are read-only/);
 });
 

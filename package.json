@@ -15,5 +15,24 @@
     "build": "node scripts/build.mjs",
     "check": "node scripts/build.mjs --check",
     "test": "node --test test/*.test.mjs"
-  }
+  },
+  "files": [
+    "bin",
+    "lib",
+    "scripts",
+    "roles",
+    "skills",
+    "commands",
+    "agents",
+    "codex",
+    "config",
+    "hooks",
+    ".codex-plugin",
+    ".claude-plugin",
+    "README.md",
+    "LICENSE",
+    ".agents/plugins",
+    "codex-math/lib",
+    "codex-math/config"
+  ]
 }
