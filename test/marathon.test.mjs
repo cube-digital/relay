@@ -4,7 +4,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, symlinkSync, writeFil
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { classifyLeg, decideNext, parseClaudeJson, parseResetTime } from '../lib/marathon.mjs';
+import { classifyLeg, decideNext, parseClaudeJson, parseCodexJson, parseResetTime } from '../lib/marathon.mjs';
 import { alive, describeMarathon, legArgs, resolveClaudeBin } from '../scripts/relay-marathon.mjs';
 import { copyFixture, ROOT, runCli, tempRepo } from './helpers.mjs';
 
@@ -22,7 +22,7 @@ async function waitFor(check, ms = 10_000) {
 // A marathon started the way Claude Code starts a background task: a child
 // process we do not wait on.
 function startMarathon(args, { cwd, env }) {
-  const child = spawn('node', [join(ROOT, 'bin', 'relay'), 'marathon', ...args], { cwd, env: { ...process.env, ...env }, stdio: ['ignore', 'pipe', 'pipe'] });
+  const child = spawn('node', [join(ROOT, 'bin', 'relay'), 'marathon', ...args], { cwd, env: { ...process.env, RELAY_HARNESS: 'claude', ...env }, stdio: ['ignore', 'pipe', 'pipe'] });
   let out = '';
   child.stdout.on('data', (d) => (out += d));
   child.stderr.on('data', (d) => (out += d));
@@ -243,4 +243,105 @@ test('the legs find claude on PATH, or fall back to the Claude Code that started
   const r = runCli(['marathon', planPath, '--hours', '1', '--dry-run'], { cwd: dir, env: { RELAY_HOME: home, RELAY_CLAUDE_BIN: '', CLAUDE_CODE_EXECPATH: '', PATH: `${tools}:/usr/bin:/bin` } });
   assert.equal(r.code, 1);
   assert.match(r.stderr, /no `claude` command found/);
+});
+
+function codexScenario(repo, steps, extra = {}) {
+  const file = join(repo.home, 'codex.json');
+  writeFileSync(file, JSON.stringify({ ledger: repo.ledger, steps, ...extra }));
+  return { file, env: { RELAY_HOME: repo.home, RELAY_HARNESS: 'codex', RELAY_CODEX_BIN: join(ROOT, 'test/fixtures/fake-codex.mjs'), FAKE_CODEX_SCENARIO: file, RELAY_MARATHON_FAST: '1' } };
+}
+
+test('Codex dry-run uses native sandbox and approval arguments without executing a leg', () => {
+  const repo = committedPlanRepo();
+  const { file, env } = codexScenario(repo, [{ result: 'RELAY_LEG: DONE' }]);
+  const run = runCli(['marathon', repo.planPath, '--codex', '--hours', '1', '--dry-run', '--model', 'chosen-model', '--effort', 'high'], { cwd: repo.dir, env });
+  assert.equal(run.code, 0, run.stdout + run.stderr);
+  assert.match(run.stdout, /exec --sandbox workspace-write --approve-for-me --json --model chosen-model -c model_reasoning_effort=high/);
+  assert.doesNotMatch(run.stdout, /bypass|--permission-mode|--max-turns/);
+  assert.equal(existsSync(file + '.argv'), false);
+  assert.equal(existsSync(repo.state), false);
+});
+
+test('Codex pauses on its real weekly window and resumes its saved session to completion', () => {
+  const repo = committedPlanRepo();
+  const resetsAt = Math.floor(Date.now() / 1000) + 120;
+  const { file, env } = codexScenario(repo, [
+    { ledger: ['wave 1: merged'], budget: { primary: { usedPercent: 96, windowDurationMins: 10080, resetsAt } }, result: 'RELAY_LEG: PAUSED — window full' },
+    { ledger: ['plan: complete'], result: 'RELAY_LEG: DONE — merged' },
+  ], { resetAfterRead: true });
+  const run = runCli(['marathon', repo.planPath, '--harness', 'codex', '--hours', '2'], { cwd: repo.dir, env });
+  assert.equal(run.code, 0, run.stdout + run.stderr);
+  assert.match(run.stdout, new RegExp(`waiting until ${new Date(resetsAt * 1000).toISOString()}`));
+  const state = JSON.parse(readFileSync(repo.state, 'utf8'));
+  assert.deepEqual(state.legs.map(leg => leg.outcome), ['paused', 'done']);
+  assert.equal(state.sessionId, 'codex-thread-1');
+  const argv = readFileSync(file + '.argv', 'utf8').trim().split('\n').map(JSON.parse);
+  assert.equal(argv[0][0], 'exec');
+  assert.ok(argv[0].at(-1).includes(join(ROOT, 'skills/run-lanes/SKILL.md')));
+  assert.ok(argv[1].at(-1).includes(`node '${join(ROOT, 'bin/relay')}' ledger '${repo.planPath}' --harness codex`));
+  assert.deepEqual(argv[1].slice(0, 6), ['exec', '--sandbox', 'workspace-write', '--approve-for-me', 'resume', '--json']);
+  assert.ok(argv[1].includes('codex-thread-1'));
+});
+
+test('Codex graceful stop finishes the leg and a restarted controller resumes the persisted thread', async t => {
+  const repo = committedPlanRepo();
+  const { file, env } = codexScenario(repo, [{ sleepMs: 400, ledger: ['wave 1: merged'], result: 'progress' }, { ledger: ['plan: complete'], result: 'RELAY_LEG: DONE' }]);
+  const marathon = startMarathon([repo.planPath, '--harness', 'codex', '--hours', '1'], { cwd: repo.dir, env });
+  t.after(() => marathon.child.kill('SIGTERM'));
+  assert.ok(await waitFor(() => existsSync(file + '.pid')));
+  assert.equal(runCli(['marathon', repo.planPath, '--stop'], { cwd: repo.dir, env }).code, 0);
+  const stopped = await marathon.exited;
+  assert.equal(stopped.code, 3, stopped.out);
+  assert.equal(JSON.parse(readFileSync(repo.state, 'utf8')).legs.length, 1);
+  const resumed = runCli(['marathon', repo.planPath, '--harness', 'codex', '--hours', '1'], { cwd: repo.dir, env });
+  assert.equal(resumed.code, 0, resumed.stdout + resumed.stderr);
+  const argv = readFileSync(file + '.argv', 'utf8').trim().split('\n').map(JSON.parse);
+  assert.ok(argv[1].includes('resume'));
+  assert.ok(argv[1].includes('codex-thread-1'));
+});
+
+test('Codex stop-now terminates its live leg and preserves the thread for continuation', async t => {
+  const repo = committedPlanRepo();
+  const { file, env } = codexScenario(repo, [{ sleepMs: 60_000, result: 'unreachable' }]);
+  const marathon = startMarathon([repo.planPath, '--harness', 'codex', '--hours', '1'], { cwd: repo.dir, env });
+  t.after(() => marathon.child.kill('SIGTERM'));
+  assert.ok(await waitFor(() => existsSync(file + '.pid')));
+  const legPid = Number(readFileSync(file + '.pid', 'utf8'));
+  assert.equal(runCli(['marathon', repo.planPath, '--stop', '--now'], { cwd: repo.dir, env }).code, 0);
+  assert.equal((await marathon.exited).code, 143);
+  assert.ok(await waitFor(() => !alive(legPid), 3000));
+  assert.equal(JSON.parse(readFileSync(repo.state, 'utf8')).sessionId, 'codex-thread-1');
+});
+
+test('a marathon deadline interrupts a running Codex leg rather than waiting for it to finish', async t => {
+  const repo = committedPlanRepo();
+  const { file, env } = codexScenario(repo, [{ sleepMs: 60_000, result: 'unreachable' }]);
+  const marathon = startMarathon([repo.planPath, '--harness', 'codex', '--hours', '0.0002'], { cwd: repo.dir, env });
+  t.after(() => marathon.child.kill('SIGTERM'));
+  assert.ok(await waitFor(() => existsSync(file + '.pid')));
+  const legPid = Number(readFileSync(file + '.pid', 'utf8'));
+  const completed = await Promise.race([marathon.exited, new Promise(resolve => setTimeout(() => resolve(undefined), 4000))]);
+  if (!completed) marathon.child.kill('SIGTERM');
+  assert.ok(completed, 'running leg is bounded by the wall-clock deadline');
+  assert.equal(completed.code, 2, completed.out);
+  assert.match(JSON.parse(readFileSync(repo.state, 'utf8')).stopReason, /deadline reached/);
+  assert.ok(await waitFor(() => !alive(legPid), 3000));
+});
+
+test('Codex JSONL errors retain the native session and use reported windows for rate-limit waits', () => {
+  const result = parseCodexJson('noise\n{"type":"thread.started","thread_id":"thread-7"}\n{"type":"turn.failed","error":{"message":"rate_limit_exceeded"}}\n');
+  assert.deepEqual(result, { session_id: 'thread-7', result: '', is_error: true, error: 'rate_limit_exceeded' });
+  const outcome = classifyLeg({ result, budget: { windows: [{ id: 'primary', usedPercent: 100, windowMinutes: 10080, resetsAt: '2026-10-20T12:00:00Z' }] }, now: NOW });
+  assert.deepEqual(outcome, { kind: 'limit', which: 'account', resetsAt: '2026-10-20T12:00:00Z', reason: 'usage limit (account)' });
+  assert.equal(parseCodexJson('{"type":"error","message":"authentication failed"}').error, 'authentication failed');
+  assert.equal(parseCodexJson('not JSON'), undefined);
+});
+
+test('Codex does not start a new leg when its critical account window resets after the deadline', () => {
+  const repo = committedPlanRepo();
+  const { file, env } = codexScenario(repo, [{ result: 'unreachable' }], { initialBudget: { primary: { usedPercent: 99, windowDurationMins: 10080, resetsAt: Math.floor(Date.now() / 1000) + 7200 } } });
+  const run = runCli(['marathon', repo.planPath, '--harness', 'codex', '--hours', '1'], { cwd: repo.dir, env });
+  assert.equal(run.code, 2, run.stdout + run.stderr);
+  assert.match(JSON.parse(readFileSync(repo.state, 'utf8')).stopReason, /after the deadline/);
+  assert.equal(existsSync(file + '.argv'), false);
 });

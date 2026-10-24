@@ -1,6 +1,6 @@
 {
   "name": "relay",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "Budget-aware orchestration: tiered model routing, worktree lanes, and lean QA for agent-written tests.",
   "author": {
     "name": "cube-digital"
@@ -14,7 +14,7 @@
     "qa"
   ],
   "skills": "./skills/",
-  "hooks": {},
+  "hooks": "./codex/hooks.plugin.json",
   "interface": {
     "displayName": "Relay",
     "shortDescription": "Tiered model routing, worktree lanes and lean QA for coding agents",
@@ -29,5 +29,10 @@
     "websiteURL": "https://github.com/cube-digital/relay"
   },
   "homepage": "https://github.com/cube-digital/relay",
-  "repository": "https://github.com/cube-digital/relay"
+  "repository": "https://github.com/cube-digital/relay",
+  "extensions": {
+    "com.openai": {
+      "onboardingSkill": "./skills/relay-setup/SKILL.md"
+    }
+  }
 }

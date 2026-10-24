@@ -1,6 +1,6 @@
 {
   "name": "relay",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "Budget-aware orchestration for Claude Code and Codex: tiered model routing, worktree lanes, and a QA mindset for agent-written tests.",
   "type": "module",
   "license": "Apache-2.0",
@@ -15,5 +15,24 @@
     "build": "node scripts/build.mjs",
     "check": "node scripts/build.mjs --check",
     "test": "node --test test/*.test.mjs"
-  }
+  },
+  "files": [
+    "bin",
+    "lib",
+    "scripts",
+    "roles",
+    "skills",
+    "commands",
+    "agents",
+    "codex",
+    "config",
+    "hooks",
+    ".codex-plugin",
+    ".claude-plugin",
+    "README.md",
+    "LICENSE",
+    ".agents/plugins",
+    "codex-math/lib",
+    "codex-math/config"
+  ]
 }

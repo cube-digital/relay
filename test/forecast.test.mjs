@@ -159,6 +159,9 @@ test('relay calibrate reads a run ledger and relay forecast uses it', () => {
   const f = runCli(['forecast', planPath, '--json'], { cwd: dir, env });
   assert.equal(f.code, 0, f.stderr);
   assert.equal(JSON.parse(f.stdout).calibrated, true);
+  const readable = runCli(['forecast', planPath, '--harness', 'claude'], { cwd: dir, env });
+  assert.equal(readable.code, 0, readable.stderr);
+  assert.match(readable.stdout, /billing-export/);
 });
 
 test('time uses the makespan; three or more waves give a usage range', () => {

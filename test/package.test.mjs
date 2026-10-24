@@ -1,0 +1,72 @@
+import assert from 'node:assert/strict';
+import { cpSync, existsSync, mkdtempSync, readFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { test } from 'node:test';
+import { ROOT, runCli, tempRepo } from './helpers.mjs';
+
+test('packaged resources run outside the source checkout without relay on PATH', () => {
+  const payload = mkdtempSync(join(tmpdir(), 'relay-payload-'));
+  const manifest = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
+  assert.ok(manifest.files?.includes('bin'), 'package must declare executable resources');
+  for (const entry of manifest.files) cpSync(join(ROOT, entry), join(payload, entry), { recursive: true });
+  cpSync(join(ROOT, 'package.json'), join(payload, 'package.json'));
+  const result = spawnSync(process.execPath, [join(payload, 'bin/relay'), 'lanes', join(payload, 'skills/plan-with-tiers/template.md')], { cwd: tmpdir(), encoding: 'utf8', env: { PATH: '/usr/bin:/bin' } });
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /csv-export: 3 tasks/);
+  const forecast = spawnSync(process.execPath, [join(payload, 'bin/relay'), 'forecast', join(payload, 'skills/plan-with-tiers/template.md'), '--harness', 'codex', '--json'], { cwd: tmpdir(), encoding: 'utf8', env: { PATH: '/usr/bin:/bin', RELAY_HOME: join(payload, 'state'), CODEX_HOME: join(payload, 'empty') } });
+  assert.equal(forecast.status, 0, forecast.stderr);
+  assert.equal(JSON.parse(forecast.stdout).harness, 'codex');
+  const spawn = spawnSync(process.execPath, [join(payload, 'hooks/codex-spawn.mjs')], { cwd: tmpdir(), encoding: 'utf8', input: JSON.stringify({ tool_name: 'spawn_agent', tool_input: { agent_type: 'relay-implementer', fork_turns: 'none', message: 'Test dispatch' } }), env: { PATH: '/usr/bin:/bin', RELAY_HOME: join(payload, 'state'), CODEX_HOME: join(payload, 'empty') } });
+  assert.equal(spawn.status, 0, spawn.stderr);
+  assert.equal(JSON.parse(spawn.stdout).hookSpecificOutput.permissionDecision, 'allow');
+  assert.equal(JSON.parse(spawn.stdout).hookSpecificOutput.updatedInput.message, 'Test dispatch');
+  const plugin = JSON.parse(readFileSync(join(payload, '.codex-plugin/plugin.json'), 'utf8'));
+  assert.equal(plugin.hooks, './codex/hooks.plugin.json');
+  assert.equal(plugin.extensions['com.openai'].onboardingSkill, './skills/relay-setup/SKILL.md');
+  assert.match(readFileSync(join(payload, plugin.hooks), 'utf8'), /\$\{PLUGIN_ROOT\}/);
+  assert.ok(existsSync(join(payload, 'roles/reviewer.md')));
+});
+
+test('fallback setup is repeatable, preserves config and creates missing skills discovery directory', () => {
+  const { dir } = tempRepo({ '.codex/config.toml': 'model = "my-model"\n[agents]\nmax_threads = 3\n' });
+  const original = readFileSync(join(dir, '.codex/config.toml'), 'utf8');
+  assert.equal(runCli(['setup', 'codex', dir]).code, 0);
+  assert.equal(runCli(['setup', 'codex', dir]).code, 0);
+  assert.equal(readFileSync(join(dir, '.codex/config.toml'), 'utf8'), original);
+  assert.ok(existsSync(join(dir, '.agents/skills/relay-plan/SKILL.md')));
+  assert.ok(existsSync(join(dir, '.codex/agents/relay-reviewer.toml')));
+});
+
+test('malformed Codex config is rejected before setup writes any resources', () => {
+  const { dir } = tempRepo({ '.codex/config.toml': '[agents\nmax_threads = 3\n' });
+  const before = readFileSync(join(dir, '.codex/config.toml'), 'utf8');
+  const result = runCli(['setup', 'codex', dir]);
+  assert.equal(result.code, 1);
+  assert.match(result.stderr, /config.*malformed|malformed.*config/i);
+  assert.equal(readFileSync(join(dir, '.codex/config.toml'), 'utf8'), before);
+  assert.equal(existsSync(join(dir, '.codex/agents')), false);
+});
+
+test('setup rejects unterminated TOML values and preserves malformed bytes', () => {
+  const { dir } = tempRepo({ '.codex/config.toml': 'model = "unterminated\n' });
+  const result = runCli(['setup', 'codex', dir]);
+  assert.equal(result.code, 1);
+  assert.match(result.stderr, /malformed.*config/i);
+  assert.equal(readFileSync(join(dir, '.codex/config.toml'), 'utf8'), 'model = "unterminated\n');
+  assert.equal(existsSync(join(dir, '.codex/agents')), false);
+});
+
+test('native plugin setup avoids duplicate hooks and doctor only reports trust as unknown', () => {
+  const { dir } = tempRepo();
+  const result = runCli(['setup', 'codex', dir, '--plugin']);
+  assert.equal(result.code, 0, result.stderr);
+  assert.equal(existsSync(join(dir, '.codex/hooks.json')), false);
+  const before = readFileSync(join(dir, '.codex/config.toml'), 'utf8');
+  const report = runCli(['doctor', '--harness', 'codex', '--project', dir, '--codex-bin', process.execPath]);
+  assert.equal(report.code, 0, report.stderr);
+  assert.match(report.stdout, /trust: unknown/i);
+  assert.match(report.stdout, /agents: 8/);
+  assert.equal(readFileSync(join(dir, '.codex/config.toml'), 'utf8'), before);
+});

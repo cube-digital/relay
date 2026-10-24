@@ -9,7 +9,7 @@
 //
 // Time stays as in relay: m̂ = Σ wall minutes / Σ makespan in expected units.
 //
-// A ledger line on Codex is stamped "[primary 23.4% resets 16:30 · secondary 41% · credits 123.4]"
+// A ledger line on Codex is stamped "[primary 23.4% resets 2026-10-26T16:30:00.000Z · secondary 41% · credits 123.4]"
 // (relay's "5h"/"7d" labels are read as primary/secondary). A wave whose window reset between
 // its two stamps is dropped, never guessed.
 
@@ -27,7 +27,7 @@ export function formatStamp(snapshot, credits) {
   const parts = [];
   for (const w of snapshot?.windows ?? []) {
     const reset = Date.parse(w.resetsAt ?? '');
-    parts.push(`${w.id} ${w.usedPercent}%` + (Number.isFinite(reset) ? ` resets ${new Date(reset).toISOString().slice(11, 16)}` : ''));
+    parts.push(`${w.id} ${w.usedPercent}%` + (Number.isFinite(reset) ? ` resets ${new Date(reset).toISOString()}` : ''));
   }
   if (typeof credits === 'number') parts.push(`credits ${Math.round(credits * 100) / 100}`);
   return parts.length ? ` [${parts.join(' · ')}]` : '';
@@ -35,7 +35,7 @@ export function formatStamp(snapshot, credits) {
 
 const LABELS = { '5h': 'primary', '7d': 'secondary', primary: 'primary', secondary: 'secondary' };
 
-// "- 2026-10-19 14:02 [primary 23.4% resets 16:30 · secondary 41% · credits 12.5] wave 1: merged @ abc"
+// "- 2026-10-19 14:02 [primary 23.4% resets 2026-10-26T16:30:00.000Z · secondary 41% · credits 12.5] wave 1: merged @ abc"
 export function parseLedgerLine(line) {
   const m = /^- (\d{4}-\d{2}-\d{2} \d{2}:\d{2})(?: \[([^\]]*)\])? (.*)$/.exec(line);
   if (!m) return undefined;
@@ -43,12 +43,18 @@ export function parseLedgerLine(line) {
   const windows = {};
   let credits;
   for (const part of (m[2] ?? '').split('·')) {
-    const w = /^\s*(5h|7d|primary|secondary) ([\d.]+)%(?: resets (\d{2}):(\d{2}))?/.exec(part);
+    const w = /^\s*(5h|7d|primary|secondary) ([\d.]+)%(?: resets (\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z|\d{2}:\d{2}))?/.exec(part);
     if (w) {
       let resetsAt;
-      if (w[3]) {
+      if (w[3]?.includes('T')) {
+        const absolute = Date.parse(w[3]);
+        if (Number.isFinite(absolute)) resetsAt = absolute;
+      } else if (w[3]) {
+        // Legacy stamps carry only the clock. Preserve their next-occurrence
+        // interpretation; new stamps retain the actual weekly reset date.
         const d = new Date(at);
-        resetsAt = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), Number(w[3]), Number(w[4]));
+        const [hour, minute] = w[3].split(':').map(Number);
+        resetsAt = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), hour, minute);
         if (resetsAt < at) resetsAt += 86_400_000;
       }
       windows[LABELS[w[1]]] = { usedPercent: Number(w[2]), resetsAt };

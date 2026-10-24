@@ -14,7 +14,8 @@ const COMMANDS = {
   ledger: ['../scripts/relay-ledger.mjs', 'append to or print a plan\'s ledger (--rulings: only Ruling lines)'],
   protect: ['../scripts/relay-protect.mjs', 'add | remove | list protected acceptance tests'],
   budget: ['../scripts/relay-budget.mjs', 'print the 5h/7d budget level (--json, --codex, --exit-code)'],
-  setup: ['../scripts/relay-setup.mjs', 'claude [--write-project] | codex <project-dir>'],
+  doctor: ['../scripts/relay-doctor.mjs', 'read-only Codex install diagnostics: --harness codex [--project <dir>] [--codex-bin <path>]'],
+  setup: ['../scripts/relay-setup.mjs', 'claude [--write-project] | codex <project-dir> [--plugin]'],
 };
 
 const [cmd, ...rest] = process.argv.slice(2);

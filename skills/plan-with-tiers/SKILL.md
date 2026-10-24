@@ -1,8 +1,11 @@
 ---
 name: plan-with-tiers
-description: Use when turning a spec or agreed design into an implementation plan, before any code is written. Produces a relay plan with a model tier, risk, files, dependencies, test budget and done check per task.
+description: Use when turning a spec or agreed design into an implementation plan, before writing code.
 ---
 # Plan with tiers
+
+Resolve this SKILL.md to its absolute real path; the installed Relay root is two directories above its containing directory. Read `<relay-root>/skills/using-relay/references/<harness>.md` (`codex` or `claude-code`). In all instructions, `relay <args>` means `node "<absolute-relay-root>/bin/relay" <args>`; substitute the resolved path on every call. Resolve all bundled skills, templates and roles from that same root. Never require a `relay` command on PATH or look for bundled files in the target project.
+
 
 Write the plan for engineers who know the language but not this codebase or spec. Decide everything that needs judgment now (files, names, signatures, exact values, which tests), so execution is mechanical and can run on cheaper models.
 
