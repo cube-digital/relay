@@ -41,11 +41,11 @@ export function renderBrief({ plan, planPath, lane, dir, specLine }) {
   out.push(`Tier: ${lane.tier} · Risk: ${lane.risk} · Tasks: ${lane.tasks.join(' → ')}`);
   out.push(`Report: ${join(dir, `lane-${lane.id}.report.md`)}`, '');
   if (lane.segments.length > 1) {
-    out.push('This lane is split between agents that work in the same worktree, one after the other:');
+    out.push('The agents below use the same worktree. They work in this order:');
     for (const s of lane.segments) out.push(`- ${agentName(lane.id, s)} (${s.role}): ${s.tasks.join(', ')}`);
-    out.push('Do only the tasks assigned to your agent name; earlier tasks are already committed.', '');
+    out.push('Do only the tasks assigned to your agent name. Earlier tasks are already committed.', '');
   }
-  out.push('Do the tasks in order, one commit per task. Exact values below are binding. Follow the qa-mindset skill for tests.', '');
+  out.push('Do the tasks in order. Make one commit per task. Use the exact values below. Follow the qa-mindset skill for tests.', '');
   if (plan.globalConstraints) out.push('## Global Constraints', '', plan.globalConstraints, '');
   out.push('## Tasks', '');
   for (const t of tasks) {

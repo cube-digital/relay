@@ -17,8 +17,10 @@ const ROUTING = {
     "implementer-deep": "strong",
     "implementer-fast": "cheap",
     "implementer": "mid",
+    "reverse-engineer": "mid",
     "reviewer": "mid",
     "scout": "cheap",
+    "teacher": "mid",
     "test-author": "mid"
   },
   "unrouted": {

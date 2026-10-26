@@ -2,6 +2,8 @@
 
 Why relay is built the way it is, with the sources checked in October 2026. Facts marked *(unverified)* came only from secondary sources or need a run on a real install.
 
+**Current implementation note — 2026-10-26.** The external research and measurements below are historical design inputs, not fresh product verification. Current source behavior is described in [architecture](architecture/overview.md), [configuration](configuration/README.md), and [testing status](testing/README.md).
+
 ## 1. Where usage goes
 
 - Multi-agent systems use about 15× the tokens of a chat, single agents about 4×; token usage alone explained 80% of performance variance in Anthropic's research eval. Parallelism buys time, not savings. [Anthropic](https://www.anthropic.com/engineering/multi-agent-research-system)
@@ -53,9 +55,16 @@ Most of these studies are recent, read through summaries, and measured mainly on
 ## 5. Codex
 
 - Skills (`SKILL.md`, `name` + `description`, in `.agents/skills`), plugins (`.codex-plugin/plugin.json`), hooks with the same event names and exit-code-2 blocking, PreToolUse `updatedInput`, and the matcher aliases `Agent` ≈ `spawn_agent`, `Edit|Write` ≈ `apply_patch`. Hooks are "a useful guardrail, not a complete enforcement boundary". [Codex hooks](https://learn.chatgpt.com/docs/hooks)
-- Custom agents are TOML files in `.codex/agents/` with `model` and `model_reasoning_effort`; `[agents] default_subagent_model` is the backstop for spawns without a model. [Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents)
-- No documented machine-readable rate-limit source; the session rollout files carry `rate_limits` *(unofficial)*. 
+- Custom agents are TOML files in `.codex/agents/`. Relay's generated definitions intentionally omit `model` and `model_reasoning_effort`; supported clean dispatches supply `model` and `reasoning_effort`, subject to hook budget caps. `[agents] default_subagent_model` backstops omitted choices. [Historical host reference](https://learn.chatgpt.com/docs/agent-configuration/subagents), [Relay generator](../scripts/build.mjs), [dispatch hook](../hooks/codex-spawn.mjs)
+- Relay refreshes Codex usage through app-server `account/rateLimits/read`. It reads a separate snapshot cache, with best-effort session-rollout fallback when the cache is absent or stale; unavailable or stale readings remain unknown. [RPC reader](../lib/codex-rpc.mjs), [budget reader](../scripts/relay-budget.mjs)
 - `codex mcp-server` was removed; Claude → Codex goes through the official [`openai/codex-plugin-cc`](https://github.com/openai/codex-plugin-cc) or `codex exec`. Its review gate "may drain usage limits quickly".
 - superpowers ships one skills tree to both harnesses with a per-harness tool-mapping reference; its Codex notes require setting both `model` and `reasoning_effort` on every spawn. [codex-tools.md](https://github.com/obra/superpowers/blob/main/skills/using-superpowers/references/codex-tools.md)
 
-→ One neutral source (`roles/`, `config/routing.json`, `skills/`), generated per harness. Claude and Codex have separate 5-hour windows: Codex takes reviews and test authoring when Claude's budget is tight.
+→ Shared roles and tier settings generate host definitions, while the Codex role-to-tier registry is maintained separately. Codex account windows come from the usage reading; Relay does not assume that every account has a five-hour window. [Current routing configuration](configuration/README.md)
+
+## 6. Current research and language instructions — 2026-10-26
+
+- `teacher` and `reverse-engineer` work independently through native roles or entry skills. Both use one shared `research-and-explain` engine and bundled teaching method. A handoff is optional evidence, not a mandatory pipeline. [Research guide](guides/teaching-and-reverse-engineering.md)
+- The shared method adapts explanation depth, vocabulary, examples, and pace. `technical` is the default focus; `business+technical` adds stakeholders, outcomes, and business rules. There are no named explanation profiles. Project code remains read-only; only an assigned report may be written within host permissions. [Shared engine](../skills/research-and-explain/SKILL.md)
+- Runtime instructions use the shared language guide and software glossary as strict STE-style draft guidance. Teacher explanations remain adaptive. This policy is not audited ASD-STE100 conformance. [Language guide](../skills/using-relay/references/language-guide.md), [glossary](../skills/using-relay/references/software-glossary.md)
+- Source review and automated checks do not establish live teaching or host behavior. All A–H cases in both hosts remain unexecuted in the recorded evaluation; the unavailable Claude plugin-test command remains a separate blocked gate. [Validation record](testing/README.md), [evaluation recipe](relay/evaluations/2026-10-25-teaching-and-reverse-engineering.md)

@@ -162,6 +162,43 @@ test('Relay routing denies full-history overrides and leaves unrelated full-hist
   assert.equal(unrelated.stdout,'');
 });
 
+test('research roles receive Relay clean-spawn enforcement and preserve explicit dispatch', () => {
+  const {dir} = tempRepo();
+  const home = join(dir, 'home');
+  mkdirSync(join(home, 'codex'), {recursive:true});
+  writeFileSync(join(home, 'codex', 'budget.json'), JSON.stringify({
+    updatedAt:new Date().toISOString(),
+    windows:[{id:'primary',usedPercent:10,windowMinutes:300}],
+  }));
+  const env = {RELAY_HOME:home,CODEX_HOME:join(dir,'empty')};
+  const teacherInput = {agent_type:'relay-teacher',message:'Explain the cache hit path',model:'gpt-6-luna',reasoning_effort:'low',fork_turns:'all'};
+  const engineerInput = {agent_type:'relay-reverse-engineer',message:'Trace the cache hit path',model:'gpt-6-luna',reasoning_effort:'low',fork_turns:'all'};
+  const teacherFull = runHook('codex-spawn.mjs', {tool_name:'spawn_agent',tool_input:teacherInput}, env);
+  const engineerFull = runHook('codex-spawn.mjs', {tool_name:'spawn_agent',tool_input:engineerInput}, env);
+  const teacherClean = runHook('codex-spawn.mjs', {tool_name:'spawn_agent',tool_input:{...teacherInput,fork_turns:'none'}}, env);
+  const engineerClean = runHook('codex-spawn.mjs', {tool_name:'spawn_agent',tool_input:{...engineerInput,fork_turns:'none'}}, env);
+  assert.equal(teacherFull.code,0,teacherFull.stderr);
+  assert.equal(engineerFull.code,0,engineerFull.stderr);
+  assert.equal(teacherClean.code,0,teacherClean.stderr);
+  assert.equal(engineerClean.code,0,engineerClean.stderr);
+  assert.notEqual(teacherFull.stdout,'','relay-teacher must receive clean-spawn enforcement');
+  assert.notEqual(engineerFull.stdout,'','relay-reverse-engineer must receive clean-spawn enforcement');
+  const teacherDenied = JSON.parse(teacherFull.stdout).hookSpecificOutput;
+  const engineerDenied = JSON.parse(engineerFull.stdout).hookSpecificOutput;
+  assert.equal(teacherDenied.permissionDecision,'deny');
+  assert.match(teacherDenied.permissionDecisionReason,/fork_turns.*none/);
+  assert.equal(teacherDenied.updatedInput,undefined);
+  assert.equal(engineerDenied.permissionDecision,'deny');
+  assert.match(engineerDenied.permissionDecisionReason,/fork_turns.*none/);
+  assert.equal(engineerDenied.updatedInput,undefined);
+  assert.deepEqual(JSON.parse(teacherClean.stdout).hookSpecificOutput, {
+    hookEventName:'PreToolUse',permissionDecision:'allow',updatedInput:{...teacherInput,fork_turns:'none'},
+  });
+  assert.deepEqual(JSON.parse(engineerClean.stdout).hookSpecificOutput, {
+    hookEventName:'PreToolUse',permissionDecision:'allow',updatedInput:{...engineerInput,fork_turns:'none'},
+  });
+});
+
 test('weekly reset date survives a wave crossing its clock time several days early', async () => {
   const {formatStamp,parseLedgerLine} = await import('../codex-math/lib/calibration.mjs');
   const {codexWaveSamples} = await import('../lib/codex-integration.mjs');

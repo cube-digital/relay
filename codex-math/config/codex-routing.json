@@ -7,6 +7,8 @@
   },
   "defaultSubagentTier": "mid",
   "roles": {
+    "teacher": "mid",
+    "reverse-engineer": "mid",
     "architect": "strong",
     "conductor": "mid",
     "implementer-deep": "strong",

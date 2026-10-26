@@ -1,6 +1,6 @@
 ---
-description: Run a relay plan unattended for hours, across usage windows, from this session. Also status and stop.
+description: Use when running a plan across usage windows, checking its status, or stopping it.
 argument-hint: "[arguments]"
 disable-model-invocation: true
 ---
-Read and follow `${CLAUDE_PLUGIN_ROOT}/skills/relay-marathon/SKILL.md` with these arguments: $ARGUMENTS. Resolve the bundled CLI from that skill’s installed root.
+Read `${CLAUDE_PLUGIN_ROOT}/skills/relay-marathon/SKILL.md` with these arguments: $ARGUMENTS. Follow that skill. Resolve the bundled CLI from that skill's installed root.

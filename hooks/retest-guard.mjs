@@ -122,10 +122,10 @@ try {
       const prev = state.runs[fp.value];
       if (prev) {
         const when = new Date(prev.at).toLocaleTimeString();
-        reason = `relay retest-guard: \`${command}\` already ran at ${when} on identical code, so its result cannot change.\n` +
+        reason = `relay retest-guard: \`${command}\` already ran at ${when} on identical code. Its result cannot change.\n` +
           (prev.tail ? `Last output (tail): ${prev.tail}\n` : '') +
-          'Use that result. Change the code first, or run a narrower command. ' +
-          'If the test is genuinely flaky, prefix the command with RELAY_RERUN=1 and say why in your report.';
+          'Use that result. Change the code first. Otherwise, run a narrower command. ' +
+          'If the test is genuinely flaky, prefix the command with RELAY_RERUN=1. State the reason in your report.';
       } else {
         state.pending[callId] = fp.value;
         save(path, state);

@@ -1,6 +1,6 @@
 ---
-description: The plan's roadmap as traffic lights — grey planned, yellow in progress, green done, red blocked — here and as a page in your browser.
+description: Use when showing a plan roadmap and its current task states.
 argument-hint: "[arguments]"
 disable-model-invocation: true
 ---
-Read and follow `${CLAUDE_PLUGIN_ROOT}/skills/relay-board/SKILL.md` with these arguments: $ARGUMENTS. Resolve the bundled CLI from that skill’s installed root.
+Read `${CLAUDE_PLUGIN_ROOT}/skills/relay-board/SKILL.md` with these arguments: $ARGUMENTS. Follow that skill. Resolve the bundled CLI from that skill's installed root.

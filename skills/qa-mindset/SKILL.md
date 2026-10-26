@@ -2,25 +2,29 @@
 name: qa-mindset
 description: Use when writing, changing, running or reviewing tests, or deciding how to verify a change.
 ---
+
+Resolve this SKILL.md to its absolute real path. The installed Relay root is two directories above its containing directory. Read `<relay-root>/skills/using-relay/references/<harness>.md` (`codex` or `claude-code`). In all instructions, `relay <args>` means `node "<absolute-relay-root>/bin/relay" <args>`. Substitute the resolved path on every call. Resolve all bundled skills, templates and roles from that same root. Never require a `relay` command on PATH or look for bundled files in the target project.
+
+Write instructions as strict STE-style drafts. Use short sentences, clear actors, and consistent terms. Keep code, commands, paths, identifiers, output markers, quotations, and evidence exact. For teacher explanations, adapt the words and detail to the learner. Use examples, analogies, and diagrams when they help.
+
+Read `<absolute-relay-root>/skills/using-relay/references/language-guide.md` and `<absolute-relay-root>/skills/using-relay/references/software-glossary.md`. Substitute the resolved installed root for `<absolute-relay-root>` in actual reads. If the references are unavailable, keep the inline policy. Report unavailable language guidance. Do not claim that the full language review passed. Do not load an unrelated coding workflow as a fallback. Load these references directly. Do not run the `using-relay` workflow to load language rules.
+
 # QA mindset
 
-Resolve this SKILL.md to its absolute real path; the installed Relay root is two directories above its containing directory. Read `<relay-root>/skills/using-relay/references/<harness>.md` (`codex` or `claude-code`). In all instructions, `relay <args>` means `node "<absolute-relay-root>/bin/relay" <args>`; substitute the resolved path on every call. Resolve all bundled skills, templates and roles from that same root. Never require a `relay` command on PATH or look for bundled files in the target project.
-
-
-A test is worth writing only if it would catch a real bug that nothing else catches. Every extra test is code to maintain, run and read. Agents over-test: most agent-written tests in studies had weak or no assertions, and repeated test runs on unchanged code are among the largest wastes in agent sessions.
+Write a test only when it catches a real bug that other checks do not catch. Each extra test needs maintenance and execution. Avoid weak assertions and repeated runs on unchanged code.
 
 ## Decide what to test
 
-1. List the behaviors the task changes (the plan's `behaviors`). Rank by risk: how likely to break × how bad if it does.
-2. Respect the task's test budget. Defaults: low risk 0–1 new tests, medium one per behavior, high one per behavior plus boundary values and error cases (or one property-based test instead of many examples).
-3. Before adding a test, check whether an existing test already fails when this behavior breaks. If yes, add nothing.
-4. Push each test as low as it can go: a unit test over an integration test, an integration test over an end-to-end test. Types and lint catch some bugs for free.
+1. List the changed behaviors from the plan's `behaviors`. Rank them by risk. Consider the likelihood and impact of failure.
+2. Respect the task's test budget. For low risk, use 0–1 new tests. For medium risk, use one per behavior. For high risk, use one per behavior plus boundary values and error cases. One property-based test can replace many examples.
+3. Before adding a test, check whether an existing test catches this failure. If it does, add no test.
+4. Use the lowest test layer that can catch the bug. Prefer a unit test to an integration test. Prefer an integration test to an end-to-end test. Use type and lint checks where sufficient.
 5. One test per equivalence class and per boundary, not many similar examples.
 
 ## Write tests that catch bugs
 
-- Expected values come from the spec or the brief. Never run the code to find out what to expect: that copies its bugs into the test.
-- Test behavior through public interfaces. No assertions on private methods, call order or internal structure; a refactor must not break the test.
+- Derive expected values from the spec or brief. Never run the code to determine the expected result.
+- Test behavior through public interfaces. Do not assert private methods, call order, or internal structure. A refactor must not break the test.
 - Mock only at process boundaries (network, clock, randomness, filesystems you don't own). Never mock the unit under test.
 - Strong assertions: exact values and states. No print-only tests, no `toBeTruthy` / not-null checks where a value is known, no loops or conditionals inside tests, no giant snapshots.
 - See the new test fail once for the right reason (or break the code on purpose and see it fail) before trusting it.
@@ -35,7 +39,7 @@ Use the narrowest check that can fail, in this order, and stop at the first fail
 
 The full suite runs once per wave on the integration branch (`relay worktrees merge --suite`), not in lanes.
 
-Never rerun a test command when the code has not changed since it last ran: the result cannot change. Relay's retest guard blocks it. For a genuinely flaky test, prefix the command with `RELAY_RERUN=1` and say why in the report.
+Never rerun a test command on unchanged code. Reuse the previous result. Relay's retest guard blocks repeated runs. If the test is genuinely flaky, prefix the command with `RELAY_RERUN=1`. State the reason in the report.
 
 ## Protected tests
 

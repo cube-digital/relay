@@ -1,6 +1,6 @@
 ---
-description: Show the 5-hour and weekly usage level relay is routing by — normal, tight or critical.
+description: Use when showing the current 5-hour and weekly usage level.
 argument-hint: "[arguments]"
 disable-model-invocation: true
 ---
-Read and follow `${CLAUDE_PLUGIN_ROOT}/skills/relay-budget/SKILL.md` with these arguments: $ARGUMENTS. Resolve the bundled CLI from that skill’s installed root.
+Read `${CLAUDE_PLUGIN_ROOT}/skills/relay-budget/SKILL.md` with these arguments: $ARGUMENTS. Follow that skill. Resolve the bundled CLI from that skill's installed root.

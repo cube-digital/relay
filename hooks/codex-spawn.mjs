@@ -21,7 +21,7 @@ try {
   // Keep explicit history intact and request an isolated Relay dispatch instead.
   if (!routed.deny && args.fork_turns !== 'none') {
     if (!routed.role) process.exit(0);
-    routed.deny = 'relay: model routing requires fork_turns: \"none\". Retry this Relay role with fork_turns: \"none\" and include its task context in the message; full-history children inherit the parent model and effort.';
+    routed.deny = 'relay: model routing requires fork_turns: \"none\". Retry this Relay role with fork_turns: \"none\" and include its isolated task context in the message. Full-history children inherit the parent model and effort.';
   }
   const out = routed.deny
     ? { hookEventName: 'PreToolUse', permissionDecision: 'deny', permissionDecisionReason: routed.deny }
