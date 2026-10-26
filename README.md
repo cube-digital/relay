@@ -957,7 +957,7 @@ For a mechanical task, the architect can write the exact code into the plan. The
 
 ## Status and roadmap
 
-Package version **0.2.0**. The repository defines **10 roles** and **18 shared skills**. Automated checks cover the CLI, hooks, generated artifacts and Claude mod. See the [testing guide](docs/testing/README.md) for the current check results and their limits. Source checks do not establish plugin discovery, hook trust or live teaching behavior on either host.
+Package version **0.3.0**. The repository defines **10 roles** and **18 shared skills**. Automated checks cover the CLI, hooks, generated artifacts and Claude mod. See the [testing guide](docs/testing/README.md) for the current check results and their limits. Source checks do not establish plugin discovery, hook trust or live teaching behavior on either host.
 
 A first pilot (October 20, Claude Code 2.1.303) ran a 3-task plan from `/relay:plan` to a merged, reviewed integration branch: lane agents landed in their worktrees by name, each role ran on its planned model, and the run produced its first calibration sample. One sample is not a rate; more pilots are the next step.
 
@@ -994,7 +994,7 @@ Edit `roles/` and `config/routing.json`, then run `relay build`. The files in `a
 
 ### Releasing
 
-For an intentional release, update `version` in `.claude-plugin/plugin.json`, `.codex-plugin/plugin.json` and `package.json` together. Verify version agreement before tagging or publishing, and use release commands supported by the installed host. Editing this checkout alone does not refresh a cached plugin; verify the installed release and follow the host's supported update and restart workflow.
+For an intentional release, update `version` in `.claude-plugin/plugin.json`, `.codex-plugin/plugin.json` and `package.json` together. Keep the RPC client version in `lib/codex-rpc.mjs` aligned. Verify version agreement before tagging or publishing, and use release commands supported by the installed host. Editing this checkout alone does not refresh a cached plugin; verify the installed release and follow the host's supported update and restart workflow.
 
 ## Credits
 
