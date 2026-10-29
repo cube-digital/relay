@@ -181,6 +181,6 @@ A useful PR describes the problem, resulting behavior, affected source/generated
 
 ## Release and plugin refresh
 
-The current package and both plugin manifests are `0.4.0`. For an intentional release, follow the [README release guidance](../../README.md#releasing): update `package.json`, `.claude-plugin/plugin.json`, and `.codex-plugin/plugin.json` together. Keep the RPC client version in `lib/codex-rpc.mjs` aligned. Verify version agreement before tagging or publishing. Use release commands supported by the installed host.
+The current package and both plugin manifests are `0.4.1`. For an intentional release, follow the [README release guidance](../../README.md#releasing): update `package.json`, `.claude-plugin/plugin.json`, and `.codex-plugin/plugin.json` together. Keep the RPC client version in `lib/codex-rpc.mjs` aligned. Verify version agreement before tagging or publishing. Use release commands supported by the installed host.
 
 New capabilities need the appropriate packaged release and installed-plugin refresh before they become available from a user's plugin cache. Editing the checkout does not show that an existing installation has updated. Verify the installed candidate and start a new session when setup requires it. Do not change release versions merely for an unrelated documentation edit.

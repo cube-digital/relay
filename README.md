@@ -810,7 +810,7 @@ Local installation copies the payload into `~/.codex/plugins/cache/<marketplace>
 
 Without native plugin hooks, use `node /absolute/path/to/relay/bin/relay setup codex /path/to/project` for project agent definitions, project hooks and `.agents/skills/` discovery links. Existing differing hooks are preserved with a separate merge candidate. **Choose one hook installation:** do not install fallback project hooks alongside enabled native Relay hooks. Setup rejects an existing Relay project-hook file when `--plugin` is requested; remove only Relay entries during migration and keep unrelated hooks.
 
-The twelve shared entrypoints are `$relay-design`, `$relay-plan`, `$relay-run`, `$relay-status`, `$relay-board`, `$relay-lanes`, `$relay-forecast`, `$relay-calibrate`, `$relay-budget`, `$relay-marathon`, `$relay-teach` and `$relay-reverse-engineer`. Their seven engine skills remain available. Per-harness references explain actual dispatch tools, installed resource paths and sandbox/report handling. Use `--harness codex` for budget, forecast, calibration, ledger and marathon so Claude and Codex readings stay separate.
+The thirteen shared entrypoints are `$relay-design`, `$relay-plan`, `$relay-to-tickets`, `$relay-run`, `$relay-status`, `$relay-board`, `$relay-lanes`, `$relay-forecast`, `$relay-calibrate`, `$relay-budget`, `$relay-marathon`, `$relay-teach` and `$relay-reverse-engineer`. Their seven engine skills remain available. Per-harness references explain actual dispatch tools, installed resource paths and sandbox/report handling. Use `--harness codex` for budget, forecast, calibration, ledger and marathon so Claude and Codex readings stay separate.
 
 ### Trying relay without installing it
 
@@ -834,6 +834,7 @@ Claude Code provides the command wrappers, board UI command, and shared design a
 |---|---|
 | `/relay:relay-design <problem>` | Collaborates on architecture, researches alternatives, and writes or updates design documents when requested. |
 | `/relay:plan <what to build \| spec \| design>` | Turns requirements into a plan with tasks, lanes and a forecast. Reuses a supplied spec or accepted design; writes a short spec when neither exists. Writes no code. |
+| `/relay:to-tickets <plan, spec, or request>` | Converts existing requirements into self-contained tickets with acceptance criteria and blockers. Returns drafts unless another destination is requested. |
 | `/relay:run [plan]` | Runs the plan now: the conductor works through the waves in the background while you keep using the session. |
 | `/relay:status [plan]` | Where a run is: waves, lanes, fix rounds, rulings, budget, and the marathon if one is running. |
 | `/relay:board [plan]` | The roadmap as traffic lights, in the chat and as a page in your browser that follows the run. |
@@ -851,12 +852,13 @@ Commands that operate on an existing plan use the newest plan in `docs/relay/pla
 
 ### Skills
 
-Relay contains **19 shared skills**: 12 public entry points and 7 engines or supporting skills. Both hosts load the same source instructions.
+Relay contains **20 shared skills**: 13 public entry points and 7 engines or supporting skills. Both hosts load the same source instructions.
 
 | Kind | Skill | Used when |
 |---|---|---|
 | Entry point | `relay-design` | Designing architecture, comparing approaches, or preparing maintained architecture documentation. |
 | Entry point | `relay-plan` | Turning a request, spec, or accepted design into a plan. |
+| Entry point | `relay-to-tickets` | Turning an existing plan, spec, or agreed discussion into tickets for people or agents. |
 | Entry point | `relay-run` | Starting a plan run. |
 | Entry point | `relay-status` | Checking a run's progress, budget and rulings. |
 | Entry point | `relay-board` | Showing task status in chat and a browser. |
@@ -980,7 +982,7 @@ For a mechanical task, the architect can write the exact code into the plan. The
 
 ## Status and roadmap
 
-Package version **0.4.0**. The repository defines **10 roles** and **19 shared skills**. Automated checks cover the CLI, hooks, generated artifacts and Claude mod. See the [testing guide](docs/testing/README.md) for the current check results and their limits. Source checks do not establish plugin discovery, hook trust or live teaching behavior on either host.
+Package version **0.4.1**. The repository defines **10 roles** and **20 shared skills**. Automated checks cover the CLI, hooks, generated artifacts and Claude mod. See the [testing guide](docs/testing/README.md) for the current check results and their limits. Source checks do not establish plugin discovery, hook trust or live teaching behavior on either host.
 
 A first pilot (October 20, Claude Code 2.1.303) ran a 3-task plan from `/relay:plan` to a merged, reviewed integration branch: lane agents landed in their worktrees by name, each role ran on its planned model, and the run produced its first calibration sample. One sample is not a rate; more pilots are the next step.
 

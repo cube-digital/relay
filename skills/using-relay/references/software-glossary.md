@@ -12,6 +12,7 @@ This is a software-term supplement to the language guide. Use one meaning for ea
 | `plan` | A task specification with Relay metadata. | Do not use for an explanation outline. |
 | `design` | A proposed or agreed architecture with responsibilities, contracts, and rationale. | Distinguish intended behavior from implemented behavior and execution tasks. |
 | `decision record` | A durable account of a significant architectural choice and its consequences. | Retain history and link a replacement when the choice changes. |
+| `ticket` | A bounded deliverable for a person or agent, with acceptance criteria and prerequisites. | Distinguish it from an internal task or execution lane. |
 | `lane` | Related implementation tasks in one worktree. | Use for plan execution only. |
 | `wave` | Lanes that can run together. | Preserve dependency order. |
 | `worktree` | A separate Git checkout. | Do not imply a new repository. |

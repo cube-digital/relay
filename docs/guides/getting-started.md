@@ -120,6 +120,27 @@ Read the returned spec, plan, assumptions and forecast. Then run that exact plan
 
 The run produces a reviewed integration branch such as `relay/<slug>/integration`. Review its report and recorded decisions. You decide whether to merge it into your branch. See the [README workflows](../../README.md#workflows-step-by-step) for lanes, reviews and long runs.
 
+## Turn an existing plan into tickets
+
+Use the same shared skill in either host:
+
+| Host | Request |
+|---|---|
+| Claude Code | `/relay:to-tickets docs/relay/plans/<plan>.md` |
+| Codex | `$relay-to-tickets docs/relay/plans/<plan>.md` |
+
+You can also ask: "Turn this plan into tickets that a developer or agent can implement."
+The skill accepts a specification or agreed conversation too. Each ticket includes
+its purpose, deliverable, relevant decisions, scope, acceptance criteria,
+verification, source references, and blockers. It does not require another plan.
+
+The default output is reviewable drafts in chat. To save files, ask for local
+tickets; the default directory is `docs/relay/tickets/<feature-slug>/`. To publish
+issues, name the tracker and project. Source decisions remain intact, unresolved
+decisions are explicit, and ticket preparation does not start implementation.
+See the [skill](../../skills/relay-to-tickets/SKILL.md) and
+[ticket template](../../skills/relay-to-tickets/ticket-template.md).
+
 ## First teaching or reconstruction request
 
 Use these independently in the current conversation:

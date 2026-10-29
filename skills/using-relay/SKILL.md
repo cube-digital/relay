@@ -1,6 +1,6 @@
 ---
 name: using-relay
-description: Use at the start of Relay design, implementation, teaching, research, or delegated work.
+description: Use at the start of Relay design, implementation, ticket preparation, teaching, research, or delegated work.
 ---
 # Relay rules
 
@@ -17,6 +17,10 @@ For architecture choices or documents, load `<relay-root>/skills/relay-design/SK
 ## Research
 
 Load `<relay-root>/skills/relay-teach/SKILL.md` for teaching or `<relay-root>/skills/relay-reverse-engineer/SKILL.md` for reconstruction. Both use `research-and-explain` with the lead here. No coding plans, lanes, worktrees, tests, installation, commits, or persistence. Lead answers follow requested depth, without the worker's eight-line limit.
+
+## Tickets
+
+When an existing plan, specification, or agreed discussion needs implementable tickets, load `<relay-root>/skills/relay-to-tickets/SKILL.md`. Prepare tickets in the current conversation. Preserve the source decisions. Ticket preparation does not start implementation, create a second plan, or publish to a tracker without a request.
 
 ## Implementation
 
