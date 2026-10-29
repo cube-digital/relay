@@ -1,5 +1,5 @@
 ---
-description: Use when turning a requested feature into a spec and a Relay implementation plan.
+description: Use when turning a requested feature, specification, or agreed architecture design into a Relay implementation plan.
 argument-hint: "[arguments]"
 disable-model-invocation: true
 ---

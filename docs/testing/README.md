@@ -69,6 +69,8 @@ Two tests were added for the teaching/reverse-engineering integration. The prote
 
 These tests establish the asserted renderer, hook, and packaging behavior. They do not establish that a host reads every instruction, that a teacher adapts successfully to a learner, or that writing conforms to the full ASD-STE100 standard.
 
+The architect/design change extends existing package tests to cover the shared design skill, its five references, and both generated architect definitions. It checks relocated resource access, Codex fallback discovery, and native setup without duplicate skill links. The existing session-start check also enforces the bootstrap size limit. The [design evaluation](../relay/evaluations/2026-10-30-architect-design.md) records these checks and a separate behavioral exercise.
+
 ## Writing new tests
 
 Follow [qa-mindset](../../skills/qa-mindset/SKILL.md). Name files `*.test.mjs` under `test/`; use the shared helpers for CLI/hook behavior and real temporary repositories for Git behavior. Derive expected values from the spec or brief, exercise public behavior, and use exact assertions. Add a test only for a failure an existing check does not catch.
@@ -116,9 +118,24 @@ For each live case, record the candidate commit, actual host/version, entry path
 
 ## Current verification record
 
+The **2026-10-30** architect/design implementation and documentation follow-up use Node.js **v20.11.0**, with working-tree changes based on `1164e7ec1e9096b0af89fb8058b1ae59849da188`. The [dated evaluation](../relay/evaluations/2026-10-30-architect-design.md) records implementation checks and an isolated behavioral exercise. The documentation follow-up changes no runtime instructions and adds or removes no tests.
+
+| Check | Result and scope |
+|---|---|
+| `npm test` | PASS: 93/93, zero failures or skipped tests; rerun for the documentation follow-up. |
+| `node bin/relay build --check` | PASS: generated files current; shared skill frontmatter portable. |
+| Plugin manifest validation | PASS during implementation with Claude Code 2.1.27. Root marketplace validation retains its existing description warning. Not rerun for the documentation-only follow-up. |
+| Isolated design exercise | Completed with a fresh Codex subagent loading source instructions directly. Produced the requested document and observed scope boundaries. This was not installed-plugin discovery or native-role validation. |
+| Skill creator validator | Could not start because PyYAML was unavailable. Relay's own portable-skill checks passed. |
+| Claude mod tests | Not rerun: this feature and documentation follow-up do not change `hooks/register.ts`. The historical host-command limitation is recorded below. |
+| Installed design scenarios, both hosts | UNEXECUTED; see the dated evaluation for selection, research, helper, review, document-update, and planning-handoff cases. |
+| Teaching/reconstruction cases A–H, both hosts | Remain UNEXECUTED in their separate evaluation record. |
+
+## Historical verification records
+
 Fresh checks on **2026-10-26** used Node.js **v20.11.0** at integration HEAD `3dec0332c4e70815a68697b4d6bc0e93c7bcabb9` plus the documentation working-tree changes. This includes the final architect-description restorations. The documentation update added no tests and removed no tests. Claude commands were not rerun for this documentation-only update.
 
-| Check | Current candidate result |
+| Check | 2026-10-26 result |
 |---|---|
 | `npm test` | PASS: 93/93, zero failures, zero skipped tests. |
 | `node bin/relay build --check` | PASS: generated files current; skills portable. |

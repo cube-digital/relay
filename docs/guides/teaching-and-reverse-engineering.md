@@ -132,6 +132,8 @@ For example, after a reconstruction request:
 Give me an optional teacher handoff for the expiry gap. Include cited evidence and open questions.
 ```
 
+An architect can also reuse a reconstruction or teaching handoff when a design is requested. Include the current mechanisms, constraints, verified paths, and unresolved questions. The [design workflow](architecture-design.md) uses that evidence to propose a change. It remains independent: teaching and reconstruction do not automatically start design, and the architect does not require either workflow first.
+
 ## Optional helpers and real capacity
 
 Helpers are useful for independent unresolved questions. Small questions can remain with the lead. Each assignment has non-overlapping ownership, one bounded question, source scope, existing evidence, focus, the absolute installed root and report-only write scope. Research helpers receive `mode=research-only` and cannot interview the learner, expand scope or delegate.

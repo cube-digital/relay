@@ -1,6 +1,6 @@
 {
   "name": "relay",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Budget-aware orchestration for Claude Code and Codex: tiered model routing, worktree lanes, and a QA mindset for agent-written tests.",
   "type": "module",
   "license": "Apache-2.0",

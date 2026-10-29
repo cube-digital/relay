@@ -1,7 +1,7 @@
 <!-- generated-by: gsd-doc-writer -->
 # Getting started with Relay
 
-Relay provides implementation workflows and independent teaching and system reconstruction. Choose Claude Code or Codex, then use the entry point for your task. Installation and discovery depend on the host you actually run.
+Relay provides architecture design, implementation workflows, and independent teaching and system reconstruction. Choose Claude Code or Codex, then use the entry point for your task. Installation and discovery depend on the host you actually run.
 
 ## Prerequisites
 
@@ -89,6 +89,19 @@ node "/absolute/path/to/relay/bin/relay" setup codex /absolute/path/to/project
 
 This installs project agents, project hooks and `.agents/skills/` links. Existing differing hooks are preserved with a separate merge candidate. Review that candidate, start a new session and inspect `/hooks`. Use one Relay hook installation at a time. When migrating to native hooks, remove only Relay's project-hook entries and preserve other hooks. See [setup instructions](../../skills/relay-setup/SKILL.md).
 
+## First architecture design
+
+Use the shared design skill to explore a problem with the existing architect:
+
+| Host | Request |
+|---|---|
+| Claude Code | `/relay:relay-design Design a durable import pipeline from requirements.md` |
+| Codex | `$relay-design Design a durable import pipeline from requirements.md` |
+
+Substitute your requirements or describe the problem directly. Ask for a comparison in chat or a saved architecture document. The architect researches alternatives, challenges assumptions, and explains one concrete flow before adding technical detail. It can work independently of teaching and reverse engineering.
+
+When you want implementation planning, give the saved design to `/relay:plan` or `$relay-plan`. Planning preserves accepted decisions and adds tasks, checks, and documentation updates. See the [architecture design guide](architecture-design.md) for research, review, and document maintenance.
+
 ## First implementation request
 
 In the target project's chat, request a plan:
@@ -134,6 +147,7 @@ See the [teaching and reverse-engineering guide](teaching-and-reverse-engineerin
 
 ## Next steps
 
+- [Architecture design](architecture-design.md) explains collaborative design and the planning handoff.
 - [Architecture](../architecture/overview.md) and [configuration](../configuration/README.md) explain source ownership and routing.
 - [Development](development.md), [testing](../testing/README.md) and [contributing](../../CONTRIBUTING.md) cover changes and verification.
 - [Teaching and reverse engineering](teaching-and-reverse-engineering.md) explains the independent research paths.

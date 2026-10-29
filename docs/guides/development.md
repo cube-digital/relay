@@ -92,6 +92,24 @@ node --test test/package.test.mjs test/build.test.mjs
 
 These checks cover relocated package resources, fallback discovery, native setup behavior, and generated definitions. They do not establish that an installed session has loaded the candidate or trusted its hooks.
 
+## Maintain the architect and design workflow
+
+This capability uses one shared skill and the existing architect. Change the source that owns the behavior:
+
+| Source | Responsibility |
+|---|---|
+| [`roles/architect.md`](../../roles/architect.md) | Collaborative behavior, design/plan/review responsibilities, tool metadata, write scope, and output limits. |
+| [`skills/relay-design/SKILL.md`](../../skills/relay-design/SKILL.md) | Entry conditions, reference loading, conversation inputs, and workflow boundaries. |
+| [`skills/relay-design/references/`](../../skills/relay-design/references/) | Design method, evidence and helpers, document maintenance, template, and readiness review. |
+| [`skills/using-relay/SKILL.md`](../../skills/using-relay/SKILL.md) and its host references | Startup selection and actual Claude/Codex dispatch guidance. |
+| [`skills/relay-plan/SKILL.md`](../../skills/relay-plan/SKILL.md) and [`plan-with-tiers`](../../skills/plan-with-tiers/SKILL.md) | Preserve accepted design contracts and add execution details and documentation tasks. |
+
+The shared skill is discovered from `skills/`; it has no `commands/` wrapper or terminal subcommand. Generate `agents/architect.md` and `codex/agents/relay-architect.toml` with the builder. Existing role routing remains in force.
+
+Keep detailed procedures out of the startup bootstrap. The session-start test enforces an additional-context size below 4,000 characters. Use the existing package tests to check that new references remain accessible after relocation. Keep behavioral exercises separate from these deterministic checks; the [design evaluation](../relay/evaluations/2026-10-30-architect-design.md) records the current coverage and live-host gaps.
+
+Update the [user guide](architecture-design.md), [configuration reference](../configuration/README.md#architecture-design-request-inputs), and README when the public behavior changes. Preserve the architect's existing planning and final-review contracts when changing design behavior.
+
 ## Language and teaching changes
 
 Use the shared [language guide](../../skills/using-relay/references/language-guide.md) and [software glossary](../../skills/using-relay/references/software-glossary.md). Runtime instructions are strict STE-style drafts. Teacher explanations use the [adaptive teaching method](../../skills/research-and-explain/references/teaching-method.md), with depth, words, examples, and pace suited to the current question and topic familiarity.
@@ -163,6 +181,6 @@ A useful PR describes the problem, resulting behavior, affected source/generated
 
 ## Release and plugin refresh
 
-The current package and both plugin manifests are `0.3.0`. For an intentional release, follow the [README release guidance](../../README.md#releasing): update `package.json`, `.claude-plugin/plugin.json`, and `.codex-plugin/plugin.json` together. Keep the RPC client version in `lib/codex-rpc.mjs` aligned. Verify version agreement before tagging or publishing. Use release commands supported by the installed host.
+The current package and both plugin manifests are `0.4.0`. For an intentional release, follow the [README release guidance](../../README.md#releasing): update `package.json`, `.claude-plugin/plugin.json`, and `.codex-plugin/plugin.json` together. Keep the RPC client version in `lib/codex-rpc.mjs` aligned. Verify version agreement before tagging or publishing. Use release commands supported by the installed host.
 
 New capabilities need the appropriate packaged release and installed-plugin refresh before they become available from a user's plugin cache. Editing the checkout does not show that an existing installation has updated. Verify the installed candidate and start a new session when setup requires it. Do not change release versions merely for an unrelated documentation edit.

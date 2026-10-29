@@ -4,6 +4,8 @@ Why relay is built the way it is, with the sources checked in October 2026. Fact
 
 **Current implementation note — 2026-10-26.** The external research and measurements below are historical design inputs, not fresh product verification. Current source behavior is described in [architecture](architecture/overview.md), [configuration](configuration/README.md), and [testing status](testing/README.md).
 
+**Architecture design workflow — 2026-10-30.** For the implemented `relay-design` skill and the architect's expanded responsibilities, read the [design guide](guides/architecture-design.md). This historical note explains Relay's original implementation orchestration; its references to using the architect at plan time and final review do not describe every current architect responsibility.
+
 ## 1. Where usage goes
 
 - Multi-agent systems use about 15× the tokens of a chat, single agents about 4×; token usage alone explained 80% of performance variance in Anthropic's research eval. Parallelism buys time, not savings. [Anthropic](https://www.anthropic.com/engineering/multi-agent-research-system)

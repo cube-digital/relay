@@ -1,7 +1,7 @@
 <!-- generated-by: gsd-doc-writer -->
 # Relay architecture
 
-Relay coordinates coding work across Claude Code and Codex. It assigns model tiers before implementation, groups related tasks into reusable Git worktrees, and records the decisions and evidence needed to review a finished branch. This addresses expensive default routing, repeated checkout and setup work, repeated test runs, and sessions that reach their usage limit midway through a feature. Teaching and reverse engineering provide a separate way to understand a system without starting implementation.
+Relay coordinates coding work across Claude Code and Codex. It assigns model tiers before implementation, groups related tasks into reusable Git worktrees, and records the decisions and evidence needed to review a finished branch. This addresses expensive default routing, repeated checkout and setup work, repeated test runs, and sessions that reach their usage limit midway through a feature. Architecture design prepares decisions and documents independently of implementation. Teaching and reverse engineering provide a separate way to understand a system.
 
 Relay combines instruction files, host event handlers, and a dependency-free Node.js CLI. Instructions assign judgment to agents. The CLI performs repeatable operations on plans, Git, usage readings, and files. Host tools and permissions determine which operations are available. See the [README](../../README.md), [getting started](../guides/getting-started.md), and [validation status](../testing/README.md).
 
@@ -12,7 +12,7 @@ A **role** defines a job. A **skill** supplies reusable instructions for doing w
 | Component | What it owns | Source |
 |---|---|---|
 | Role sources | Responsibilities, tier declarations, allowed tools where supported, output limits, and write boundaries. | [roles/](../../roles/) |
-| Skills and references | Planning, execution, QA, research procedures, host dispatch guidance, and shared language rules. | [skills/](../../skills/) |
+| Skills and references | Design, planning, execution, QA, research procedures, host dispatch guidance, and shared language rules. | [skills/](../../skills/) |
 | Claude command wrappers | Explicit command entry points that load the corresponding skill with user arguments. | [commands/](../../commands/), [run wrapper](../../commands/run.md) |
 | Shared configuration | Per-host model tiers, shared budget thresholds and caps, lane limits, and forecast weights. | [config/routing.json](../../config/routing.json) |
 | Codex configuration | A separately maintained role-to-tier map, window policy, harness data, and credit priors. | [Codex routing](../../codex-math/config/codex-routing.json), [harness data](../../codex-math/config/codex-harness.json) |
@@ -25,7 +25,7 @@ The source roles divide judgment as follows. Codex uses the exact generated name
 
 | Source role | Tier | Responsibility | Generated Codex file under `codex/agents/` |
 |---|---|---|---|
-| [architect](../../roles/architect.md) | strong | Write the implementation plan and review the finished branch. | `relay-architect.toml` |
+| [architect](../../roles/architect.md) | strong | Design architecture, research alternatives, write plans, and review designs or the finished branch. | `relay-architect.toml` |
 | [conductor](../../roles/conductor.md) | mid | Coordinate lanes, reviews, fixes, rulings, and integration. | `relay-conductor.toml` |
 | [implementer-fast](../../roles/implementer-fast.md) | cheap | Carry out complete planned code or mechanical changes. | `relay-implementer-fast.toml` |
 | [implementer](../../roles/implementer.md) | mid | Implement related lane tasks, with one commit per task. | `relay-implementer.toml` |
@@ -64,6 +64,12 @@ The shared `config/routing.json` supplies model and effort choices by tier. Role
 Codex definitions intentionally omit model and effort keys. A supported clean dispatch supplies `model`, `reasoning_effort`, and `fork_turns: "none"`. The spawn hook preserves explicit choices before applying budget caps; omitted values fall back to the recognized role tier and then the default tier. Project `[agents]` defaults provide a further backstop. Full-history children inherit their parent's settings, so the hook requests a clean retry for a recognized Relay role. A fallback agent type does not automatically receive Relay role-name recognition. [Codex dispatch guidance](../../skills/using-relay/references/codex.md), [spawn hook](../../hooks/codex-spawn.mjs), [routing function](../../codex-math/lib/budget.mjs)
 
 Consumers combine the configurations explicitly. `readBudget()` uses shared thresholds for both hosts. The Codex spawn hook overlays shared tiers and tight/critical caps onto the Codex registry. The Codex forecast bridge overlays shared tiers, lane limits, and four forecast weights while retaining Codex-specific window and credit data. See [configuration](../configuration/README.md), [budget reader](../../scripts/relay-budget.mjs), and [forecast bridge](../../lib/codex-integration.mjs).
+
+## Design flow: a problem and its constraints
+
+The shared `relay-design` skill applies the existing architect in the current conversation. It loads design guidance from supporting references as needed. Research, document maintenance, and design review are responsibilities of that workflow; they do not add roles or a separate engine. The architect retains its planning and final branch review duties.
+
+The result can be a short comparison or a maintained architecture document. Optional helpers answer bounded questions under the existing host and budget limits. When planning is requested, `relay-plan` consumes the accepted design and preserves its decisions, contracts, and acceptance scenarios. The plan adds execution details and necessary documentation updates. See the [design guide](../guides/architecture-design.md).
 
 ## Implementation flow: one feature request
 

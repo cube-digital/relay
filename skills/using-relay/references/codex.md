@@ -18,6 +18,12 @@ Invoke helpers as `node "<absolute-relay-root>/bin/relay" ...`. Add `--harness c
 
 Use this section only when setup is requested. Native plugin installation supplies skills and trusted command hooks. Run `setup codex <project> --plugin` from the bundled CLI for project agents and defaults, then start a new session. Do not install fallback project hooks alongside native plugin hooks. Hook trust is a user decision in `/hooks`. Setup and doctor cannot infer or grant it.
 
+## Architecture design
+
+Invoke `$relay-design` through skill discovery, or use native `relay-architect`. The entry skill acts as the interactive architect in the current conversation. Direct native design requests read the design references from the installed root. Preserve the architect's existing plan and final-review responsibilities.
+
+For optional helpers, follow `skills/relay-design/references/research.md` from the installed root. Use actual capacity, the existing budget and routing table, clean spawns, and the supported custom-type fallback above. Supply `mode=research-only` or `mode=design-review`, a bounded task, and no recursive delegation. An allowlist or role instruction does not create unavailable web or dispatch tools. Do not install hooks or change settings as part of design.
+
 ## Teaching and research
 
 Invoke `$relay-teach` or `$relay-reverse-engineer` through skill discovery. A native `relay-teacher` or `relay-reverse-engineer` also works independently. Entry skills act as the interactive lead. Do not create a lead child automatically. Follow the shared engine under `<absolute-relay-root>/skills/research-and-explain/`.

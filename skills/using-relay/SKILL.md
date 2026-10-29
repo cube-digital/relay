@@ -1,18 +1,22 @@
 ---
 name: using-relay
-description: Use at the start of Relay implementation, teaching, research, or delegated work.
+description: Use at the start of Relay design, implementation, teaching, research, or delegated work.
 ---
 # Relay rules
 
-Resolve this SKILL.md to its absolute real path. The installed Relay root is two directories above its containing directory. Read `<relay-root>/skills/using-relay/references/<harness>.md` (`codex` or `claude-code`). `relay <args>` means `node "<absolute-relay-root>/bin/relay" <args>`. Substitute the resolved root in calls, reads, and briefs. Resolve bundled files from that root. Do not require `relay` on PATH or use target-project copies.
+Resolve this SKILL.md's real path. The installed root is two directories above its directory. Read `<relay-root>/skills/using-relay/references/<harness>.md` (`codex` or `claude-code`). `relay <args>` means `node "<absolute-relay-root>/bin/relay" <args>`. Use this root in reads, calls, and briefs; do not use target-project copies or require `relay` on PATH.
 
-Write instructions as strict STE-style drafts. Use short sentences, clear actors, and consistent terms. Keep code, commands, paths, identifiers, output markers, quotations, and evidence exact. For teacher explanations, adapt the words and detail to the learner. Use examples, analogies, and diagrams when they help.
+Write strict STE-style instruction drafts: short sentences, clear actors, consistent terms. Preserve code, commands, paths, identifiers, markers, quotations, and evidence. Adapt explanations to the learner; use examples, analogies, and diagrams when useful.
 
-Read `<absolute-relay-root>/skills/using-relay/references/language-guide.md` and `<absolute-relay-root>/skills/using-relay/references/software-glossary.md` directly. If unavailable, keep the inline policy. Report unavailable guidance. Do not claim a full language review or activate unrelated workflows as a fallback.
+Read `language-guide.md` and `software-glossary.md` in that references directory. If unavailable, retain the inline policy and disclose the gap. Do not claim a full language review or activate unrelated workflows as fallback.
+
+## Design
+
+For architecture choices or documents, load `<relay-root>/skills/relay-design/SKILL.md` as the current lead. Concept questions can use teaching or a direct answer. Accepted designs go to `relay-plan` when planning is requested. Preserve decisions and authorization; design alone does not start planning or coding.
 
 ## Research
 
-For teaching, load `<absolute-relay-root>/skills/relay-teach/SKILL.md`. For reconstruction, load `<absolute-relay-root>/skills/relay-reverse-engineer/SKILL.md`. Both use `research-and-explain`. Act as the lead here. Do not start coding plans, lanes, worktrees, tests, installation, commits, or persistence. Lead answers follow requested depth, without the coding worker's eight-line limit.
+Load `<relay-root>/skills/relay-teach/SKILL.md` for teaching or `<relay-root>/skills/relay-reverse-engineer/SKILL.md` for reconstruction. Both use `research-and-explain` with the lead here. No coding plans, lanes, worktrees, tests, installation, commits, or persistence. Lead answers follow requested depth, without the worker's eight-line limit.
 
 ## Implementation
 
@@ -22,14 +26,14 @@ For teaching, load `<absolute-relay-root>/skills/relay-teach/SKILL.md`. For reco
 
 ## Dispatch
 
-Use Relay roles: scout for search; implementer-fast / implementer / implementer-deep to build; test-author for spec-derived tests; reviewer for review; architect for plans/final review; conductor for whole plans; teacher for independent teaching/research; reverse-engineer for independent reconstruction. Research helpers use `mode=research-only` and cannot delegate.
+Use Relay roles: scout for search; implementer-fast / implementer / implementer-deep to build; test-author for acceptance tests; reviewer for code review; architect for design, plans, and architectural review; conductor for whole plans; teacher for teaching/research; reverse-engineer for reconstruction. Helpers with `mode=research-only` or `mode=design-review` cannot delegate.
 
-Claude names are `relay:<role>`. Codex names are `relay-<role>`. Use the host reference's supported custom-type fallback when needed. Set Codex model and reasoning effort from the routing table on each supported clean spawn. Supply the absolute installed root when task context is supported. Do not paste file contents or session history into briefs, except source role instructions for a supported fallback.
+Claude names: `relay:<role>`. Codex names: `relay-<role>`. Follow the host reference for supported fallback and clean spawns. Set Codex model and effort from routing. Supply the installed root in task context. Briefs contain no file contents or session history except role instructions for supported fallback.
 
 ## Budget and cache
 
-Read `relay budget --harness <harness>` for the 5-hour/7-day level. At normal, use plan tiers. At tight, keep Opus for final review. Prefer cheap tiers when the plan contains complete code. At unknown, act as tight.
+Read `relay budget --harness <harness>`. Normal: use plan tiers. Tight or unknown: keep Opus for final review. Prefer cheap tiers for complete planned code.
 
-At critical during implementation, finish the current wave. Commit. Write a handoff with `handoff`. Start nothing new. During research at critical, start no helpers. Finish the bounded answer and disclose gaps. Do not commit or start an implementation handoff.
+At critical during implementation, finish the current wave. Commit. Write a handoff with `handoff`. Start nothing new. During design or research at critical, start no helpers. Finish the bounded answer or requested document and disclose gaps. Do not commit or start an implementation handoff.
 
-Keep the main model and effort selected at session start. A mid-session switch reads the conversation again without the cache. Use `/clear` between unrelated tasks.
+Keep the session's model and effort to retain its cache. Use `/clear` between unrelated tasks.

@@ -2,6 +2,8 @@
 
 `relay-whitepaper.pdf` is a one-page note on relay: the problem, the mechanism, the statistical model behind `relay forecast`, and what is not proven yet. Every number in its figure comes from relay's own code, run on `example-plan.md`.
 
+Its scope is implementation orchestration and forecasting. The independent architecture-design workflow is documented in the [design guide](../guides/architecture-design.md). The plan forecast is not an estimate of an open-ended design or research conversation.
+
 ## Rebuild
 
 From the repository root:

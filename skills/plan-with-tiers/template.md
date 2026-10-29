@@ -2,6 +2,7 @@
 
 **Goal:** <one sentence>
 **Spec:** docs/relay/specs/<file>.md
+**Design (when supplied):** <path and revision or dated state; omit when absent>
 **Architecture:** <two or three sentences>
 
 ## Global Constraints

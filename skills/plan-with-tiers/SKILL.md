@@ -13,7 +13,9 @@ Read `<absolute-relay-root>/skills/using-relay/references/language-guide.md` and
 
 Write the plan for engineers who know the language. Assume they do not know this codebase or spec. Decide the files, names, signatures, exact values, and tests now. Make execution mechanical so cheaper models can do it.
 
-Save to `docs/relay/plans/YYYY-MM-DD-<slug>.md`. Use scout agents for search. Do not read the codebase file by file. Copy the format in [template.md](template.md).
+When a design is supplied, link its path and revision or dated state when known. Preserve its settled decisions, contracts, acceptance scenarios, and constraints. Decide details explicitly left to the builder. Do not silently replace architectural decisions. Flag unresolved material conflicts before dependent tasks. Include architecture checks and documentation maintenance in the tasks that need them.
+
+Save to `docs/relay/plans/YYYY-MM-DD-<slug>.md`. Use scout agents for bounded search when available. Otherwise inspect the relevant files directly. Reuse evidence; do not read the codebase file by file. Copy the format in [template.md](template.md).
 
 ## Tasks
 

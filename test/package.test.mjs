@@ -28,6 +28,17 @@ test('packaged resources run outside the source checkout without relay on PATH',
   assert.match(readFileSync(join(payload, plugin.hooks), 'utf8'), /\$\{PLUGIN_ROOT\}/);
   assert.ok(existsSync(join(payload, 'roles/reviewer.md')));
   assert.equal(plugin.skills, './skills/');
+  const designResources = [
+    'roles/architect.md', 'agents/architect.md', 'codex/agents/relay-architect.toml',
+    'skills/relay-design/SKILL.md',
+    'skills/relay-design/references/design-method.md',
+    'skills/relay-design/references/research.md',
+    'skills/relay-design/references/documentation.md',
+    'skills/relay-design/references/design-template.md',
+    'skills/relay-design/references/review.md',
+  ];
+  assert.deepEqual(designResources.map(path => readFileSync(join(payload, path), 'utf8')),
+    designResources.map(path => readFileSync(join(ROOT, path), 'utf8')));
   assert.equal(readFileSync(join(payload, 'roles/teacher.md'), 'utf8'), readFileSync(join(ROOT, 'roles/teacher.md'), 'utf8'));
   assert.equal(readFileSync(join(payload, 'roles/reverse-engineer.md'), 'utf8'), readFileSync(join(ROOT, 'roles/reverse-engineer.md'), 'utf8'));
   assert.equal(readFileSync(join(payload, 'agents/teacher.md'), 'utf8'), readFileSync(join(ROOT, 'agents/teacher.md'), 'utf8'));
@@ -45,6 +56,14 @@ test('packaged resources run outside the source checkout without relay on PATH',
   const relocatedProject = tempRepo().dir;
   const setup = spawnSync(process.execPath, [join(payload, 'bin/relay'), 'setup', 'codex', relocatedProject], { cwd: tmpdir(), encoding: 'utf8', env: { PATH: '/usr/bin:/bin', RELAY_HOME: join(payload, 'state'), CODEX_HOME: join(payload, 'empty') } });
   assert.equal(setup.status, 0, setup.stderr);
+  const designPath = realpathSync(join(relocatedProject, '.agents/skills/relay-design/SKILL.md'));
+  assert.equal(designPath, join(payload, 'skills/relay-design/SKILL.md'));
+  const designRoot = join(designPath, '../../..');
+  assert.equal(designRoot, payload);
+  assert.deepEqual(designResources.map(path => readFileSync(join(designRoot, path), 'utf8')),
+    designResources.map(path => readFileSync(join(ROOT, path), 'utf8')));
+  assert.equal(readFileSync(join(relocatedProject, '.codex/agents/relay-architect.toml'), 'utf8'),
+    readFileSync(join(payload, 'codex/agents/relay-architect.toml'), 'utf8'));
   const teachPath = realpathSync(join(relocatedProject, '.agents/skills/relay-teach/SKILL.md'));
   const engineerPath = realpathSync(join(relocatedProject, '.agents/skills/relay-reverse-engineer/SKILL.md'));
   assert.equal(teachPath, join(payload, 'skills/relay-teach/SKILL.md'));
@@ -69,6 +88,8 @@ test('fallback setup is repeatable, preserves config and creates missing skills 
   assert.equal(runCli(['setup', 'codex', dir]).code, 0);
   assert.equal(readFileSync(join(dir, '.codex/config.toml'), 'utf8'), original);
   assert.ok(existsSync(join(dir, '.agents/skills/relay-plan/SKILL.md')));
+  assert.equal(realpathSync(join(dir, '.agents/skills/relay-design/SKILL.md')), join(ROOT, 'skills/relay-design/SKILL.md'));
+  assert.equal(readFileSync(join(dir, '.codex/agents/relay-architect.toml'), 'utf8'), readFileSync(join(ROOT, 'codex/agents/relay-architect.toml'), 'utf8'));
   assert.ok(existsSync(join(dir, '.codex/agents/relay-reviewer.toml')));
   assert.equal(realpathSync(join(dir, '.agents/skills/relay-teach/SKILL.md')), join(ROOT, 'skills/relay-teach/SKILL.md'));
   assert.equal(realpathSync(join(dir, '.agents/skills/relay-reverse-engineer/SKILL.md')), join(ROOT, 'skills/relay-reverse-engineer/SKILL.md'));
@@ -107,6 +128,8 @@ test('native plugin setup avoids duplicate hooks and doctor only reports trust a
   assert.equal(existsSync(join(dir, '.agents/skills/relay-teach')), false);
   assert.equal(existsSync(join(dir, '.agents/skills/relay-reverse-engineer')), false);
   assert.equal(existsSync(join(dir, '.agents/skills/using-relay')), false);
+  assert.equal(existsSync(join(dir, '.agents/skills/relay-design')), false);
+  assert.equal(readFileSync(join(dir, '.codex/agents/relay-architect.toml'), 'utf8'), readFileSync(join(ROOT, 'codex/agents/relay-architect.toml'), 'utf8'));
   assert.equal(readFileSync(join(dir, '.codex/agents/relay-teacher.toml'), 'utf8'), readFileSync(join(ROOT, 'codex/agents/relay-teacher.toml'), 'utf8'));
   assert.equal(readFileSync(join(dir, '.codex/agents/relay-reverse-engineer.toml'), 'utf8'), readFileSync(join(ROOT, 'codex/agents/relay-reverse-engineer.toml'), 'utf8'));
 

@@ -1,7 +1,7 @@
 <!-- generated-by: gsd-doc-writer -->
 # Configuration
 
-Relay 0.3.0 keeps model routing, role instructions, and host setup in separate files. Change the source files, then rebuild generated definitions. Start with the [project README](../../README.md) or [getting started](../guides/getting-started.md). See the [architecture overview](../architecture/overview.md) for component relationships.
+Relay 0.4.0 keeps model routing, role instructions, and host setup in separate files. Change the source files, then rebuild generated definitions. Start with the [project README](../../README.md) or [getting started](../guides/getting-started.md). See the [architecture overview](../architecture/overview.md) for component relationships.
 
 ## Config file format
 
@@ -148,6 +148,22 @@ Edit the source under [`roles/`](../../roles), then rebuild. The builder require
 | `reverse-engineer` | `mid` | `true` | `40` |
 
 Both research roles list `Read, Grep, Glob, Bash, Write, WebFetch, WebSearch`. They may inspect sources and write only an explicitly assigned report within host permissions. They may not change project code, commit, run tests, or start implementation workflows. Native Claude child roles have no `Agent` tool and research serially. Codex TOMLs do not grant a sandbox or new tool permissions.
+
+## Architecture design request inputs
+
+[`relay-design`](../../skills/relay-design/SKILL.md) uses the existing `architect` role. There is no additional role registry entry, model tier, terminal subcommand, or design configuration file. The interactive lead keeps the session model; dispatched architect instances use the existing `strong` tier and host routing.
+
+| Input in the conversation | Default and meaning |
+|---|---|
+| Problem or design question | Required; use current context when already supplied. |
+| Requirements, evidence, and settled decisions | Optional supplied paths, URLs, or prior discussion. Reuse them before asking questions. |
+| Explanation preference | Optional familiarity, depth, examples, or diagram request. |
+| `max-helpers` | Integer `0` through `3`; default ceiling `3`. Actual global capacity and budget can reduce it to zero. |
+| Document destination | Use a supplied path or project conventions. For a requested new document without a location, use `docs/relay/designs/YYYY-MM-DD-<topic>.md`. A chat comparison need not create files. |
+
+These inputs accept natural-language equivalents and are not CLI flags. Helpers receive an explicit `mode=research-only` or `mode=design-review` assignment and cannot delegate. Those modes are internal responsibilities of the architect, not additional roles. Unknown capacity means serial work; critical usage permits no helpers. The helper ceiling is separate from implementation lane limits.
+
+The architect's Claude allowlist includes `WebFetch` and `WebSearch`. Native Claude children have no `Agent` tool and work serially. Host permissions still determine availability. Architect instructions permit scoped design documents, decisions, plans, and reports while prohibiting project-code edits and commits. The absence of `readonly: true` in its metadata does not authorize implementation. See the [design guide](../guides/architecture-design.md) and [helper policy](../../skills/relay-design/references/research.md).
 
 ## Teaching and research request inputs
 
