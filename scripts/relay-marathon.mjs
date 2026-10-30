@@ -33,6 +33,7 @@ import { delimiter, join, resolve } from 'node:path';
 import { parseArgs } from '../lib/args.mjs';
 import { describeWindows, levelFor } from '../lib/budget.mjs';
 import { resolveHarness } from '../lib/harness.mjs';
+import { codexRouting } from '../lib/codex-integration.mjs';
 import { resolveCodexBin } from '../lib/codex-rpc.mjs';
 import { formatForecast } from '../lib/forecast.mjs';
 import { ensureExcluded, git, mainRoot } from '../lib/git.mjs';
@@ -276,6 +277,7 @@ export async function main(argv) {
     return 1;
   }
   const routing = loadRouting();
+  const mid = harness === 'codex' ? codexRouting().tiers.mid : routing.tiers.mid.claude;
   mkdirSync(dir, { recursive: true });
   const ledger = ledgerPath(planPath);
   const hours = Number(args.hours);
@@ -284,8 +286,8 @@ export async function main(argv) {
   const deadline = new Date(start.getTime() + hours * 3_600_000);
   const options = {
     harness,
-    model: args.model ?? routing.tiers.mid[harness].model,
-    effort: args.effort ?? routing.tiers.mid[harness].effort,
+    model: args.model ?? mid.model,
+    effort: args.effort ?? mid.effort,
     permissionMode: harness === 'codex' ? 'approve-for-me' : args['permission-mode'] ?? 'auto',
     maxTurns: Number(args['max-turns'] ?? 400),
     maxLegs: Number(args['max-legs'] ?? 24),

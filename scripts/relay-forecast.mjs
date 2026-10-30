@@ -18,11 +18,13 @@ export function forecastPlan(planPath, opts = {}) {
   const routing = loadRouting();
   const harness = resolveHarness(opts);
   const snap = readSnapshot(snapshotPath(harness));
-  const budget = snap && !isStale(snap, routing.budget.staleAfterMinutes) ? snap : undefined;
+  const budget = snap && !isStale(snap, (harness === 'codex' ? codexRouting() : routing).budget.staleAfterMinutes) ? snap : undefined;
   if (harness === 'codex') {
     const calibration = calibrationFromSummary(summarizeCodex(readCalibration(calibrationPath(harness))));
+    const codex = codexRouting();
+    if (opts.maxLanes !== undefined) codex.lanes = { ...codex.lanes, maxParallelLanes: Number(opts.maxLanes) };
     const result = codexForecast({
-      plan: res.plan, lanes: res.lanes, routing: codexRouting(), harness: loadHarness(),
+      plan: res.plan, lanes: res.lanes, routing: codex, harness: loadHarness(),
       calibration, snapshot: budget,
     });
     return { errors: [], warnings: res.warnings, forecast: labelCodexForecast(result, calibration) };
