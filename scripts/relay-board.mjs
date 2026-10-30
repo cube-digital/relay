@@ -32,8 +32,8 @@ function subjects(root, range) {
 
 const branchExists = (root, b) => git(['rev-parse', '--verify', '--quiet', `refs/heads/${b}`], root, { allowFail: true }) !== undefined;
 
-export function boardFor(planPath) {
-  const res = planLanes(planPath);
+export function boardFor(planPath, opts = {}) {
+  const res = planLanes(planPath, { harness: opts.harness, codex: opts.codex });
   if (res.errors.length) return { errors: res.errors };
   const { plan, lanes } = res;
   const root = mainRoot(dirname(resolve(planPath)));
@@ -63,8 +63,8 @@ export function boardFor(planPath) {
   return { board, dir, root };
 }
 
-export function writeBoard(planPath, { html = false } = {}) {
-  const r = boardFor(planPath);
+export function writeBoard(planPath, { html = false, harness, codex } = {}) {
+  const r = boardFor(planPath, { harness, codex });
   if (r.errors) return r;
   const { board, dir, root } = r;
   mkdirSync(dir, { recursive: true });
@@ -76,22 +76,22 @@ export function writeBoard(planPath, { html = false } = {}) {
 }
 
 // Called after ledger appends and worktree operations. Never fails the caller.
-export function refreshBoard(planPath) {
+export function refreshBoard(planPath, opts = {}) {
   try {
-    writeBoard(planPath);
+    writeBoard(planPath, opts);
   } catch {
     // the board is a view; a failure here must not stop the run
   }
 }
 
 export function main(argv) {
-  const args = parseArgs(argv, { booleans: ['html', 'open', 'json'] });
+  const args = parseArgs(argv, { booleans: ['html', 'open', 'json', 'codex'] });
   const planPath = args._[0];
   if (!planPath) {
-    console.error('usage: relay board <plan.md> [--html] [--open] [--json]');
+    console.error('usage: relay board <plan.md> [--html] [--open] [--json] [--harness claude|codex]');
     return 64;
   }
-  const r = writeBoard(planPath, { html: Boolean(args.html || args.open) });
+  const r = writeBoard(planPath, { html: Boolean(args.html || args.open), harness: args.harness, codex: args.codex });
   if (r.errors) {
     for (const e of r.errors) console.error(`✗ ${e}`);
     return 1;
