@@ -30,7 +30,7 @@ Relay deliberately has no `CLAUDE.md` at the plugin root. Keep shared repository
 |---|---|
 | [`roles/*.md`](../../roles) | Host-neutral role metadata and instructions. |
 | [`config/routing.json`](../../config/routing.json) | Shared model tiers, budget policy, lane limits, and forecast weights. |
-| [`codex-math/config/codex-routing.json`](../../codex-math/config/codex-routing.json) | Separately maintained Codex role registry, window policy, and forecast priors. |
+| [`codex-math/config/codex-routing.json`](../../codex-math/config/codex-routing.json) | Codex role registry, tiers, window policy, lanes, and forecast priors. A build source; the build checks it. |
 | [`skills/`](../../skills), [`commands/`](../../commands) | Shared workflows, supporting references, and command wrappers. |
 | [`lib/`](../../lib), [`scripts/`](../../scripts), [`bin/relay`](../../bin/relay) | CLI behavior, reusable logic, and dispatch. |
 | [`hooks/`](../../hooks) | Command hooks and the Claude mod; preserve the generated routing block. |
@@ -42,7 +42,7 @@ Relay deliberately has no `CLAUDE.md` at the plugin root. Keep shared repository
 - `codex/agents/*.toml`, `codex/config.snippet.toml`, `codex/hooks.json`, and `codex/hooks.plugin.json`.
 - The `<relay:generated>` block in `hooks/register.ts`.
 
-Do not hand-edit `agents/`, `codex/`, or that marked block. Regenerate them from the sources. The Codex registry in `codex-math/config/codex-routing.json` is not a generated output.
+Do not hand-edit `agents/`, `codex/`, or that marked block. Regenerate them from the sources. The Codex registry in `codex-math/config/codex-routing.json` is a source, not a generated output.
 
 ```mermaid
 flowchart LR
@@ -75,12 +75,12 @@ Inspect both the source and generated diff after building. A successful build pr
 ## Change a role or shared skill
 
 1. Edit the role under `roles/`. Preserve its responsibilities, stop conditions, report scope, and output contract unless the change intentionally revises them. The builder requires a matching `name`, a valid `tier`, and a description.
-2. For a new role, add its source file. Add or update the entry in the separate Codex `roles` registry so role-name routing recognizes it. Check the shared tier model choices in `config/routing.json`.
+2. For a new role, add its source file. Add or update the entry in the separate Codex `roles` registry so role-name routing recognizes it. Its tier must match the role file (`relay build` checks this). Check the tier model choices in `config/routing.json` (Claude) and `codex-math/config/codex-routing.json` (Codex).
 3. If the capability needs a public entry point, add or change its shared skill and the relevant discovery or packaging sources. Keep bundled references resolvable from the installed Relay root, including outside this checkout.
 4. Run `node bin/relay build`. Review generated Claude and Codex definitions, routing changes, and exact literals.
 5. Use the relevant build, package, routing, and hook tests. Record live-host checks separately when a change needs them.
 
-Codex definitions keep model and effort selection explicit at dispatch. Do not add model/effort override keys to generated TOMLs. Read-only definitions and role instructions restrict edits and assigned report output; they do not create an absolute sandbox guarantee or grant missing host permissions.
+Codex definitions keep model and effort selection explicit at dispatch. Do not add model/effort override keys to generated TOMLs: a TOML model overrides the spawn request (observed, Codex 0.163.0). Read-only definitions and role instructions restrict edits and assigned report output; they do not create an absolute sandbox guarantee or grant missing host permissions.
 
 Shared skill frontmatter contains only `name` and `description`. The description states when to use the skill. Name an action, such as “dispatch the reviewer agent,” or give both hosts' supported forms. Keep `SKILL.md` short and move supporting detail into references. Both hosts load the same source instructions.
 

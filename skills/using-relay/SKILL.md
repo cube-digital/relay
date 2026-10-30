@@ -8,7 +8,7 @@ If you are an assigned worker, follow your role and task. Skip this lead workflo
 
 ## Skill selection
 
-Before responding or acting, check the request, context, and skill descriptions. Include clarification and source inspection. If a Relay skill may apply, load and follow it first. Users need not name Relay. Check again when the task changes. Reuse loaded instructions. Announce the skill and purpose.
+Before responding or acting, check the request, context, and skill descriptions. If a Relay skill may apply, load and follow it first. Users need not name Relay. Check again when the task changes. Announce the skill.
 
 User instructions take precedence. Preserve decisions, scope, and authorization. Continue the active workflow when applicable. If no skill applies, respond directly.
 
@@ -16,7 +16,7 @@ User instructions take precedence. Preserve decisions, scope, and authorization.
 
 Resolve this SKILL.md's real path. `<relay-root>` is two directories above its directory. Read `<relay-root>/skills/using-relay/references/<harness>.md` (`codex` or `claude-code`). `relay <args>` means `node "<absolute-relay-root>/bin/relay" <args>`. Resolve bundled resources there; do not use project copies or PATH.
 
-Read `language-guide.md` and `software-glossary.md` there. Write short STE-style drafts with clear actors and consistent terms. Preserve code, commands, paths, identifiers, markers, quotations, and evidence. Adapt explanations to the learner. If references are unavailable, retain this policy and report the gap. Do not claim a full language review or load unrelated workflows.
+Read `language-guide.md` and `software-glossary.md` there. Write short STE-style drafts with clear actors and consistent terms. Preserve code, commands, paths, identifiers, markers, quotations, and evidence. Adapt explanations to the learner. If references are unavailable, retain this policy and report the gap.
 
 ## Design
 
