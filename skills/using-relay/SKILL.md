@@ -40,11 +40,11 @@ For tickets from an existing plan, specification, or agreed discussion, load `re
 
 Use Relay roles: scout for search; implementer-fast / implementer / implementer-deep to build; test-author for acceptance tests; reviewer for review; architect for design, plans, and architectural review; conductor for plans; teacher for teaching/research; reverse-engineer for reconstruction. Helpers with `mode=research-only` or `mode=design-review` cannot delegate.
 
-Claude: `relay:<role>`. Codex: `relay-<role>`. Follow the host reference for fallback and clean spawns. Set Codex model and effort from routing. Supply the installed root. Briefs contain no file contents or session history except role instructions for supported fallback.
+Claude: `relay:<role>`. Codex: `relay-<role>`. Follow the host reference for fallback and clean spawns. Codex: request the tier's model and effort on every clean spawn; agent definitions carry none. Supply the installed root. Briefs contain no file contents or session history except role instructions for supported fallback.
 
 ## Budget and cache
 
-Read `relay budget --harness <harness>`. Normal: use plan tiers. Tight or unknown: keep Opus for final review. Prefer cheap tiers for complete planned code.
+Read `relay budget --harness <harness>`. Normal: use plan tiers. Tight or unknown: keep the strong tier for the final review. Codex stop lines are per window (host reference). Prefer cheap tiers for complete planned code.
 
 At critical during implementation, finish the wave, commit, and use `handoff`. Start nothing new. At critical during design or research, start no helpers. Finish the bounded answer or requested document and disclose gaps. Do not commit or start an implementation handoff.
 
