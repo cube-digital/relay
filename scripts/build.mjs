@@ -171,6 +171,30 @@ export function checkCodexRouting(roles, codexRouting, harness) {
   return problems;
 }
 
+const SOURCE_LABEL = /^(prior|measured|documented|observed|decompiled|policy)\b/;
+const SOURCED = ['budget', 'lanes', 'forecast', 'forecast.prior', 'forecast.prior.windowCapacityCredits'];
+
+function hasNumber(value) {
+  if (typeof value === 'number') return true;
+  if (value && typeof value === 'object' && !Array.isArray(value)) return Object.entries(value).some(([k, v]) => !k.startsWith('$') && hasNumber(v));
+  return false;
+}
+
+// Every number in the Codex routing source says where it comes from.
+export function checkCodexSources(codexRouting, file = 'codex-math/config/codex-routing.json') {
+  const problems = [];
+  for (const path of SOURCED) {
+    const node = path.split('.').reduce((o, k) => o?.[k], codexRouting);
+    if (!node) continue;
+    for (const [key, value] of Object.entries(node)) {
+      if (key.startsWith('$') || SOURCED.includes(`${path}.${key}`) || !hasNumber(value)) continue;
+      const label = node.$sources?.[key];
+      if (typeof label !== 'string' || !SOURCE_LABEL.test(label)) problems.push(`${file}: ${path}.${key} needs a source label in ${path}.$sources (prior:, measured:, documented:, observed:, decompiled: or policy:)`);
+    }
+  }
+  return problems;
+}
+
 export function outputs(root = RELAY_ROOT) {
   const routing = loadRouting(root);
   const codexRouting = loadCodexRouting(join(root, 'codex-math'));
@@ -191,7 +215,7 @@ export function outputs(root = RELAY_ROOT) {
 export function main(args = process.argv.slice(2), root = RELAY_ROOT) {
   const check = args.includes('--check');
   const codexRouting = loadCodexRouting(join(root, 'codex-math'));
-  const problems = [...checkSkills(root), ...checkCodexRouting(loadRoles(root), codexRouting, loadHarness(join(root, 'codex-math')))];
+  const problems = [...checkSkills(root), ...checkCodexRouting(loadRoles(root), codexRouting, loadHarness(join(root, 'codex-math'))), ...checkCodexSources(codexRouting)];
   const stale = [];
   for (const [rel, content] of outputs(root)) {
     const abs = join(root, rel);
