@@ -24,7 +24,7 @@ test('the Codex whitepaper numbers are what the model computes', () => {
   assert.deepEqual(['cheap', 'mid', 'strong'].map((t) => Math.round(f.profiles[t].creditsPerUnit * 1000) / 1000), [0.027, 0.405, 1.654]);
   const primary = f.usage.find((u) => u.id === 'primary');
   const secondary = f.usage.find((u) => u.id === 'secondary');
-  assert.deepEqual([primary.capacityCredits, primary.pct, primary.windowsUsed], [210, 62.3, 2], 'measured Team capacity: the plan rolls into a second 5-hour window without a pause');
+  assert.deepEqual([primary.capacityCredits, primary.pct, primary.windowsUsed], [210, 62.3, 2], 'Team capacity prior (210; measured 212 and 277): the plan rolls into a second 5-hour window without a pause');
   assert.deepEqual([secondary.capacityCredits, secondary.pct, secondary.windowsUsed], [1400, 9.3, 1]);
   assert.deepEqual([f.time.workMinutes, f.time.waitMinutes, f.time.totalMinutes], [351, 0, 351]);
   assert.deepEqual(f.fastLane.map((x) => [x.wave, x.minutesSaved, Math.round(x.extraCredits)]), [[1, 32, 10], [2, 93, 102], [3, 34, 33]]);
