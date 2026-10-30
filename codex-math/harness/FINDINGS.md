@@ -28,10 +28,10 @@ The backend estimates every thread in credits and the client fetches it: `POST /
 
 Published credit rates per 1M tokens at Standard speed, input / cached input / output (documented, learn.chatgpt.com/docs/pricing, read 2026-10-22):
 
-| model | input | cached input | output | relative per token at the agent mix |
+| model | input | cached input | output | relative per token at published rates and the prior token mix (3% uncached / 96.5% cached / 0.5% output) |
 |---|---|---|---|---|
 | gpt-6-astra | 250 | 25 | 1,250 | 100 |
-| gpt-6.1-sol | 50 | 2.5 | 250 | 17.6 |
+| gpt-6.1-sol | 50 | 2.5 | 250 | 13.6 |
 | gpt-6-sol | 50 | 5 | 250 | 20 |
 | gpt-6-luna | 2.5 | 0.25 | 12.5 | 1 |
 
@@ -66,7 +66,7 @@ Multi-agent v2 (feature `multi_agent` stable; catalog `multi_agent_version: v2`)
 
 Config (`[agents]`; keys static 0x0e6c33bf; values observed in the TUI `/debug-config` of a sandbox whose user `config.toml` set `default_subagent_model = "gpt-6-luna"` and `default_subagent_reasoning_effort = "low"`, so those two lines show the configured values, not defaults): `enabled` (true), `max_concurrent_threads_per_session` (`<unset>` → **compiled default 4 threads including the root, i.e. 3 concurrent children**; a user value N is stored as N + 1, so N counts children; `features.multi_agent_v2.max_concurrent_threads_per_session` wins when set and is the total; decompiled: `resolve_multi_agent_v2_config` at 0x75950f0, literal `mov esi,0x4` at 0x759522f, enforced by `AgentRegistry::reserve_spawn_slot` on the registry's total count; live: run 09 spawned 3 explorers and the 4th `spawn_agent` failed with `collab spawn failed: agent thread limit reached`; legacy alias `max_threads`), `max_depth` (1, V1 only, ignored by V2), `default_subagent_model`, `default_subagent_reasoning_effort`, `interrupt_message` (true), `job_max_runtime_seconds` (agent jobs). Documented: without a configured default the subagent inherits the parent's model; a model without an effort takes the model's default effort; subagents follow the root session's service tier.
 
-Custom agents: TOML files in `~/.codex/agents/` or `<project>/.codex/agents/` with `name`, `description`, `developer_instructions`, `model`, `model_reasoning_effort`, `model_reasoning_summary`, `model_verbosity`, `features.*`, `skills.*`, `nickname_candidates`, `config_file`; `sandbox_mode`, `approval_policy`, `model_provider` and `mcp_servers` are not overridable (documented; static `AgentRoleToml` 0x0e75197e). Built-in roles: `default`, `worker` ("execution and production work"), `explorer` ("fast and authoritative", spawn several in parallel) and an `awaiter` (`model_reasoning_effort = "low"`, `background_terminal_max_timeout = 3600000`, static 0x0e9224a7).
+Custom agents (observed on 0.163.0: not offered as agent_type until registered; a TOML model wins over the spawn's, §10): TOML files in `~/.codex/agents/` or `<project>/.codex/agents/` with `name`, `description`, `developer_instructions`, `model`, `model_reasoning_effort`, `model_reasoning_summary`, `model_verbosity`, `features.*`, `skills.*`, `nickname_candidates`, `config_file`; `sandbox_mode`, `approval_policy`, `model_provider` and `mcp_servers` are not overridable (documented; static `AgentRoleToml` 0x0e75197e). Built-in roles: `default`, `worker` ("execution and production work"), `explorer` ("fast and authoritative", spawn several in parallel) and an `awaiter` (`model_reasoning_effort = "low"`, `background_terminal_max_timeout = 3600000`, static 0x0e9224a7).
 
 Persistence makes attribution exact: each subagent is a thread with its own rollout and its own row in `state_5.sqlite.threads` (`model`, `reasoning_effort`, `tokens_used`, `agent_role`, `agent_nickname`, `agent_path`, `thread_source`, `history_mode`), linked to its parent by `thread_spawn_edges(parent_thread_id, child_thread_id, status)` (static DDL 0x0eb983b1; observed DB). The harness's error enum (static 0x0eaf830a) includes, among its general variants, `AgentLimitReached` (the concurrency cap), `SessionBudgetExceeded`, `ContextWindowExceeded`, `UsageLimitReached`, `RateLimitExceeded` and `FlexUnavailable`. There are also CSV "agent jobs" (`agent_jobs`, `agent_job_items` tables with `input_csv_path`, `assigned_thread_id`, `attempt_count`).
 
@@ -104,7 +104,7 @@ Phases A–H of `AGENT-PLAN.md` ran on a colleague's machine (`../evidence/RESUL
 
 | estimator | credits per 100% | residual SD (points) |
 |---|---|---|
-| single rate, all models at published rates, Astra weighted 0.5 | **6,176** (per day: 6,239 / 6,146 / 6,077 / 6,679; window 1: 6,353, window 2: 6,489 unweighted) | 0.64 |
+| single rate, all models at published rates, Astra weighted 0.5 | **6,176** (Astra-weighted; per day, Astra-weighted: 6,239 / 6,146 / 6,077 / 6,679; window 1: 6,353, window 2: 6,489 (weighting not recorded)) | 0.64 |
 | per-model non-negative least squares (cumulative credits per model as regressors) | gpt-6.1-sol 6,454 · gpt-6-sol 6,872 · gpt-6-astra 13,442 · codex-auto-review 3,879 · gpt-6-luna unidentified (5 credits) | 0.19 |
 
 So on this plan **one weekly point ≈ 62 published-rate credits of gpt-6.1-sol work**, Sol 6 counts the same within noise, and **Astra counts about half its published rate** (0.43–0.57: five steps, 254 credits). These are `pricing.includedMeterWeight` in `codex-harness.json` (Astra 0.5, others 1; purchased credits are charged unweighted) and `windowCapacityCredits.self_serve_business_prolite.primary = 6200` in `codex-routing.json`. `codex-auto-review` (no published rate) is priced as Sol 6.1 (`pricing.rateAliases`); its own weight (1.7) is weakly identified. The other plans on the machine give weaker numbers: team 5-hour 212 and 277 credits (two windows, one to 99%), team weekly 1,300 and 1,640, pro weekly 12,600–18,100 (four steps); usage on other devices is invisible to a rollout and biases these low. The routing priors carry them rounded (team/plus/business 210 + 1,400; pro 15,000).
@@ -114,3 +114,13 @@ So on this plan **one weekly point ≈ 62 published-rate credits of gpt-6.1-sol 
 **Concurrency.** Run 09 (gpt-6-luna, no `[agents]` table): 3 spawns succeeded, the 4th failed with `agent thread limit reached`; `state_5.sqlite` shows the three child threads (`thread_source: subagent`, `agent_path /root/explorer1..3`) and three `thread_spawn_edges`. `codex exec --json` emits no item for `spawn_agent` on 0.163.0 (only `collab_tool_call` items for `wait`); the failure reaches the stream only through the agent's message.
 
 **Fields beyond §1–§7.** `turn.completed.usage` carries `cache_write_input_tokens` (0 in every run); `account/read` adds `workspaceRouting { chatgptAccountId, backendOrigin, accountRoutingOverride }`; `account/rateLimits/read` has `individualLimit: null`, `rateLimitReachedType: null`; `model/list` entries carry `serviceTiers [{ id: "priority", name: "Fast" }]`, `defaultServiceTier`, `additionalSpeedTiers`, `availabilityNux`, `upgrade`/`upgradeInfo`.
+
+## 10. Role registration and agent TOML precedence (observed, Codex 0.163.0, 2026-10-30)
+
+Scratch repo, relay plugin disabled, parent `gpt-6.1-sol`/`low`, trusted project.
+
+- **Probe 1.** `.codex/agents/probe.toml` (model `gpt-6-luna`, effort `low`), no config registration. `spawn_agent` had no `agent_type` parameter; its parameters were exactly `task_name, message, model, reasoning_effort, fork_turns`. The child ran on the requested model and loaded no role (`agent_role` null).
+- **Probe 2.** The same file, plus `-c agents.probe.description=… -c agents.probe.config_file=<absolute path to probe.toml>`. `spawn_agent` gained `agent_type` with values `probe, default, explorer, worker`.
+- **Probe 3.** Registered role; the spawn requested `agent_type probe`, `model gpt-6-sol`, `reasoning_effort medium`, `fork_turns none`. The child rollout shows `agent_role: probe`, the TOML's `developer_instructions` loaded, and turn_context `model gpt-6-luna`, `effort low`.
+
+Conclusions: a custom agent TOML is offered as a `spawn_agent` `agent_type` only when `[agents.<name>]` with `config_file` (and `description`) registers it; a `model` / `model_reasoning_effort` in the agent TOML overrides the spawn's requested model and effort.
