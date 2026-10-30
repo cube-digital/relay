@@ -11,6 +11,7 @@ import { describeWindows, isStale, levelFor, parseCodexSnapshot, readSnapshot, s
 import { resolveHarness } from '../lib/harness.mjs';
 import { readCodexLimits } from '../lib/codex-rpc.mjs';
 import { loadRouting } from '../lib/routing.mjs';
+import { loadCodexRouting } from '../codex-math/lib/harness.mjs';
 
 const CODES = { normal: 0, tight: 10, critical: 20, unknown: 30 };
 
@@ -32,10 +33,11 @@ function newestRollout(dir) {
 export function readBudget(options = {}) {
   const harness = resolveHarness(options);
   const routing = loadRouting();
+  const staleAfter = (harness === 'codex' ? loadCodexRouting() : routing).budget.staleAfterMinutes;
   let snap = readSnapshot(snapshotPath(harness));
   if (harness === 'codex') {
     // Account cache wins when fresh; rollout fallback is best-effort and never Claude's cache.
-    if (!snap || isStale(snap, routing.budget.staleAfterMinutes)) {
+    if (!snap || isStale(snap, staleAfter)) {
       try {
         const file = newestRollout(join(process.env.CODEX_HOME || join(homedir(), '.codex'), 'sessions'));
         const rollout = file ? parseCodexSnapshot(readFileSync(file, 'utf8')) : undefined;
@@ -43,7 +45,7 @@ export function readBudget(options = {}) {
       } catch {}
     }
   }
-  if (!snap || isStale(snap, routing.budget.staleAfterMinutes)) {
+  if (!snap || isStale(snap, staleAfter)) {
     return { harness, level: 'unknown', reason: snap ? 'stale reading' : 'no reading yet', snapshot: snap };
   }
   return { harness, level: levelFor(snap, routing.budget), snapshot: snap, text: describeWindows(snap) };
