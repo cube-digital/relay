@@ -1,18 +1,9 @@
 {
-  "$comment": "Single source of truth for model routing and budget policy. Edit, then run `relay build` (regenerates agents/, codex/agents/ and the routing block in hooks/register.ts).",
+  "$comment": "Single source of truth for Claude model routing, Claude budget policy, lane limits and Claude forecast weights. Codex routing, budget and forecast live in codex-math/config/codex-routing.json. Edit either, then run `relay build` (regenerates agents/, codex/agents/, codex/config.snippet.toml and the routing block in hooks/register.ts).",
   "tiers": {
-    "cheap": {
-      "claude": { "model": "haiku", "effort": "low" },
-      "codex": { "model": "gpt-6-luna", "effort": "low" }
-    },
-    "mid": {
-      "claude": { "model": "sonnet", "effort": "medium" },
-      "codex": { "model": "gpt-6.1-sol", "effort": "medium" }
-    },
-    "strong": {
-      "claude": { "model": "opus", "effort": "high" },
-      "codex": { "model": "gpt-6-astra", "effort": "high" }
-    }
+    "cheap": { "claude": { "model": "haiku", "effort": "low" } },
+    "mid": { "claude": { "model": "sonnet", "effort": "medium" } },
+    "strong": { "claude": { "model": "opus", "effort": "high" } }
   },
   "defaultSubagentTier": "mid",
   "unrouted": {
