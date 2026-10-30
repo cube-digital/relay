@@ -62,7 +62,9 @@ default_subagent_reasoning_effort = "medium"
 
 These defaults backstop omitted spawn choices. They do not change the parent session model or personal settings. In [`routeSpawn`](../../codex-math/lib/budget.mjs), an explicit recognized model determines the tier before the role registry or default tier; budget caps still apply. A fallback agent type can carry role instructions without receiving role-name-specific hook recognition.
 
-### Shared budget policy
+Codex may ignore the project `.codex/config.toml` (role registrations and `[agents]` defaults) until the project is trusted in `~/.codex/config.toml`; doctor warns about it. This is unconfirmed live.
+
+### Claude budget policy
 
 | Key | Default |
 |---|---|

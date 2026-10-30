@@ -29,7 +29,7 @@ Relay deliberately has no `CLAUDE.md` at the plugin root. Keep shared repository
 | Edit | Purpose |
 |---|---|
 | [`roles/*.md`](../../roles) | Host-neutral role metadata and instructions. |
-| [`config/routing.json`](../../config/routing.json) | Shared model tiers, budget policy, lane limits, and forecast weights. |
+| [`config/routing.json`](../../config/routing.json) | Claude model tiers, budget policy, lane limits, and forecast weights. |
 | [`codex-math/config/codex-routing.json`](../../codex-math/config/codex-routing.json) | Codex role registry, tiers, window policy, lanes, and forecast priors. A build source; the build checks it. |
 | [`skills/`](../../skills), [`commands/`](../../commands) | Shared workflows, supporting references, and command wrappers. |
 | [`lib/`](../../lib), [`scripts/`](../../scripts), [`bin/relay`](../../bin/relay) | CLI behavior, reusable logic, and dispatch. |

@@ -11,4 +11,4 @@ Read `<absolute-relay-root>/skills/using-relay/references/language-guide.md` and
 
 # Relay budget
 
-Run `relay budget`. Show its output unchanged in a code block. Add one line about the current level. At normal, route by plan tier. At tight, keep Opus for the final review only. At critical, finish the current wave, write a handoff, and start nothing new. At unknown, act as tight.
+Run `relay budget`. Show its output unchanged in a code block. Add one line about the current level. At normal, route by plan tier. At tight, keep the strong tier for the final review only. At critical, finish the current wave, write a handoff, and start nothing new. At unknown, act as tight.

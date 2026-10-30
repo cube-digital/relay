@@ -415,7 +415,7 @@ The full rules are in [skills/qa-mindset/SKILL.md](skills/qa-mindset/SKILL.md).
 
 ### 7. Claude Code and Codex together
 
-Relay keeps source role instructions in `roles/` and Claude model tiers in `config/routing.json` and Codex tiers in `codex-math/config/codex-routing.json`. `node bin/relay build` generates the Claude agent definitions, Codex agent definitions and hook manifests, Codex agent defaults, and the routing block inside the Claude mod. The skills are shared directly. Hook logic remains in its source files.
+Relay keeps source role instructions in `roles/` and Claude model tiers in `config/routing.json`, and Codex tiers in `codex-math/config/codex-routing.json`. `node bin/relay build` generates the Claude agent definitions, Codex agent definitions and hook manifests, Codex agent defaults, and the routing block inside the Claude mod. The skills are shared directly. Hook logic remains in its source files.
 
 ```mermaid
 flowchart LR
@@ -804,7 +804,7 @@ Keep the marketplace name `relay` for Git and local installations, so the plugin
 
 Use the installed cache path for setup, as shown by Codex's plugin details. If Codex is bundled with the desktop app and absent from PATH, invoke its absolute executable path; `RELAY_CODEX_BIN` or `--codex-bin` also selects that executable for Relay diagnostics and long runs. No global settings changes are required.
 
-The manifest's native onboarding skill guides project setup. `--plugin` copies project agents and adds `[agents]` defaults only when project config is absent. Existing config stays intact; merge any printed missing defaults. Generated Codex TOML agent definitions stay model-free on purpose: a TOML model overrides the spawn request (observed on Codex 0.163.0), so the spawn guard alone enforces model and effort. The native plugin cannot register roles, so setup registers each one in `.codex/config.toml` with an absolute `config_file`; a committed project config is therefore machine-specific. Start a new chat after setup so agents are discovered, and inspect `/hooks` to approve native hooks. Files on disk do not prove trust; doctor reports it as unknown.
+The manifest's native onboarding skill guides project setup. `--plugin` copies project agents and adds `[agents]` defaults only when project config is absent. Existing config stays intact; merge any printed missing defaults. Generated Codex TOML agent definitions stay model-free on purpose: a TOML model overrides the spawn request (observed on Codex 0.163.0), so the spawn guard alone enforces model and effort. The native plugin cannot register roles, so setup registers each one in `.codex/config.toml` with an absolute `config_file`; a committed project config is therefore machine-specific. Start a new chat after setup so agents are discovered, and inspect `/hooks` to approve native hooks. Files on disk do not prove trust; doctor reports it as unknown. Codex may ignore the project `.codex/config.toml` (role registrations and `[agents]` defaults) until the project is trusted in `~/.codex/config.toml`; doctor warns about it. This is unconfirmed live.
 
 Local installation copies the payload into `~/.codex/plugins/cache/<marketplace>/<plugin>/local`. Source edits are **not live**: refresh/reinstall the local plugin, then start a new chat. Hook-containing plugins currently use manual/local desktop installation rather than the public plugin directory. See the official [plugin development guide](https://developers.openai.com/plugins/build/plugins) and [command hooks guide](https://learn.chatgpt.com/docs/hooks).
 

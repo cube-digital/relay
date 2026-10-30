@@ -14,7 +14,7 @@ A **role** defines a job. A **skill** supplies reusable instructions for doing w
 | Role sources | Responsibilities, tier declarations, allowed tools where supported, output limits, and write boundaries. | [roles/](../../roles/) |
 | Skills and references | Design, planning, execution, QA, research procedures, host dispatch guidance, and shared language rules. | [skills/](../../skills/) |
 | Claude command wrappers | Explicit command entry points that load the corresponding skill with user arguments. | [commands/](../../commands/), [run wrapper](../../commands/run.md) |
-| Shared configuration | Per-host model tiers, shared budget thresholds and caps, lane limits, and forecast weights. | [config/routing.json](../../config/routing.json) |
+| Claude configuration | Claude model tiers, budget thresholds and caps, lane limits, and forecast weights. | [config/routing.json](../../config/routing.json) |
 | Codex configuration | The Codex role-to-tier map, tiers, window policy, lane limits, harness data, and credit priors. A build source. | [Codex routing](../../codex-math/config/codex-routing.json), [harness data](../../codex-math/config/codex-harness.json) |
 | CLI, scripts, and libraries | Command dispatch; plan validation; lane grouping; worktrees; review packages; ledger, budget, forecast, calibration, and board operations. | [bin/relay](../../bin/relay), [scripts/](../../scripts/), [lib/](../../lib/) |
 | Hooks and Claude mod | Session bootstrap, spawn routing, usage caps, test guards, lane working directories, and optional board UI. | [hooks/](../../hooks/), [register.ts](../../hooks/register.ts) |

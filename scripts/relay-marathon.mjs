@@ -328,7 +328,7 @@ export async function main(argv) {
   delete state.stopReason;
   const save = () => {
     writeFileSync(statePath, JSON.stringify(state, null, 2) + '\n');
-    refreshBoard(planPath);
+    refreshBoard(planPath, { harness });
   };
   const finish = (reason, phase = 'stopped') => {
     state.endedAt = new Date().toISOString();
