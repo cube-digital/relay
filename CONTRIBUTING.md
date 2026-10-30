@@ -17,8 +17,8 @@ Read [AGENTS.md](AGENTS.md) before editing. Shared instructions belong there; th
 
 ## Coding standards
 
-- Edit role sources in `roles/` and shared policy in `config/routing.json`, then run `node bin/relay build`. Review the generated diff; do not hand-edit `agents/`, `codex/`, or the marked routing block in `hooks/register.ts`.
-- Keep the separate Codex role registry in `codex-math/config/codex-routing.json` aligned. Package and discovery changes need the existing package checks for both hosts.
+- Edit role sources in `roles/` and shared policy in `config/routing.json` (Claude) and `codex-math/config/codex-routing.json` (Codex), then run `node bin/relay build`. Review the generated diff; do not hand-edit `agents/`, `codex/`, or the marked routing block in `hooks/register.ts`.
+- The build checks the Codex role tiers against `roles/`. Package and discovery changes need the existing package checks for both hosts.
 - Keep shared skills short and portable. Frontmatter permits only `name` and `description`; descriptions state when the skill applies. Use action names or both hosts' supported forms.
 - Follow the shared [language guide](skills/using-relay/references/language-guide.md). Keep exact literals intact. Instruction drafts and adaptive learner explanations have different writing needs. Preserve hook fail-open behavior and add no runtime dependencies.
 

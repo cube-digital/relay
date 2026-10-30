@@ -14,8 +14,8 @@ A **role** defines a job. A **skill** supplies reusable instructions for doing w
 | Role sources | Responsibilities, tier declarations, allowed tools where supported, output limits, and write boundaries. | [roles/](../../roles/) |
 | Skills and references | Design, planning, execution, QA, research procedures, host dispatch guidance, and shared language rules. | [skills/](../../skills/) |
 | Claude command wrappers | Explicit command entry points that load the corresponding skill with user arguments. | [commands/](../../commands/), [run wrapper](../../commands/run.md) |
-| Shared configuration | Per-host model tiers, shared budget thresholds and caps, lane limits, and forecast weights. | [config/routing.json](../../config/routing.json) |
-| Codex configuration | A separately maintained role-to-tier map, window policy, harness data, and credit priors. | [Codex routing](../../codex-math/config/codex-routing.json), [harness data](../../codex-math/config/codex-harness.json) |
+| Claude configuration | Claude model tiers, budget thresholds and caps, lane limits, and forecast weights. | [config/routing.json](../../config/routing.json) |
+| Codex configuration | The Codex role-to-tier map, tiers, window policy, lane limits, harness data, and credit priors. A build source. | [Codex routing](../../codex-math/config/codex-routing.json), [harness data](../../codex-math/config/codex-harness.json) |
 | CLI, scripts, and libraries | Command dispatch; plan validation; lane grouping; worktrees; review packages; ledger, budget, forecast, calibration, and board operations. | [bin/relay](../../bin/relay), [scripts/](../../scripts/), [lib/](../../lib/) |
 | Hooks and Claude mod | Session bootstrap, spawn routing, usage caps, test guards, lane working directories, and optional board UI. | [hooks/](../../hooks/), [register.ts](../../hooks/register.ts) |
 | Generated host files | Claude agent definitions; Codex agent definitions, defaults, and hook configurations. | [agents/](../../agents/), [codex/](../../codex/) |
@@ -40,7 +40,7 @@ The source roles divide judgment as follows. Codex uses the exact generated name
 
 ```mermaid
 graph TD
-    S["Sources: roles/*.md<br/>config/routing.json"] -->|node bin/relay build| B["scripts/build.mjs"]
+    S["Sources: roles/*.md<br/>config/routing.json<br/>codex-math/config/codex-routing.json"] -->|node bin/relay build| B["scripts/build.mjs"]
     B --> C["Claude outputs: agents/*.md<br/>register.ts routing block"]
     B --> X["Codex outputs: relay-*.toml<br/>defaults and hook JSON"]
     H["Handwritten sources:<br/>skills, commands, hooks"] --> M[".claude-plugin/plugin.json<br/>and conventional plugin layout"]
@@ -53,17 +53,17 @@ graph TD
     P --> E
 ```
 
-For example, a change to the teacher's instructions starts in `roles/teacher.md`. The build reads that role and the shared routing configuration. It writes `agents/teacher.md` and `codex/agents/relay-teacher.toml`. It also regenerates the Codex defaults and hook JSON files, plus **only** the `<relay:generated>` routing block inside `hooks/register.ts`. The rest of that TypeScript module remains handwritten. The build checks that skill frontmatter contains only `name` and `description`. [Build source](../../scripts/build.mjs)
+For example, a change to the teacher's instructions starts in `roles/teacher.md`. The build reads that role and the routing configuration. It writes `agents/teacher.md` and `codex/agents/relay-teacher.toml`. It also regenerates the Codex defaults and hook JSON files, plus **only** the `<relay:generated>` routing block inside `hooks/register.ts`. The rest of that TypeScript module remains handwritten. The build checks that skill frontmatter contains only `name` and `description`. [Build source](../../scripts/build.mjs)
 
 The two manifests are handwritten discovery inputs, not build outputs. Claude uses its plugin layout for agents, skills, commands, and [hooks/hooks.json](../../hooks/hooks.json). The [Codex manifest](../../.codex-plugin/plugin.json) names `skills/`, `codex/hooks.plugin.json`, and its onboarding skill. It does not install project agent definitions. `relay setup codex <project> --plugin` copies those definitions into the project's `.codex/agents/` and supplies `[agents]` defaults without adding duplicate project hooks. Hook trust remains a host/user decision. The fallback setup without `--plugin` installs project hooks and links project skills. [Claude manifest](../../.claude-plugin/plugin.json), [setup source](../../scripts/relay-setup.mjs)
 
 ### Routing inputs and precedence
 
-The shared `config/routing.json` supplies model and effort choices by tier. Role source tiers feed Claude definitions and the generated Claude mod table. The **Codex role map** in `codex-math/config/codex-routing.json` is maintained separately; the build does not derive that map from `roles/`.
+`config/routing.json` supplies Claude model and effort choices by tier; `codex-math/config/codex-routing.json` supplies Codex's. Role source tiers feed Claude definitions and the generated Claude mod table. The **Codex role map** in `codex-routing.json` is checked by the build against `roles/`, not derived from it.
 
-Codex definitions intentionally omit model and effort keys. A supported clean dispatch supplies `model`, `reasoning_effort`, and `fork_turns: "none"`. The spawn hook preserves explicit choices before applying budget caps; omitted values fall back to the recognized role tier and then the default tier. Project `[agents]` defaults provide a further backstop. Full-history children inherit their parent's settings, so the hook requests a clean retry for a recognized Relay role. A fallback agent type does not automatically receive Relay role-name recognition. [Codex dispatch guidance](../../skills/using-relay/references/codex.md), [spawn hook](../../hooks/codex-spawn.mjs), [routing function](../../codex-math/lib/budget.mjs)
+Codex definitions intentionally omit model and effort keys: a TOML model overrides the spawn request (observed, Codex 0.163.0). A supported clean dispatch supplies `model`, `reasoning_effort`, and `fork_turns: "none"`. The spawn hook preserves explicit choices before applying budget caps; omitted values fall back to the recognized role tier and then the default tier. Project `[agents]` defaults provide a further backstop. Full-history children inherit their parent's settings, so the hook requests a clean retry for a recognized Relay role. A fallback agent type does not automatically receive Relay role-name recognition. [Codex dispatch guidance](../../skills/using-relay/references/codex.md), [spawn hook](../../hooks/codex-spawn.mjs), [routing function](../../codex-math/lib/budget.mjs)
 
-Consumers combine the configurations explicitly. `readBudget()` uses shared thresholds for both hosts. The Codex spawn hook overlays shared tiers and tight/critical caps onto the Codex registry. The Codex forecast bridge overlays shared tiers, lane limits, and four forecast weights while retaining Codex-specific window and credit data. See [configuration](../configuration/README.md), [budget reader](../../scripts/relay-budget.mjs), and [forecast bridge](../../lib/codex-integration.mjs).
+Each host reads its own configuration. `readBudget()` uses the Claude thresholds for Claude and Codex's per-window lines for Codex. The Codex spawn hook and forecast bridge read only `codex-routing.json` and the harness data; the forecast caps lanes at three. See [configuration](../configuration/README.md), [budget reader](../../scripts/relay-budget.mjs), and [forecast bridge](../../lib/codex-integration.mjs).
 
 ## Design flow: a problem and its constraints
 

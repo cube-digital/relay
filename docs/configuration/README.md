@@ -9,9 +9,9 @@ The routing files are JSON. Role files are Markdown with YAML frontmatter. Share
 
 | Source | Purpose |
 |---|---|
-| [`config/routing.json`](../../config/routing.json) | Shared tier models, Claude built-in routing, budget policy, lane limits, and forecast weights. |
+| [`config/routing.json`](../../config/routing.json) | Claude tier models, built-in routing, budget policy, lane limits, and forecast weights. |
 | [`roles/*.md`](../../roles) | Role descriptions, tiers, tools, turn limits, and instructions. |
-| [`codex-math/config/codex-routing.json`](../../codex-math/config/codex-routing.json) | Separately maintained Codex role registry, window policy, reset-credit advice, and forecast priors. |
+| [`codex-math/config/codex-routing.json`](../../codex-math/config/codex-routing.json) | Codex role registry, tier models and efforts, window policy, lane limits, reset-credit advice, and forecast priors. Build source. |
 | [`codex-math/config/codex-harness.json`](../../codex-math/config/codex-harness.json) | Codex model, effort, metering, and window data used by the forecast and routing library. |
 | [`skills/`](../../skills) | Shared workflows and their supporting references. |
 
@@ -22,8 +22,9 @@ graph TD
   B --> A[agents/*.md]
   B --> X[codex agents, defaults, and hooks]
   B --> M[hooks/register.ts generated block]
-  K[codex-math/config/codex-routing.json] --> H[Codex runtime policy and forecast]
-  C --> H
+  K[codex-math/config/codex-routing.json] --> B
+  K --> H[Codex runtime policy and forecast]
+  H2[codex-harness.json] --> H
 ```
 
 From the Relay checkout, regenerate definitions with:
@@ -33,7 +34,7 @@ node bin/relay build
 node bin/relay build --check
 ```
 
-[`scripts/build.mjs`](../../scripts/build.mjs) generates `agents/*.md`, `codex/agents/*.toml`, `codex/config.snippet.toml`, `codex/hooks.json`, `codex/hooks.plugin.json`, and the `<relay:generated>` block in `hooks/register.ts`. Do not edit these outputs by hand. The build does not regenerate the Codex role registry in `codex-math/config/codex-routing.json`; update that source separately when adding or changing a role's registry tier.
+[`scripts/build.mjs`](../../scripts/build.mjs) generates `agents/*.md`, `codex/agents/*.toml`, `codex/config.snippet.toml`, `codex/hooks.json`, `codex/hooks.plugin.json`, and the `<relay:generated>` block in `hooks/register.ts`. Do not edit these outputs by hand. The build also reads and checks `codex-math/config/codex-routing.json`; it does not rewrite it. Update the registry when adding or changing a role's tier.
 
 ## Defaults
 
@@ -41,7 +42,7 @@ These values come from the checked-in configuration. They are Relay defaults, no
 
 ### Tier routing
 
-| Tier | Claude model / effort | Codex model / effort |
+| Tier | Claude model / effort (`config/routing.json`) | Codex model / effort (`codex-routing.json`) |
 |---|---|---|
 | `cheap` | `haiku` / `low` | `gpt-6-luna` / `low` |
 | `mid` | `sonnet` / `medium` | `gpt-6.1-sol` / `medium` |
@@ -51,7 +52,7 @@ These values come from the checked-in configuration. They are Relay defaults, no
 
 Codex dispatch must request the chosen model and reasoning effort explicitly through supported host fields. Clean Relay workers use `fork_turns: "none"`; full-history children inherit the parent model and effort and cannot accept overrides. The [Codex host reference](../../skills/using-relay/references/codex.md) describes this dispatch contract.
 
-Generated Codex agent TOMLs contain `name`, `description`, and `developer_instructions`. They contain no model, effort, sandbox, or tool-policy override keys. The generated project default is:
+Generated Codex agent TOMLs contain `name`, `description`, and `developer_instructions`. They contain no model, effort, sandbox, or tool-policy override keys, on purpose: a TOML model overrides the spawn request (observed, Codex 0.163.0), so only the spawn hook sets model and effort. The build also writes `codex/agents.snippet.toml`; `relay setup codex <project>` appends its tables to `.codex/config.toml`, registering each role with an absolute `config_file` (Codex offers a custom agent only when registered, and the native plugin cannot register roles). A committed project config is therefore machine-specific. The generated project default is:
 
 ```toml
 [agents]
@@ -61,7 +62,9 @@ default_subagent_reasoning_effort = "medium"
 
 These defaults backstop omitted spawn choices. They do not change the parent session model or personal settings. In [`routeSpawn`](../../codex-math/lib/budget.mjs), an explicit recognized model determines the tier before the role registry or default tier; budget caps still apply. A fallback agent type can carry role instructions without receiving role-name-specific hook recognition.
 
-### Shared budget policy
+Codex may ignore the project `.codex/config.toml` (role registrations and `[agents]` defaults) until the project is trusted in `~/.codex/config.toml`; doctor warns about it. This is unconfirmed live.
+
+### Claude budget policy
 
 | Key | Default |
 |---|---|
@@ -73,11 +76,11 @@ These defaults backstop omitted spawn choices. They do not change the parent ses
 | `budget.critical.denyNewSpawns` | `implementer`, `implementer-fast`, `implementer-deep`, `test-author` |
 | `budget.critical.hide` | `implementer-deep` |
 
-[`scripts/relay-budget.mjs`](../../scripts/relay-budget.mjs) uses the shared thresholds for both hosts. A Codex window lasting at least seven days uses the shared seven-day thresholds. Missing or stale readings produce `unknown`; the Codex spawn hook treats `unknown` as `tight`.
+[`scripts/relay-budget.mjs`](../../scripts/relay-budget.mjs) uses these thresholds for Claude. Codex uses the per-window lines from `codex-routing.json` (primary 60/85, secondary 80/95, any window of seven days or more 80/95). Missing or stale readings produce `unknown`, which routes as `tight`.
 
 ### Codex-specific policy
 
-The Codex registry currently assigns `teacher` and `reverse-engineer` to `mid`. The other assignments match the role table below. It is a source file, separate from generated TOMLs.
+The Codex registry currently assigns `teacher` and `reverse-engineer` to `mid`. The other assignments match the role table below. It is a build source, separate from generated TOMLs; the build checks each role's tier against `roles/`.
 
 | Key in `codex-math/config/codex-routing.json` | Default |
 |---|---|
@@ -91,11 +94,11 @@ The Codex registry currently assigns `teacher` and `reverse-engineer` to `mid`. 
 | `budget.resetCredit.keepAtLeast` | `0` |
 | `budget.creditsExhaustedIsCritical` | `true` |
 
-These keys serve the Codex math library. The integrated [`hooks/codex-spawn.mjs`](../../hooks/codex-spawn.mjs) reads the Codex registry, replaces its tier models and efforts with shared values, and overlays shared tight/critical role policy. Its budget level comes from the shared budget reader described above. Reset-credit advice does not consume a credit.
+These keys serve the Codex math library. The integrated [`hooks/codex-spawn.mjs`](../../hooks/codex-spawn.mjs) uses the Codex registry as is: it overlays no shared tiers or tight/critical policy. Its budget level comes from the Codex lines above. Reset-credit advice does not consume a credit.
 
 ### Lane and forecast settings
 
-| Shared key | Default |
+| Key in `config/routing.json` | Default |
 |---|---|
 | `lanes.maxLaneTasks` | `6` tasks per implementation lane |
 | `lanes.maxParallelLanes` | `4` implementation lanes |
@@ -109,7 +112,7 @@ These keys serve the Codex math library. The integrated [`hooks/codex-spawn.mjs`
 
 A task's weight is `tierWeight[tier] × riskFactor[risk]`. Shared default rates are placeholders until calibration supplies samples. Research helper limits do not use `maxParallelLanes`.
 
-[`lib/codex-integration.mjs`](../../lib/codex-integration.mjs) takes tier models, lane limits, and `tierWeight`, `riskFactor`, `fixRoundProbability`, and `fixRoundCost` from the shared file. Codex forecasts retain the following Codex-specific priors:
+The table above is Claude's. [`lib/codex-integration.mjs`](../../lib/codex-integration.mjs) takes T, R, κ, p, the priors, and lanes from `codex-routing.json` only. Codex lanes are capped at `min(4, 3)`: `lanes.maxParallelLanes` and the harness's `maxConcurrentChildren`. `--max-lanes N` overrides the cap for a project that raised `[agents] max_concurrent_threads_per_session`, which `relay worktrees sync` does not read. The Codex priors:
 
 | Codex forecast key | Default |
 |---|---|
@@ -256,7 +259,7 @@ The host may supply `CODEX_THREAD_ID` or `CODEX_SESSION_ID` for harness detectio
 
 Use the complete checked-in routing files. Relay reads them directly; it does not merge an arbitrary partial JSON file with default configuration. No environment variable substitutes for a missing routing file.
 
-The builder rejects role sources with a mismatched `name` (`name must be "<filename>"`), an unsupported `tier` (`tier must be one of cheap, mid, strong`), or a missing description (`description is required`). A missing tier/host entry fails with `routing.json has no <harness> entry for tier "<tier>"`. An invalid harness fails with `unknown harness "<value>" (expected claude or codex)`.
+The builder rejects role sources with a mismatched `name` (`name must be "<filename>"`), an unsupported `tier` (`tier must be one of cheap, mid, strong`), or a missing description (`description is required`). A missing tier/host entry fails with `routing.json has no <harness> entry for tier "<tier>"`. An invalid harness fails with `unknown harness "<value>" (expected claude or codex)`. The build also fails when a `codex-routing.json` role tier differs from its `roles/` file, a role has no `roles/` file, a tier model is missing from `codex-harness.json` or lacks the effort, or a number has no source label in `$sources`.
 
 Codex setup rejects malformed existing config or hook JSON before installation. Claude project setup requires a Git repository. Research requests require a subject and valid focus/helper fields, but they require no handoff, report path, profile, learner interview, or model change.
 
