@@ -1,5 +1,5 @@
 {
-  "$comment": "Routing and budget policy for relay on the Codex (ChatGPT) harness. Same shape of decisions as config/routing.json, with the three things the Codex harness adds: a speed tier per spawn, per-window stop lines keyed by the window the account actually has (primary / secondary, from account/rateLimits/read), and a reset-credit rule. Priors marked `prior` are to be replaced by `relay calibrate` samples.",
+  "$comment": "Routing and budget policy for relay on the Codex (ChatGPT) harness. Same shape of decisions as config/routing.json, with the three things the Codex harness adds: a speed tier per spawn, per-window stop lines keyed by the window the account actually has (primary / secondary, from account/rateLimits/read), and a reset-credit rule. Priors marked `prior` are to be replaced by `relay calibrate` samples. It is a relay build source: `relay build --check` checks `roles` against roles/*.md and requires a `$sources` label for every number.",
   "tiers": {
     "cheap": { "model": "gpt-6-luna", "effort": "low", "speed": "standard" },
     "mid": { "model": "gpt-6.1-sol", "effort": "medium", "speed": "standard" },
@@ -20,6 +20,12 @@
   },
   "budget": {
     "$comment": "Stop lines by window: `windows` is keyed by position (primary, secondary) for accounts with a short primary window; `weekly` applies to any window of seven days or more whatever its position, so a Pro account (weekly window only, reported as primary) is gated by the weekly lines.",
+    "$sources": {
+      "windows": "policy: relay's Claude stop lines carried over by window position (primary 60/85 like the 5-hour window, secondary 80/95 like the weekly one); not tuned on Codex",
+      "weekly": "policy: 80/95 for any window of seven days or more, whatever its position (pro and self_serve_business_prolite have only a weekly primary window, harness/FINDINGS.md §9)",
+      "staleAfterMinutes": "policy: same as config/routing.json",
+      "resetCredit": "policy: spend a reset credit only when the wait is at least an hour; keep none in reserve"
+    },
     "windows": {
       "primary": { "tight": 60, "critical": 85 },
       "secondary": { "tight": 80, "critical": 95 }
@@ -39,21 +45,49 @@
     "resetCredit": { "consumeWhenWaitMinutesAtLeast": 60, "keepAtLeast": 0 },
     "creditsExhaustedIsCritical": true
   },
-  "lanes": { "maxLaneTasks": 6, "maxParallelLanes": 4 },
+  "lanes": {
+    "$sources": {
+      "maxLaneTasks": "policy: same as config/routing.json",
+      "maxParallelLanes": "policy: ceiling; relay clamps it to the child threads Codex runs at once, 3 by default (decompiled default of 4 threads including the root; observed in evidence/live/runs/09-spawn-limit)"
+    },
+    "maxLaneTasks": 6,
+    "maxParallelLanes": 4
+  },
   "forecast": {
     "$comment": "Work units are relay's: weight = tierWeight[tier] × riskFactor[risk], read here as relative token volume of a task. tokensPerUnit turns units into total tokens processed (input + cached input + output summed over a thread's turns); tokenMix splits them; the model's credit rates and included-metering weights (config/codex-harness.json → pricing) turn tokens into credits; windowCapacityCredits says how many credits are 100% of a window. Everything under `prior` is replaced by `relay calibrate` samples; the comments say which priors live readings support (evidence/RESULTS.md, harness/FINDINGS.md §9).",
+    "$sources": {
+      "tierWeight": "prior: relay's tier ladder T = 1/3/7, read as relative token volume; not measured on Codex",
+      "riskFactor": "prior: relay's risk factor R = 0.8/1/1.4; not measured on Codex",
+      "fixRoundProbability": "prior: relay's fix-round probability p = 0.2/0.5/0.8 by a lane's riskiest task; not measured on Codex",
+      "fixRoundCost": "prior: share of a lane a fix round re-works, κ = 0.35; not measured on Codex"
+    },
     "tierWeight": { "cheap": 1, "mid": 3, "strong": 7 },
     "riskFactor": { "low": 0.8, "medium": 1.0, "high": 1.4 },
     "fixRoundProbability": { "low": 0.2, "medium": 0.5, "high": 0.8 },
     "fixRoundCost": 0.35,
     "prior": {
-      "$comment": "tokensPerUnit is a scale prior (uncalibrated at relay's unit): at this token mix it reproduces the credits per unit the nine scratch runs measured (cheap 0.018–0.026, mid 0.30–0.49, strong 1.48 at published rates / 0.74 metered). tokenMix is the mix real Codex sessions showed on 2026-10-20 → 22 (326 M tokens of gpt-6.1-sol: 2.6% uncached input, 97.1% cached input, 0.3% output; the scratch runs ran 7–30% uncached and 1% output). effortOutputMultiplier stays a prior: the scratch runs produced 0–148 reasoning tokens, too few to see it.",
+      "$comment": "Replaced by `relay calibrate --harness codex` samples where they exist. `$sources` says which values are priors and which are measured or documented.",
+      "$sources": {
+        "tokensPerUnit": "prior: scale prior, uncalibrated at relay's unit (70k tokens per unit on every tier). At tokenMix it gives 0.027 / 0.41 / 1.65 credits per unit (cheap / mid / strong, included meter). Nine scratch runs measured 0.018–0.026 (cheap) and 0.30–0.49 (mid), which the prior matches, and 0.74 metered for strong (1.48 at published rates), so the strong prior is conservative, 2.2× measured (evidence/RESULTS.md §D, harness/FINDINGS.md §9)",
+        "tokenMix": "measured: α = 3% uncached input / 96.5% cached input / 0.5% output, rounded from real sessions on one Business account, 2026-10-20 → 22 (326 M gpt-6.1-sol tokens: 2.6% / 97.1% / 0.3%); the scratch runs ran 7–30% uncached and 1% output (harness/FINDINGS.md §9)",
+        "effortOutputMultiplier": "prior: not measured; the scratch runs produced 0–148 reasoning tokens, too few to see it",
+        "minutesPerUnit": "prior: relay's Claude default of 4 minutes per unit; replaced by timed waves from `relay calibrate --harness codex`"
+      },
       "tokensPerUnit": { "cheap": 70000, "mid": 70000, "strong": 70000 },
       "tokenMix": { "input": 0.03, "cachedInput": 0.965, "output": 0.005 },
       "effortOutputMultiplier": { "low": 1.0, "medium": 1.5, "high": 2.5, "xhigh": 4.0, "max": 6.0, "ultra": 8.0 },
       "minutesPerUnit": 4,
       "windowCapacityCredits": {
         "$comment": "published-rate credits (gpt-6.1-sol mix, metered weights) that fill 100% of a window, by plan type as account/rateLimits/read reports it. self_serve_business_prolite: measured (29 integer steps of the weekly window over two windows, Q̂ = 6 176, per-day 6 077–6 679). team: two 5-hour windows (1 → 99% on 208 credits, 1 → 44% on 120) give 212 and 277, their weekly window 1 300 and 1 640 (weak: one machine's rollouts, usage elsewhere invisible); plus and business are assumed equal to team (OpenAI documents Plus and Standard Business with the same per-five-hour estimates). pro: 12 600–18 100 from 4 points (weak). promax: 4 × pro (placeholder). unknown: plus.",
+        "$sources": {
+          "plus": "prior: assumed equal to team (OpenAI documents Plus and Standard Business with the same per-five-hour estimates)",
+          "business": "prior: assumed equal to team (same documented estimates as Plus)",
+          "team": "prior: 210 / 1,400 rounded from weak measurements: 5-hour windows 212 and 277, weekly 1,300 and 1,640 (one machine's rollouts; usage on other devices is invisible and biases them low)",
+          "self_serve_business_prolite": "measured: weekly window, 29 integer steps over two windows, Q̂ = 6,176 with Astra weighted 0.5, rounded to 6,200 (harness/FINDINGS.md §9)",
+          "pro": "prior: 15,000, inside a weak measured range of 12,600–18,100 (four weekly steps)",
+          "promax": "prior: placeholder, 4 × pro",
+          "unknown": "prior: same as plus"
+        },
         "plus": { "primary": 210, "secondary": 1400 },
         "business": { "primary": 210, "secondary": 1400 },
         "team": { "primary": 210, "secondary": 1400 },
