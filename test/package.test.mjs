@@ -1,10 +1,14 @@
 import assert from 'node:assert/strict';
-import { cpSync, existsSync, mkdtempSync, readFileSync, realpathSync } from 'node:fs';
+import { cpSync, existsSync, mkdtempSync, mkdirSync, readdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { test } from 'node:test';
 import { ROOT, runCli, tempRepo } from './helpers.mjs';
+
+function roleNames() {
+  return readdirSync(join(ROOT, 'roles')).filter((f) => f.endsWith('.md')).map((f) => f.slice(0, -3));
+}
 
 test('packaged resources run outside the source checkout without relay on PATH', () => {
   const payload = realpathSync(mkdtempSync(join(tmpdir(), 'relay-payload-')));
@@ -85,8 +89,13 @@ test('fallback setup is repeatable, preserves config and creates missing skills 
   const { dir } = tempRepo({ '.codex/config.toml': 'model = "my-model"\n[agents]\nmax_threads = 3\n' });
   const original = readFileSync(join(dir, '.codex/config.toml'), 'utf8');
   assert.equal(runCli(['setup', 'codex', dir]).code, 0);
+  const first = readFileSync(join(dir, '.codex/config.toml'), 'utf8');
   assert.equal(runCli(['setup', 'codex', dir]).code, 0);
-  assert.equal(readFileSync(join(dir, '.codex/config.toml'), 'utf8'), original);
+  const second = readFileSync(join(dir, '.codex/config.toml'), 'utf8');
+  assert.ok(first.startsWith(original), 'original bytes must be an exact prefix');
+  assert.equal(second, first);
+  assert.equal(first.match(/^\[agents\]$/gm).length, 1);
+  for (const role of roleNames()) assert.equal(first.split(`[agents.relay-${role}]`).length - 1, 1, role);
   assert.ok(existsSync(join(dir, '.agents/skills/relay-plan/SKILL.md')));
   assert.equal(realpathSync(join(dir, '.agents/skills/relay-design/SKILL.md')), join(ROOT, 'skills/relay-design/SKILL.md'));
   assert.equal(readFileSync(join(dir, '.codex/agents/relay-architect.toml'), 'utf8'), readFileSync(join(ROOT, 'codex/agents/relay-architect.toml'), 'utf8'));
@@ -139,4 +148,38 @@ test('native plugin setup avoids duplicate hooks and doctor only reports trust a
   assert.match(report.stdout, /trust: unknown/i);
   assert.match(report.stdout, /agents: 10/);
   assert.equal(readFileSync(join(dir, '.codex/config.toml'), 'utf8'), before);
+});
+
+test('setup codex registers every role with an existing absolute config_file, with and without --plugin', () => {
+  const roles = roleNames();
+  assert.equal(roles.length, 10);
+  for (const extra of [[], ['--plugin']]) {
+    const { dir } = tempRepo();
+    const result = runCli(['setup', 'codex', dir, ...extra]);
+    assert.equal(result.code, 0, result.stderr);
+    const config = readFileSync(join(dir, '.codex/config.toml'), 'utf8');
+    for (const role of roles) {
+      const table = config.match(new RegExp(`^\\[agents\\.relay-${role}\\]\\n((?:(?!\\[).*\\n?)*)`, 'm'));
+      assert.ok(table, `missing [agents.relay-${role}] with ${extra.join(' ')}`);
+      const file = table[1].match(/^config_file = "(.*)"$/m)[1];
+      assert.equal(file, join(dir, '.codex/agents', `relay-${role}.toml`));
+      assert.ok(existsSync(file), file);
+    }
+    assert.equal(config.match(/^\[agents\.relay-[\w-]+\]$/gm).length, 10);
+    const report = runCli(['doctor', '--harness', 'codex', '--project', dir, '--codex-bin', process.execPath]);
+    assert.match(report.stdout, /registered in \.codex\/config\.toml: 10/);
+  }
+});
+
+test('doctor warns when the project is not trusted in the user Codex config and passes when it is', () => {
+  const { dir } = tempRepo();
+  assert.equal(runCli(['setup', 'codex', dir]).code, 0);
+  const home = mkdtempSync(join(tmpdir(), 'relay-codex-home-'));
+  writeFileSync(join(home, 'config.toml'), '[projects."/somewhere/else"]\ntrust_level = "trusted"\n');
+  const args = ['doctor', '--harness', 'codex', '--project', dir, '--codex-bin', process.execPath];
+  const untrusted = runCli(args, { env: { CODEX_HOME: home } });
+  assert.match(untrusted.stdout, /project trust: not trusted/);
+  writeFileSync(join(home, 'config.toml'), `[projects."${realpathSync(dir)}"]\ntrust_level = "trusted"\n`);
+  const trusted = runCli(args, { env: { CODEX_HOME: home } });
+  assert.match(trusted.stdout, /^project trust: trusted$/m);
 });
