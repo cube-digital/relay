@@ -415,11 +415,11 @@ The full rules are in [skills/qa-mindset/SKILL.md](skills/qa-mindset/SKILL.md).
 
 ### 7. Claude Code and Codex together
 
-Relay keeps source role instructions in `roles/` and shared model tiers in `config/routing.json`. `node bin/relay build` generates the Claude agent definitions, Codex agent definitions and hook manifests, Codex agent defaults, and the routing block inside the Claude mod. The skills are shared directly. Hook logic remains in its source files.
+Relay keeps source role instructions in `roles/` and Claude model tiers in `config/routing.json` and Codex tiers in `codex-math/config/codex-routing.json`. `node bin/relay build` generates the Claude agent definitions, Codex agent definitions and hook manifests, Codex agent defaults, and the routing block inside the Claude mod. The skills are shared directly. Hook logic remains in its source files.
 
 ```mermaid
 flowchart LR
-    src["roles/*.md<br/>config/routing.json"] --> build{{"relay build"}}
+    src["roles/*.md<br/>config/routing.json<br/>codex-math/config/codex-routing.json"] --> build{{"relay build"}}
     build --> cc["Claude Code<br/>agents/*.md"]
     build --> cx["Codex<br/>codex/agents/*.toml<br/>codex/hooks.json<br/>[agents] defaults"]
     build --> mod["Claude mod<br/>generated routing block"]
@@ -804,7 +804,7 @@ Keep the marketplace name `relay` for Git and local installations, so the plugin
 
 Use the installed cache path for setup, as shown by Codex's plugin details. If Codex is bundled with the desktop app and absent from PATH, invoke its absolute executable path; `RELAY_CODEX_BIN` or `--codex-bin` also selects that executable for Relay diagnostics and long runs. No global settings changes are required.
 
-The manifest's native onboarding skill guides project setup. `--plugin` copies project agents and adds `[agents]` defaults only when project config is absent. Existing config stays intact; merge any printed missing defaults. Generated Codex TOML agent definitions leave model and effort to explicit dispatch and the spawn guard. They cannot override that request or budget routing. Start a new chat after setup so agents are discovered, and inspect `/hooks` to approve native hooks. Files on disk do not prove trust; doctor reports it as unknown.
+The manifest's native onboarding skill guides project setup. `--plugin` copies project agents and adds `[agents]` defaults only when project config is absent. Existing config stays intact; merge any printed missing defaults. Generated Codex TOML agent definitions stay model-free on purpose: a TOML model overrides the spawn request (observed on Codex 0.163.0), so the spawn guard alone enforces model and effort. The native plugin cannot register roles, so setup registers each one in `.codex/config.toml` with an absolute `config_file`; a committed project config is therefore machine-specific. Start a new chat after setup so agents are discovered, and inspect `/hooks` to approve native hooks. Files on disk do not prove trust; doctor reports it as unknown.
 
 Local installation copies the payload into `~/.codex/plugins/cache/<marketplace>/<plugin>/local`. Source edits are **not live**: refresh/reinstall the local plugin, then start a new chat. Hook-containing plugins currently use manual/local desktop installation rather than the public plugin directory. See the official [plugin development guide](https://developers.openai.com/plugins/build/plugins) and [command hooks guide](https://learn.chatgpt.com/docs/hooks).
 
@@ -955,7 +955,7 @@ Shared model tiers, Claude budget policy, lane limits and common forecast weight
 
 To change which tier a role uses, edit its file in `roles/`. After role or shared routing changes, run `node bin/relay build`. It regenerates `agents/`, `codex/` and the marked routing block in `hooks/register.ts`. Edit the source files, then rebuild; do not edit those generated outputs by hand.
 
-Codex also uses [codex-math/config/codex-routing.json](codex-math/config/codex-routing.json) for its role registry, window policy and forecast priors, plus [codex-math/config/codex-harness.json](codex-math/config/codex-harness.json) for harness data. These files are maintained separately; `relay build` does not generate the Codex role registry from the shared tiers. The integration reads shared Codex model tiers at runtime, while the Codex spawn hook combines them with the separate role registry and budget policy. Keep a role's registry entry aligned when its tier changes. See the [configuration guide](docs/configuration/README.md) for the source boundaries and defaults.
+Codex also uses [codex-math/config/codex-routing.json](codex-math/config/codex-routing.json) for its role registry, window policy and forecast priors, plus [codex-math/config/codex-harness.json](codex-math/config/codex-harness.json) for harness data. The Codex routing file is a build source: `relay build` checks its role tiers against `roles/` and requires a source label on every number. The Codex budget uses its own per-window lines, and Codex lanes are capped at three. See the [configuration guide](docs/configuration/README.md) for the source boundaries and defaults.
 
 `maxParallelLanes` is limited more by your machine than by relay: each lane may run its own dev server, database or test ports. Four is a safe start.
 
@@ -994,7 +994,7 @@ Still to confirm on a real install:
 - [ ] A resumed lane agent (fix rounds 1–3) stays in its worktree.
 - [ ] The board's band and pane draw in a live Claude Code session (mod tests cover the terminal and desktop surfaces).
 - [ ] An installed Codex session discovers the candidate roles and trusts and executes its hooks.
-- [ ] The Codex model names in `config/routing.json` match the current ones (they change often).
+- [ ] The Codex model names in `codex-math/config/codex-routing.json` match the current ones (they change often).
 - [ ] Teaching and reverse-engineering scenarios A–H run on both hosts; all remain **UNEXECUTED** in the [evaluation record](docs/relay/evaluations/2026-10-25-teaching-and-reverse-engineering.md).
 - [ ] Installed design-skill selection, native architect use, external research, helper limits, and the full planning handoff run on both hosts. An isolated exercise passed; the [design evaluation](docs/relay/evaluations/2026-10-30-architect-design.md) lists the remaining live scenarios.
 
@@ -1018,7 +1018,7 @@ node bin/relay build --check      # generated files are in sync, skills are port
 claude plugin validate . && claude plugin test .
 ```
 
-Edit `roles/` and `config/routing.json`, then run `relay build`. The files in `agents/` and `codex/` are generated. [AGENTS.md](AGENTS.md) has the rules for agents working on relay itself, and [docs/design.md](docs/design.md) the research and sources behind each decision.
+Edit `roles/`, `config/routing.json` and `codex-math/config/codex-routing.json`, then run `relay build`. The files in `agents/` and `codex/` are generated. [AGENTS.md](AGENTS.md) has the rules for agents working on relay itself, and [docs/design.md](docs/design.md) the research and sources behind each decision.
 
 ### Releasing
 
