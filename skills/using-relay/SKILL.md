@@ -8,7 +8,7 @@ If you are an assigned worker, follow your role and task. Skip this lead workflo
 
 ## Skill selection
 
-Before responding or acting, check the request, context, and skill descriptions. If a Relay skill may apply, load and follow it first. Users need not name Relay. Check again when the task changes. Announce the skill.
+Before responding or acting, check the request, context, and skill descriptions. Include clarification and source inspection. If a Relay skill may apply, load and follow it first. Users need not name Relay. Check again when the task changes. Reuse loaded instructions. Announce the skill and purpose.
 
 User instructions take precedence. Preserve decisions, scope, and authorization. Continue the active workflow when applicable. If no skill applies, respond directly.
 
@@ -16,7 +16,7 @@ User instructions take precedence. Preserve decisions, scope, and authorization.
 
 Resolve this SKILL.md's real path. `<relay-root>` is two directories above its directory. Read `<relay-root>/skills/using-relay/references/<harness>.md` (`codex` or `claude-code`). `relay <args>` means `node "<absolute-relay-root>/bin/relay" <args>`. Resolve bundled resources there; do not use project copies or PATH.
 
-Read `language-guide.md` and `software-glossary.md` there. Write short STE-style drafts with clear actors and consistent terms. Preserve code, commands, paths, identifiers, markers, quotations, and evidence. Adapt explanations to the learner. If references are unavailable, retain this policy and report the gap.
+Read `language-guide.md` and `software-glossary.md` there. Write short STE-style drafts with clear actors and consistent terms. Preserve code, commands, paths, identifiers, markers, quotations, and evidence. Adapt explanations to the learner. If references are unavailable, retain this policy and report the gap. Do not claim a full language review or load unrelated workflows.
 
 ## Design
 
@@ -40,11 +40,11 @@ For tickets from an existing plan, specification, or agreed discussion, load `re
 
 Use Relay roles: scout for search; implementer-fast / implementer / implementer-deep to build; test-author for acceptance tests; reviewer for review; architect for design, plans, and architectural review; conductor for plans; teacher for teaching/research; reverse-engineer for reconstruction. Helpers with `mode=research-only` or `mode=design-review` cannot delegate.
 
-Claude: `relay:<role>`. Codex: `relay-<role>`. Follow the host reference for fallback and clean spawns. Codex: request the tier's model and effort on every clean spawn; agent definitions carry none. Supply the installed root. Briefs contain no file contents or session history except role instructions for supported fallback.
+Claude: `relay:<role>`. Codex: `relay-<role>`. Follow the host reference for fallback and clean spawns. Set Codex model and effort from routing on every clean spawn. Supply the installed root. Briefs contain no file contents or session history except role instructions for supported fallback.
 
 ## Budget and cache
 
-Read `relay budget --harness <harness>`. Normal: use plan tiers. Tight or unknown: keep the strong tier for the final review. Codex stop lines are per window (host reference). Prefer cheap tiers for complete planned code.
+Read `relay budget --harness <harness>`. Normal: use plan tiers. Tight or unknown: keep the strong tier for the final review. Prefer cheap tiers for complete planned code.
 
 At critical during implementation, finish the wave, commit, and use `handoff`. Start nothing new. At critical during design or research, start no helpers. Finish the bounded answer or requested document and disclose gaps. Do not commit or start an implementation handoff.
 
