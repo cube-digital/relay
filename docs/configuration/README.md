@@ -1,7 +1,7 @@
 <!-- generated-by: gsd-doc-writer -->
 # Configuration
 
-Relay 0.5.0 keeps model routing, role instructions, and host setup in separate files. Change the source files, then rebuild generated definitions. Start with the [project README](../../README.md) or [getting started](../guides/getting-started.md). See the [architecture overview](../architecture/overview.md) for component relationships.
+Relay 0.6.0 keeps model routing, role instructions, and host setup in separate files. Change the source files, then rebuild generated definitions. Start with the [project README](../../README.md) or [getting started](../guides/getting-started.md). See the [architecture overview](../architecture/overview.md) for component relationships.
 
 ## Config file format
 

@@ -1,6 +1,6 @@
 {
   "name": "relay",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Budget-aware orchestration: tiered model routing, worktree lanes, and lean QA for agent-written tests.",
   "author": {
     "name": "cube-digital"

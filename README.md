@@ -845,6 +845,7 @@ Claude Code provides the command wrappers, board UI command, and shared design a
 | `/relay:marathon status \| stop [now]` | Where a marathon is (leg, wait, last outcome, ledger tail), or end it. |
 | `/relay:calibrate [plan]` | Learns your account's real usage and speed from a finished run; without a plan, shows the current calibration. |
 | `/relay:budget` | The 5-hour and weekly level relay routes by: normal, tight or critical. |
+| `/relay:checkpoint [task or destination]` | Saves the current chat and work state as a timestamped checkpoint for another person or agent. |
 | `/relay:relay-teach <question>` | Uses the shared teaching skill to explain a topic from evidence in the current conversation. |
 | `/relay:relay-reverse-engineer <system>` | Uses the shared reconstruction skill to explain mechanisms, constraints and rationale from evidence. |
 
@@ -852,7 +853,7 @@ Commands that operate on an existing plan use the newest plan in `docs/relay/pla
 
 ### Skills
 
-Relay contains **20 shared skills**: 13 public entry points and 7 engines or supporting skills. Both hosts load the same source instructions.
+Relay contains **21 shared skills**: 14 public entry points and 7 engines or supporting skills. Both hosts load the same source instructions.
 
 The session-start hook loads `using-relay`. Before responding or acting, the lead checks the request and conversation context, then loads an applicable Relay skill. You do not need to name Relay or invoke a skill explicitly. The lead checks again when the task changes and preserves your instructions, scope, and existing authorization. Assigned workers follow their role and task. Selection is model-driven; it depends on skill discovery and the bootstrap being loaded by the host.
 
@@ -869,6 +870,7 @@ The session-start hook loads `using-relay`. Before responding or acting, the lea
 | Entry point | `relay-marathon` | Running a plan across usage windows. |
 | Entry point | `relay-calibrate` | Learning usage and time rates from completed work. |
 | Entry point | `relay-budget` | Reading the current usage level. |
+| Entry point | `checkpoint-work` | Saving current-session progress or preparing a handoff for another person or agent. |
 | Entry point | `relay-teach` | Independent interactive teaching in the current conversation. |
 | Entry point | `relay-reverse-engineer` | Independent interactive reconstruction of an existing system. |
 | Engine/support | `using-relay` | Selecting a workflow and applying shared language, budget and dispatch rules. |
@@ -878,6 +880,14 @@ The session-start hook loads `using-relay`. Before responding or acting, the lea
 | Engine/support | `research-and-explain` | Applying shared request, evidence, helper and teaching rules for both research roles. |
 | Engine/support | `handoff` | Recording implementation state for a later session. |
 | Engine/support | `relay-setup` | Installing relay or checking routing, discovery and hooks. |
+
+### Session checkpoints
+
+Use `/relay:checkpoint` in Claude Code or `$checkpoint-work` in Codex. You can also ask, "Save a checkpoint of this session." The skill reads the available current-chat messages and summaries, inspects the work state, and records completed work, evidence, decisions, blockers, and concrete next steps. It marks unavailable context as `UNKNOWN` and keeps historical checks separate from current verification.
+
+The default location is `docs/checkpoints/<task-id>/<YYYY-MM-DDTHHMMSSZ>.md` in the project. Each record uses UTC and links the previous checkpoint for the same task. Filename collisions receive a sequence suffix. Earlier records remain unchanged. Specify another destination in your request when needed.
+
+The [skill](skills/checkpoint-work/SKILL.md) uses a bundled [template](skills/checkpoint-work/assets/checkpoint.md) and short STE-style sentences. Checkpoint creation alone does not run checks, commit work, or send the record. A colleague can read the saved file, verify the current state, and continue from "Start here" within the agreed scope. The existing `handoff` skill remains the implementation budget handoff workflow.
 
 ### Agents
 
@@ -984,7 +994,7 @@ For a mechanical task, the architect can write the exact code into the plan. The
 
 ## Status and roadmap
 
-Package version **0.5.0**. The repository defines **10 roles** and **20 shared skills**. Automated checks cover the CLI, hooks, generated artifacts and Claude mod. See the [testing guide](docs/testing/README.md) for the current check results and their limits. Source checks do not establish plugin discovery, hook trust or live teaching behavior on either host.
+Package version **0.6.0**. The repository defines **10 roles** and **21 shared skills**. Automated checks cover the CLI, hooks, generated artifacts and Claude mod. See the [testing guide](docs/testing/README.md) for the current check results and their limits. Source checks do not establish plugin discovery, hook trust or live teaching behavior on either host.
 
 A first pilot (October 20, Claude Code 2.1.303) ran a 3-task plan from `/relay:plan` to a merged, reviewed integration branch: lane agents landed in their worktrees by name, each role ran on its planned model, and the run produced its first calibration sample. One sample is not a rate; more pilots are the next step.
 
