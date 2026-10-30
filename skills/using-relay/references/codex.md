@@ -2,7 +2,7 @@
 
 Use the active harness tools. Do not invent a tool or parameter the session does not expose. Custom agents are named `relay-<role>`. When the tool supports a custom agent type, name it explicitly. Resolve roles and templates from the absolute installed Relay root determined from the skill's real path. If custom agent types are unavailable, read the bundled role and put its instructions in the spawned task. Never read `roles/reviewer.md` relative to the target project.
 
-Read `<relay-root>/config/routing.json` to select the Codex model and effort for each tier. Always request that model and effort on spawn using the active tool's supported fields. The native spawn hook applies budget caps. Agent definitions intentionally contain no model/effort keys that could override the request. The project `[agents]` defaults backstop omitted choices. Do not change the parent session model or personal settings.
+Codex routing lives in `<relay-root>/codex-math/config/codex-routing.json`: cheap `gpt-6-luna`/`low`, mid `gpt-6.1-sol`/`medium`, strong `gpt-6-astra`/`high`, standard speed. Agent definitions carry no model or effort, because a model in an agent TOML overrides the spawn request (observed, Codex 0.163.0). Request model and effort on every clean spawn with the active tool's supported fields. The native spawn hook applies budget caps. `agent_type: relay-<role>` exists only after `setup codex` registers the roles in the project `.codex/config.toml`. When it is missing, use the fallback above and request the tier's model and effort explicitly. Project `[agents]` defaults backstop omitted choices. Do not change the parent session model or personal settings.
 
 ## Clean worker dispatch (V2)
 
@@ -13,6 +13,14 @@ In the active collaboration API, model/effort overrides are valid only with `for
 Every lane prompt starts `Work only in <absolute-worktree>; cd there first.` Give each worker explicit file ownership, tell it that others are working and their changes must be preserved, and provide an absolute report path. Use the active collaboration wait/resume facilities. If background threads are unavailable, coordinate in the current task. Never promise an independent background run that the available tools cannot support.
 
 Invoke helpers as `node "<absolute-relay-root>/bin/relay" ...`. Add `--harness codex` to budget, forecast, calibrate, ledger, and marathon commands. For a different Codex executable set `RELAY_CODEX_BIN` to its absolute path. For cross-harness review use the bundled absolute reviewer role path. A read-only sandbox cannot write an in-project report. Use supported output-file capture (`codex exec -o <report>`) or return the review to the coordinator for saving.
+
+## Budget and concurrency
+
+`relay budget --harness codex` reads the account's actual windows. A 5-hour primary window is tight at 60% and critical at 85%. A secondary window under seven days is tight at 80% and critical at 95%. Any window of seven days or more (the weekly window, and the only window on Pro) is tight at 80% and critical at 95%. No reading, or a stale one, is `unknown`. Act as tight. Under a cap the hook lowers speed first, then effort, then model.
+
+A Codex session runs at most three child agents at once by default. The fourth spawn fails with `agent thread limit reached`. A finished agent holds its slot until it is closed. Under Codex, `relay lanes`, `forecast` and `worktrees sync` plan at most three lanes per wave.
+
+Coordinate lanes from the root session. A conductor child takes one slot. Close test-authors and reviewers when their results are recorded. Close a lane agent when its review is clean. When every slot is busy and a lane needs review, use the out-of-process review (`codex exec --sandbox read-only -o <review path> ...`). It takes no slot. Do not retry a failed spawn in a loop. Wait for an agent, close it, then spawn.
 
 ## Installation guidance
 
