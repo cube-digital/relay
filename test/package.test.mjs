@@ -9,13 +9,16 @@ import { ROOT, runCli, tempRepo } from './helpers.mjs';
 test('packaged resources run outside the source checkout without relay on PATH', () => {
   const payload = realpathSync(mkdtempSync(join(tmpdir(), 'relay-payload-')));
   const manifest = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
-  assert.ok(manifest.files?.includes('bin'), 'package must declare executable resources');
+  assert.equal(existsSync(join(ROOT, 'bin')), false, 'hosted Claude plugins must not contain a top-level bin directory');
+  assert.ok(manifest.files?.includes('scripts'), 'package must declare executable resources');
   for (const entry of manifest.files) cpSync(join(ROOT, entry), join(payload, entry), { recursive: true });
   cpSync(join(ROOT, 'package.json'), join(payload, 'package.json'));
-  const result = spawnSync(process.execPath, [join(payload, 'bin/relay'), 'lanes', join(payload, 'skills/plan-with-tiers/template.md')], { cwd: tmpdir(), encoding: 'utf8', env: { PATH: '/usr/bin:/bin' } });
+  assert.equal(existsSync(join(payload, 'bin')), false, 'published payload must preserve the hosted layout');
+  const cli = join(payload, manifest.bin.relay);
+  const result = spawnSync(process.execPath, [cli, 'lanes', join(payload, 'skills/plan-with-tiers/template.md')], { cwd: tmpdir(), encoding: 'utf8', env: { PATH: '/usr/bin:/bin' } });
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /csv-export: 3 tasks/);
-  const forecast = spawnSync(process.execPath, [join(payload, 'bin/relay'), 'forecast', join(payload, 'skills/plan-with-tiers/template.md'), '--harness', 'codex', '--json'], { cwd: tmpdir(), encoding: 'utf8', env: { PATH: '/usr/bin:/bin', RELAY_HOME: join(payload, 'state'), CODEX_HOME: join(payload, 'empty') } });
+  const forecast = spawnSync(process.execPath, [cli, 'forecast', join(payload, 'skills/plan-with-tiers/template.md'), '--harness', 'codex', '--json'], { cwd: tmpdir(), encoding: 'utf8', env: { PATH: '/usr/bin:/bin', RELAY_HOME: join(payload, 'state'), CODEX_HOME: join(payload, 'empty') } });
   assert.equal(forecast.status, 0, forecast.stderr);
   assert.equal(JSON.parse(forecast.stdout).harness, 'codex');
   const spawn = spawnSync(process.execPath, [join(payload, 'hooks/codex-spawn.mjs')], { cwd: tmpdir(), encoding: 'utf8', input: JSON.stringify({ tool_name: 'spawn_agent', tool_input: { agent_type: 'relay-implementer', fork_turns: 'none', message: 'Test dispatch' } }), env: { PATH: '/usr/bin:/bin', RELAY_HOME: join(payload, 'state'), CODEX_HOME: join(payload, 'empty') } });
@@ -60,7 +63,7 @@ test('packaged resources run outside the source checkout without relay on PATH',
   assert.deepEqual(checkpointResources.map(path => readFileSync(join(payload, path), 'utf8')),
     checkpointResources.map(path => readFileSync(join(ROOT, path), 'utf8')));
   const relocatedProject = tempRepo().dir;
-  const setup = spawnSync(process.execPath, [join(payload, 'bin/relay'), 'setup', 'codex', relocatedProject], { cwd: tmpdir(), encoding: 'utf8', env: { PATH: '/usr/bin:/bin', RELAY_HOME: join(payload, 'state'), CODEX_HOME: join(payload, 'empty') } });
+  const setup = spawnSync(process.execPath, [cli, 'setup', 'codex', relocatedProject], { cwd: tmpdir(), encoding: 'utf8', env: { PATH: '/usr/bin:/bin', RELAY_HOME: join(payload, 'state'), CODEX_HOME: join(payload, 'empty') } });
   assert.equal(setup.status, 0, setup.stderr);
   const checkpointPath = realpathSync(join(relocatedProject, '.agents/skills/checkpoint-work/SKILL.md'));
   assert.equal(checkpointPath, join(payload, 'skills/checkpoint-work/SKILL.md'));

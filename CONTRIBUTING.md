@@ -10,14 +10,14 @@ Relay requires Node.js `>=20` and Git. The CLI has no runtime dependencies or co
 ```bash
 git clone https://github.com/cube-digital/relay.git
 cd relay
-node bin/relay --help
+node scripts/relay.mjs --help
 ```
 
 Read [AGENTS.md](AGENTS.md) before editing. Shared instructions belong there; this plugin root deliberately has no `CLAUDE.md`.
 
 ## Coding standards
 
-- Edit role sources in `roles/` and shared policy in `config/routing.json`, then run `node bin/relay build`. Review the generated diff; do not hand-edit `agents/`, `codex/`, or the marked routing block in `hooks/register.ts`.
+- Edit role sources in `roles/` and shared policy in `config/routing.json`, then run `node scripts/relay.mjs build`. Review the generated diff; do not hand-edit `agents/`, `codex/`, or the marked routing block in `hooks/register.ts`.
 - Keep the separate Codex role registry in `codex-math/config/codex-routing.json` aligned. Package and discovery changes need the existing package checks for both hosts.
 - Keep shared skills short and portable. Frontmatter permits only `name` and `description`; descriptions state when the skill applies. Use action names or both hosts' supported forms.
 - Follow the shared [language guide](skills/using-relay/references/language-guide.md). Keep exact literals intact. Instruction drafts and adaptive learner explanations have different writing needs. Preserve hook fail-open behavior and add no runtime dependencies.
@@ -39,7 +39,7 @@ Before finishing:
 
 ```bash
 npm test
-node bin/relay build --check
+node scripts/relay.mjs build --check
 ```
 
 When `hooks/register.ts` changes, also run `claude plugin validate .` and `claude plugin test .`. If the installed CLI lacks the test command, record its version and the blocker; do not report success for that check. Details are in the [development guide](docs/guides/development.md#verification).

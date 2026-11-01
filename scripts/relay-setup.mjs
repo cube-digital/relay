@@ -115,7 +115,7 @@ function setupCodex(args) {
     console.log(`✓ project skills → ${skillsDir}`);
   }
   console.log('\nStart a new Codex session. Trust native/project hooks through /hooks; setup cannot grant trust.');
-  console.log(`CLI: node "${join(RELAY_ROOT, 'bin', 'relay')}" (no PATH installation required)`);
+  console.log(`CLI: node "${join(RELAY_ROOT, 'scripts', 'relay.mjs')}" (no PATH installation required)`);
   return 0;
 }
 

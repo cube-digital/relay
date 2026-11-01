@@ -16,7 +16,7 @@ A **role** defines a job. A **skill** supplies reusable instructions for doing w
 | Claude command wrappers | Explicit command entry points that load the corresponding skill with user arguments. | [commands/](../../commands/), [run wrapper](../../commands/run.md) |
 | Shared configuration | Per-host model tiers, shared budget thresholds and caps, lane limits, and forecast weights. | [config/routing.json](../../config/routing.json) |
 | Codex configuration | A separately maintained role-to-tier map, window policy, harness data, and credit priors. | [Codex routing](../../codex-math/config/codex-routing.json), [harness data](../../codex-math/config/codex-harness.json) |
-| CLI, scripts, and libraries | Command dispatch; plan validation; lane grouping; worktrees; review packages; ledger, budget, forecast, calibration, and board operations. | [bin/relay](../../bin/relay), [scripts/](../../scripts/), [lib/](../../lib/) |
+| CLI, scripts, and libraries | Command dispatch; plan validation; lane grouping; worktrees; review packages; ledger, budget, forecast, calibration, and board operations. | [scripts/relay.mjs](../../scripts/relay.mjs), [scripts/](../../scripts/), [lib/](../../lib/) |
 | Hooks and Claude mod | Session bootstrap, spawn routing, usage caps, test guards, lane working directories, and optional board UI. | [hooks/](../../hooks/), [register.ts](../../hooks/register.ts) |
 | Generated host files | Claude agent definitions; Codex agent definitions, defaults, and hook configurations. | [agents/](../../agents/), [codex/](../../codex/) |
 | Project run evidence | Lane briefs, reports, review packages, ledger events, active worktree mappings, and board state. | Written by [relay-lanes](../../scripts/relay-lanes.mjs), [relay-worktrees](../../scripts/relay-worktrees.mjs), and [relay-ledger](../../scripts/relay-ledger.mjs) |
@@ -40,7 +40,7 @@ The source roles divide judgment as follows. Codex uses the exact generated name
 
 ```mermaid
 graph TD
-    S["Sources: roles/*.md<br/>config/routing.json"] -->|node bin/relay build| B["scripts/build.mjs"]
+    S["Sources: roles/*.md<br/>config/routing.json"] -->|node scripts/relay.mjs build| B["scripts/build.mjs"]
     B --> C["Claude outputs: agents/*.md<br/>register.ts routing block"]
     B --> X["Codex outputs: relay-*.toml<br/>defaults and hook JSON"]
     H["Handwritten sources:<br/>skills, commands, hooks"] --> M[".claude-plugin/plugin.json<br/>and conventional plugin layout"]
@@ -182,7 +182,7 @@ roles/               Shared job definitions
 skills/              Shared workflows and bundled references
 commands/            Claude command entry wrappers
 config/              Shared routing and limits
-bin/, scripts/, lib/ Terminal entry point, operations, reusable logic
+scripts/, lib/       Terminal entry point, operations, reusable logic
 hooks/               Host event handlers and Claude mod
 agents/, codex/      Generated host definitions and configuration
 codex-math/          Codex-specific models, policy data, and evidence

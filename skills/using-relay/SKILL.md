@@ -14,7 +14,7 @@ User instructions take precedence. Preserve decisions, scope, and authorization.
 
 ## Resources and language
 
-Resolve this SKILL.md's real path. `<relay-root>` is two directories above its directory. Read `<relay-root>/skills/using-relay/references/<harness>.md` (`codex` or `claude-code`). `relay <args>` means `node "<absolute-relay-root>/bin/relay" <args>`. Resolve bundled resources there; do not use project copies or PATH.
+Resolve this SKILL.md's real path. `<relay-root>` is two directories above its directory. Read `<relay-root>/skills/using-relay/references/<harness>.md` (`codex` or `claude-code`). `relay <args>` means `node "<absolute-relay-root>/scripts/relay.mjs" <args>`. Resolve bundled resources there; do not use project copies or PATH.
 
 Read `language-guide.md` and `software-glossary.md` there. Write short STE-style drafts with clear actors and consistent terms. Preserve code, commands, paths, identifiers, markers, quotations, and evidence. Adapt explanations to the learner. If references are unavailable, retain this policy and report the gap. Do not claim a full language review or load unrelated workflows.
 

@@ -415,7 +415,7 @@ The full rules are in [skills/qa-mindset/SKILL.md](skills/qa-mindset/SKILL.md).
 
 ### 7. Claude Code and Codex together
 
-Relay keeps source role instructions in `roles/` and shared model tiers in `config/routing.json`. `node bin/relay build` generates the Claude agent definitions, Codex agent definitions and hook manifests, Codex agent defaults, and the routing block inside the Claude mod. The skills are shared directly. Hook logic remains in its source files.
+Relay keeps source role instructions in `roles/` and shared model tiers in `config/routing.json`. `node scripts/relay.mjs build` generates the Claude agent definitions, Codex agent definitions and hook manifests, Codex agent defaults, and the routing block inside the Claude mod. The skills are shared directly. Hook logic remains in its source files.
 
 ```mermaid
 flowchart LR
@@ -483,8 +483,8 @@ Marathon supports both harnesses. Claude legs use short `claude -p` sessions wit
 Select Codex explicitly and inspect the dry run before starting:
 
 ```bash
-node /absolute/path/to/installed/relay/bin/relay marathon plan.md --hours 20 --harness codex --dry-run
-node /absolute/path/to/installed/relay/bin/relay marathon plan.md --hours 20 --harness codex
+node /absolute/path/to/installed/relay/scripts/relay.mjs marathon plan.md --hours 20 --harness codex --dry-run
+node /absolute/path/to/installed/relay/scripts/relay.mjs marathon plan.md --hours 20 --harness codex
 ```
 
 Codex uses its native `workspace-write` sandbox and `--approve-for-me` approval flow, loads installed plugins, and selects the conductor model/effort from Relay's mid tier. Use `--codex-bin /absolute/path/to/codex` or `RELAY_CODEX_BIN` when the executable is absent from PATH. Claude-only flags (`--permission-mode`, `--allowed-tools`, `--plugin-dir`, `--max-turns`) are rejected for Codex. Account readings and calibration remain separate per harness; waits use the actual blocking window resets. At the end you get an integration branch, test counts and every recorded ruling.
@@ -719,6 +719,10 @@ See the [teaching and reverse-engineering guide](docs/guides/teaching-and-revers
 
 You need a recent **Claude Code** (run `claude update`), **git**, and **Node 20 or newer**. Relay's hooks and its `relay` command run on Node.
 
+Relay 0.6.1 places its Node entry point at `scripts/relay.mjs`. Hosted Claude plugins cannot contain a top-level `bin/` directory. See the [hosted marketplace packaging rule](https://code.claude.com/docs/en/plugins/host-marketplace#distribute-through-organization-settings). If you call Relay by path, replace `node bin/relay` with `node scripts/relay.mjs` after updating. For an installed copy, use `node "<absolute-relay-root>/scripts/relay.mjs"`. The npm command remains `relay`, with the same subcommands.
+
+Existing cached 0.6.0 installations keep their own files. Update the complete plugin through the host, then confirm the installed version. If you used `npm link`, run it again after updating the checkout to recreate the command link. A local validator pass does not prove hosted server acceptance.
+
 ### Claude Code
 
 **1. Add the marketplace and install the plugin.** Inside Claude Code:
@@ -796,8 +800,8 @@ For a local checkout (including hook changes), use Relay's canonical marketplace
 ```bash
 codex plugin marketplace add /absolute/path/to/relay
 codex plugin add relay@relay
-node /absolute/path/to/installed/relay/bin/relay setup codex /path/to/project --plugin
-node /absolute/path/to/installed/relay/bin/relay doctor --harness codex --project /path/to/project
+node /absolute/path/to/installed/relay/scripts/relay.mjs setup codex /path/to/project --plugin
+node /absolute/path/to/installed/relay/scripts/relay.mjs doctor --harness codex --project /path/to/project
 ```
 
 Keep the marketplace name `relay` for Git and local installations, so the plugin remains `relay@relay`. To switch a registered marketplace to another checkout or Git ref, remove that marketplace source and add the desired source, using `--ref` for a branch or tag.
@@ -808,7 +812,7 @@ The manifest's native onboarding skill guides project setup. `--plugin` copies p
 
 Local installation copies the payload into `~/.codex/plugins/cache/<marketplace>/<plugin>/local`. Source edits are **not live**: refresh/reinstall the local plugin, then start a new chat. Hook-containing plugins currently use manual/local desktop installation rather than the public plugin directory. See the official [plugin development guide](https://developers.openai.com/plugins/build/plugins) and [command hooks guide](https://learn.chatgpt.com/docs/hooks).
 
-Without native plugin hooks, use `node /absolute/path/to/relay/bin/relay setup codex /path/to/project` for project agent definitions, project hooks and `.agents/skills/` discovery links. Existing differing hooks are preserved with a separate merge candidate. **Choose one hook installation:** do not install fallback project hooks alongside enabled native Relay hooks. Setup rejects an existing Relay project-hook file when `--plugin` is requested; remove only Relay entries during migration and keep unrelated hooks.
+Without native plugin hooks, use `node /absolute/path/to/relay/scripts/relay.mjs setup codex /path/to/project` for project agent definitions, project hooks and `.agents/skills/` discovery links. Existing differing hooks are preserved with a separate merge candidate. **Choose one hook installation:** do not install fallback project hooks alongside enabled native Relay hooks. Setup rejects an existing Relay project-hook file when `--plugin` is requested; remove only Relay entries during migration and keep unrelated hooks.
 
 The thirteen shared entrypoints are `$relay-design`, `$relay-plan`, `$relay-to-tickets`, `$relay-run`, `$relay-status`, `$relay-board`, `$relay-lanes`, `$relay-forecast`, `$relay-calibrate`, `$relay-budget`, `$relay-marathon`, `$relay-teach` and `$relay-reverse-engineer`. Their seven engine skills remain available. Per-harness references explain actual dispatch tools, installed resource paths and sandbox/report handling. Use `--harness codex` for budget, forecast, calibration, ledger and marathon so Claude and Codex readings stay separate.
 
@@ -963,7 +967,7 @@ Shared model tiers, Claude budget policy, lane limits and common forecast weight
 }
 ```
 
-To change which tier a role uses, edit its file in `roles/`. After role or shared routing changes, run `node bin/relay build`. It regenerates `agents/`, `codex/` and the marked routing block in `hooks/register.ts`. Edit the source files, then rebuild; do not edit those generated outputs by hand.
+To change which tier a role uses, edit its file in `roles/`. After role or shared routing changes, run `node scripts/relay.mjs build`. It regenerates `agents/`, `codex/` and the marked routing block in `hooks/register.ts`. Edit the source files, then rebuild; do not edit those generated outputs by hand.
 
 Codex also uses [codex-math/config/codex-routing.json](codex-math/config/codex-routing.json) for its role registry, window policy and forecast priors, plus [codex-math/config/codex-harness.json](codex-math/config/codex-harness.json) for harness data. These files are maintained separately; `relay build` does not generate the Codex role registry from the shared tiers. The integration reads shared Codex model tiers at runtime, while the Codex spawn hook combines them with the separate role registry and budget policy. Keep a role's registry entry aligned when its tier changes. See the [configuration guide](docs/configuration/README.md) for the source boundaries and defaults.
 
@@ -994,7 +998,7 @@ For a mechanical task, the architect can write the exact code into the plan. The
 
 ## Status and roadmap
 
-Package version **0.6.0**. The repository defines **10 roles** and **21 shared skills**. Automated checks cover the CLI, hooks, generated artifacts and Claude mod. See the [testing guide](docs/testing/README.md) for the current check results and their limits. Source checks do not establish plugin discovery, hook trust or live teaching behavior on either host.
+Package version **0.6.1**. The repository defines **10 roles** and **21 shared skills**. Automated checks cover the CLI, hooks, generated artifacts and Claude mod. See the [testing guide](docs/testing/README.md) for the current check results and their limits. Source checks do not establish plugin discovery, hook trust or live teaching behavior on either host.
 
 A first pilot (October 20, Claude Code 2.1.303) ran a 3-task plan from `/relay:plan` to a merged, reviewed integration branch: lane agents landed in their worktrees by name, each role ran on its planned model, and the run produced its first calibration sample. One sample is not a rate; more pilots are the next step.
 
@@ -1024,7 +1028,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines and the [development guide
 
 ```bash
 npm test                          # unit and integration tests, against real git repositories
-node bin/relay build --check      # generated files are in sync, skills are portable
+node scripts/relay.mjs build --check      # generated files are in sync, skills are portable
 claude plugin validate . && claude plugin test .
 ```
 

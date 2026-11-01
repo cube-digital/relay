@@ -25,12 +25,14 @@ Relay has no package dependencies. Its repository tests use Node's built-in test
    ```bash
    node --version
    npm test
-   node bin/relay build --check
+   node scripts/relay.mjs build --check
    ```
 
 These commands inspect the checkout. They do not install its plugin into a host. Read the [testing guide](../testing/README.md) for what each check proves and the current recorded results.
 
-Use `node bin/relay ...` only from the Relay source root. In another project, use `node "/absolute/path/to/installed/relay/bin/relay" ...`. Replace that placeholder with the installed root from plugin details or skill discovery. A global `relay` command is optional.
+Use `node scripts/relay.mjs ...` only from the Relay source root. In another project, use `node "/absolute/path/to/installed/relay/scripts/relay.mjs" ...`. Replace that placeholder with the installed root from plugin details or skill discovery. A global `relay` command is optional.
+
+Relay 0.6.1 moves the entry point from `bin/relay` to `scripts/relay.mjs`. Update direct path calls after updating the complete plugin. The npm command remains `relay`. Hosted Claude plugins cannot contain a top-level `bin/` directory. See the [hosted packaging rule](https://code.claude.com/docs/en/plugins/host-marketplace#distribute-through-organization-settings). Local validation does not prove hosted server acceptance.
 
 ## Install for Claude Code
 
@@ -46,8 +48,8 @@ Use `node bin/relay ...` only from the Relay source root. In another project, us
 3. From the target Git repository, apply project settings and read the budget:
 
    ```bash
-   node "/absolute/path/to/installed/relay/bin/relay" setup claude --write-project
-   node "/absolute/path/to/installed/relay/bin/relay" budget --harness claude
+   node "/absolute/path/to/installed/relay/scripts/relay.mjs" setup claude --write-project
+   node "/absolute/path/to/installed/relay/scripts/relay.mjs" budget --harness claude
    ```
 
    Setup merges `worktree.baseRef: "head"` and `subagentPromptCacheTtl: "1h"` into project settings. It does not grant host permissions. After usage data arrives, the budget command can read the mod's snapshot.
@@ -68,9 +70,9 @@ For a temporary source-checkout session, run `claude --plugin-dir /absolute/path
 2. Find the installed root in plugin details. Use that copy for native plugin setup:
 
    ```bash
-   node "/absolute/path/to/installed/relay/bin/relay" setup codex /absolute/path/to/project --plugin
-   node "/absolute/path/to/installed/relay/bin/relay" doctor --harness codex --project /absolute/path/to/project
-   node "/absolute/path/to/installed/relay/bin/relay" budget --harness codex
+   node "/absolute/path/to/installed/relay/scripts/relay.mjs" setup codex /absolute/path/to/project --plugin
+   node "/absolute/path/to/installed/relay/scripts/relay.mjs" doctor --harness codex --project /absolute/path/to/project
+   node "/absolute/path/to/installed/relay/scripts/relay.mjs" budget --harness codex
    ```
 
    `--plugin` installs project agent definitions. It supplies `[agents]` defaults when the project config is absent. Existing config is preserved; review any printed missing defaults and `.relay-pending` agent files. Native hooks come from the plugin manifest.
@@ -84,7 +86,7 @@ If Codex is absent from `PATH`, use its absolute executable path. Relay's diagno
 Choose this separate path when native Relay plugin hooks are not enabled:
 
 ```bash
-node "/absolute/path/to/relay/bin/relay" setup codex /absolute/path/to/project
+node "/absolute/path/to/relay/scripts/relay.mjs" setup codex /absolute/path/to/project
 ```
 
 This installs project agents, project hooks and `.agents/skills/` links. Existing differing hooks are preserved with a separate merge candidate. Review that candidate, start a new session and inspect `/hooks`. Use one Relay hook installation at a time. When migrating to native hooks, remove only Relay's project-hook entries and preserve other hooks. See [setup instructions](../../skills/relay-setup/SKILL.md).
