@@ -12,7 +12,7 @@ In the active collaboration API, model/effort overrides are valid only with `for
 
 Every lane prompt starts `Work only in <absolute-worktree>; cd there first.` Give each worker explicit file ownership, tell it that others are working and their changes must be preserved, and provide an absolute report path. Use the active collaboration wait/resume facilities. If background threads are unavailable, coordinate in the current task. Never promise an independent background run that the available tools cannot support.
 
-Invoke helpers as `node "<absolute-relay-root>/bin/relay" ...`. Add `--harness codex` to budget, forecast, calibrate, ledger, and marathon commands. For a different Codex executable set `RELAY_CODEX_BIN` to its absolute path. For cross-harness review use the bundled absolute reviewer role path. A read-only sandbox cannot write an in-project report. Use supported output-file capture (`codex exec -o <report>`) or return the review to the coordinator for saving.
+Invoke helpers as `node "<absolute-relay-root>/scripts/relay.mjs" ...`. Add `--harness codex` to budget, forecast, calibrate, ledger, and marathon commands. For a different Codex executable set `RELAY_CODEX_BIN` to its absolute path. For cross-harness review use the bundled absolute reviewer role path. A read-only sandbox cannot write an in-project report. Use supported output-file capture (`codex exec -o <report>`) or return the review to the coordinator for saving.
 
 ## Budget and concurrency
 

@@ -1,7 +1,7 @@
 <!-- generated-by: gsd-doc-writer -->
 # Configuration
 
-Relay 0.5.0 keeps model routing, role instructions, and host setup in separate files. Change the source files, then rebuild generated definitions. Start with the [project README](../../README.md) or [getting started](../guides/getting-started.md). See the [architecture overview](../architecture/overview.md) for component relationships.
+Relay 0.6.1 keeps model routing, role instructions, and host setup in separate files. Change the source files, then rebuild generated definitions. Start with the [project README](../../README.md) or [getting started](../guides/getting-started.md). See the [architecture overview](../architecture/overview.md) for component relationships.
 
 ## Config file format
 
@@ -17,7 +17,7 @@ The routing files are JSON. Role files are Markdown with YAML frontmatter. Share
 
 ```mermaid
 graph TD
-  R[roles/*.md] --> B[node bin/relay build]
+  R[roles/*.md] --> B[node scripts/relay.mjs build]
   C[config/routing.json] --> B
   B --> A[agents/*.md]
   B --> X[codex agents, defaults, and hooks]
@@ -30,8 +30,8 @@ graph TD
 From the Relay checkout, regenerate definitions with:
 
 ```bash
-node bin/relay build
-node bin/relay build --check
+node scripts/relay.mjs build
+node scripts/relay.mjs build --check
 ```
 
 [`scripts/build.mjs`](../../scripts/build.mjs) generates `agents/*.md`, `codex/agents/*.toml`, `codex/config.snippet.toml`, `codex/hooks.json`, `codex/hooks.plugin.json`, and the `<relay:generated>` block in `hooks/register.ts`. Do not edit these outputs by hand. The build also reads and checks `codex-math/config/codex-routing.json`; it does not rewrite it. Update the registry when adding or changing a role's tier.
@@ -206,7 +206,7 @@ To change terminology, edit the shared glossary or language guide as source cont
 For Claude Code, print the recommended settings from the Relay checkout:
 
 ```bash
-node bin/relay setup claude
+node scripts/relay.mjs setup claude
 ```
 
 The settings are valid project configuration:
@@ -221,7 +221,7 @@ The settings are valid project configuration:
 To merge these settings into a target repository, run the installed CLI there. Replace `<absolute-relay-root>` with the resolved installed Relay root:
 
 ```bash
-node "<absolute-relay-root>/bin/relay" setup claude --write-project
+node "<absolute-relay-root>/scripts/relay.mjs" setup claude --write-project
 ```
 
 This writes the target repository's `.claude/settings.json`. Native Claude hooks load through the plugin system; Codex project hooks are not part of Claude setup.
@@ -230,10 +230,10 @@ For Codex, choose the mode that matches installation:
 
 ```bash
 # Native plugin already supplies skills and hooks.
-node bin/relay setup codex /path/to/project --plugin
+node scripts/relay.mjs setup codex /path/to/project --plugin
 
 # Project fallback supplies hooks and skill links.
-node bin/relay setup codex /path/to/project
+node scripts/relay.mjs setup codex /path/to/project
 ```
 
 Both modes copy generated agents into the project's `.codex/agents/` and create `.codex/config.toml` with agent defaults only when it is absent. Existing configuration is preserved and missing defaults are printed for manual merge. Changed agent copies are preserved; proposed replacements use `.relay-pending` files.
@@ -270,7 +270,7 @@ Relay has no development/staging/production `.env` loader. Use explicit CLI harn
 For example, from the Relay checkout, read the Codex budget with a selected executable:
 
 ```bash
-RELAY_CODEX_BIN=/absolute/path/to/codex node bin/relay budget --harness codex
+RELAY_CODEX_BIN=/absolute/path/to/codex node scripts/relay.mjs budget --harness codex
 ```
 
 Keep host-specific state separate: CLI Claude snapshots and calibration use `RELAY_HOME/budget.json` and `RELAY_HOME/calibration.json`; Codex uses the `codex/` subdirectory. When `RELAY_HOME` is unset, substitute `~/.relay`.

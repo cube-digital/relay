@@ -17,7 +17,7 @@ Use Node.js `>=20`, Git, and npm. CI uses Node.js 22. There are no runtime depen
 2. Read [AGENTS.md](../../AGENTS.md) and inspect the CLI:
 
    ```bash
-   node bin/relay --help
+   node scripts/relay.mjs --help
    ```
 
 3. Make a scoped change on a descriptive branch. The remote default branch is `main`. No separate contributor branch-name or commit-message convention is documented.
@@ -32,7 +32,7 @@ Relay deliberately has no `CLAUDE.md` at the plugin root. Keep shared repository
 | [`config/routing.json`](../../config/routing.json) | Claude model tiers, budget policy, lane limits, and forecast weights. |
 | [`codex-math/config/codex-routing.json`](../../codex-math/config/codex-routing.json) | Codex role registry, tiers, window policy, lanes, and forecast priors. A build source; the build checks it. |
 | [`skills/`](../../skills), [`commands/`](../../commands) | Shared workflows, supporting references, and command wrappers. |
-| [`lib/`](../../lib), [`scripts/`](../../scripts), [`bin/relay`](../../bin/relay) | CLI behavior, reusable logic, and dispatch. |
+| [`lib/`](../../lib), [`scripts/`](../../scripts), [`scripts/relay.mjs`](../../scripts/relay.mjs) | CLI behavior, reusable logic, and dispatch. |
 | [`hooks/`](../../hooks) | Command hooks and the Claude mod; preserve the generated routing block. |
 | Plugin manifests and [`package.json`](../../package.json) | Host discovery, package resources, and release metadata. |
 
@@ -66,8 +66,8 @@ These are all npm scripts in `package.json`:
 The direct build forms used in repository instructions are:
 
 ```bash
-node bin/relay build
-node bin/relay build --check
+node scripts/relay.mjs build
+node scripts/relay.mjs build --check
 ```
 
 Inspect both the source and generated diff after building. A successful build proves generation consistency; it does not prove live discovery, hook trust, or research behavior in either host.
@@ -77,7 +77,7 @@ Inspect both the source and generated diff after building. A successful build pr
 1. Edit the role under `roles/`. Preserve its responsibilities, stop conditions, report scope, and output contract unless the change intentionally revises them. The builder requires a matching `name`, a valid `tier`, and a description.
 2. For a new role, add its source file. Add or update the entry in the separate Codex `roles` registry so role-name routing recognizes it. Its tier must match the role file (`relay build` checks this). Check the tier model choices in `config/routing.json` (Claude) and `codex-math/config/codex-routing.json` (Codex).
 3. If the capability needs a public entry point, add or change its shared skill and the relevant discovery or packaging sources. Keep bundled references resolvable from the installed Relay root, including outside this checkout.
-4. Run `node bin/relay build`. Review generated Claude and Codex definitions, routing changes, and exact literals.
+4. Run `node scripts/relay.mjs build`. Review generated Claude and Codex definitions, routing changes, and exact literals.
 5. Use the relevant build, package, routing, and hook tests. Record live-host checks separately when a change needs them.
 
 Codex definitions keep model and effort selection explicit at dispatch. Do not add model/effort override keys to generated TOMLs: a TOML model overrides the spawn request (observed, Codex 0.163.0). Read-only definitions and role instructions restrict edits and assigned report output; they do not create an absolute sandbox guarantee or grant missing host permissions.
@@ -153,7 +153,7 @@ Before finishing, [AGENTS.md](../../AGENTS.md) requires:
 
 ```bash
 npm test
-node bin/relay build --check
+node scripts/relay.mjs build --check
 ```
 
 When `hooks/register.ts` changes, including regenerated routing, also run:
@@ -165,7 +165,7 @@ claude plugin test .
 
 The plugin test command can be unavailable: Claude Code 2.1.27 has been recorded reporting an unknown `test` command. Record the executable version, command, and blocker when that occurs. Do not count an unavailable check as a pass. The Node npm test script does not run `hooks/register.test.ts`.
 
-CI runs `npm test` and `node bin/relay build --check` on pushes and pull requests in [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml). See [testing](../testing/README.md) for check details and evidence limits. Teaching scenarios A–H remain unexecuted in the dated [evaluation record](../relay/evaluations/2026-10-25-teaching-and-reverse-engineering.md).
+CI runs `npm test` and `node scripts/relay.mjs build --check` on pushes and pull requests in [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml). See [testing](../testing/README.md) for check details and evidence limits. Teaching scenarios A–H remain unexecuted in the dated [evaluation record](../relay/evaluations/2026-10-25-teaching-and-reverse-engineering.md).
 
 For prose-only changes, review source claims manually, resolve relative links, and inspect diagram syntax and labels. Run repository-required checks; do not add unit tests that merely repeat documentation text.
 
@@ -181,6 +181,6 @@ A useful PR describes the problem, resulting behavior, affected source/generated
 
 ## Release and plugin refresh
 
-The current package and both plugin manifests are `0.5.0`. For an intentional release, follow the [README release guidance](../../README.md#releasing): update `package.json`, `.claude-plugin/plugin.json`, and `.codex-plugin/plugin.json` together. Keep the RPC client version in `lib/codex-rpc.mjs` aligned. Verify version agreement before tagging or publishing. Use release commands supported by the installed host.
+The current package and both plugin manifests are `0.6.1`. For an intentional release, follow the [README release guidance](../../README.md#releasing): update `package.json`, `.claude-plugin/plugin.json`, and `.codex-plugin/plugin.json` together. Keep the RPC client version in `lib/codex-rpc.mjs` aligned. Verify version agreement before tagging or publishing. Use release commands supported by the installed host.
 
 New capabilities need the appropriate packaged release and installed-plugin refresh before they become available from a user's plugin cache. Editing the checkout does not show that an existing installation has updated. Verify the installed candidate and start a new session when setup requires it. Do not change release versions merely for an unrelated documentation edit.

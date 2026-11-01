@@ -22,10 +22,10 @@ npm test
 Check generated definitions and portable skill frontmatter without writing files:
 
 ```bash
-node bin/relay build --check
+node scripts/relay.mjs build --check
 ```
 
-That check compares generated outputs with the role/configuration sources. It also checks skill names, descriptions, and the portable `name` + `description` frontmatter contract. It does not validate natural-language meaning. If generated files are stale, correct their sources and regenerate with `node bin/relay build`. [Build implementation](../../scripts/build.mjs)
+That check compares generated outputs with the role/configuration sources. It also checks skill names, descriptions, and the portable `name` + `description` frontmatter contract. It does not validate natural-language meaning. If generated files are stale, correct their sources and regenerate with `node scripts/relay.mjs build`. [Build implementation](../../scripts/build.mjs)
 
 For a related subset or one file:
 
@@ -96,7 +96,7 @@ The QA policy measures whether a test catches the relevant failure. A coverage p
 
 ## CI integration
 
-The [`ci` workflow](../../.github/workflows/ci.yml), job `test`, runs on pushes and pull requests using `ubuntu-latest` and Node.js 22. After checkout and a Git identity setup, it runs `npm test` followed by `node bin/relay build --check`. It does not run Claude plugin validation, Claude mod tests, manual language review, or the live research matrix.
+The [`ci` workflow](../../.github/workflows/ci.yml), job `test`, runs on pushes and pull requests using `ubuntu-latest` and Node.js 22. After checkout and a Git identity setup, it runs `npm test` followed by `node scripts/relay.mjs build --check`. It does not run Claude plugin validation, Claude mod tests, manual language review, or the live research matrix.
 
 ## Manual and live evaluation
 

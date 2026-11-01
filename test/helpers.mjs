@@ -40,6 +40,6 @@ export function runHook(script, input, env = {}) {
 }
 
 export function runCli(args, { cwd = ROOT, env = {} } = {}) {
-  const res = spawnSync('node', [join(ROOT, 'bin', 'relay'), ...args], { cwd, encoding: 'utf8', env: { ...process.env, RELAY_HARNESS: 'claude', ...env } });
+  const res = spawnSync('node', [join(ROOT, 'scripts', 'relay.mjs'), ...args], { cwd, encoding: 'utf8', env: { ...process.env, RELAY_HARNESS: 'claude', ...env } });
   return { code: res.status, stdout: res.stdout, stderr: res.stderr };
 }

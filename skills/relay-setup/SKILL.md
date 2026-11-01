@@ -3,7 +3,7 @@ name: relay-setup
 description: Use when installing Relay in a project, completing native plugin onboarding, or diagnosing routing, discovery and hooks.
 ---
 
-Resolve this SKILL.md to its absolute real path. Relay's installed root is two directories above its containing directory. Run every helper as `node "<absolute-relay-root>/bin/relay" ...`. No PATH installation is needed. Read the matching harness reference in `<relay-root>/skills/using-relay/references/`.
+Resolve this SKILL.md to its absolute real path. Relay's installed root is two directories above its containing directory. Run every helper as `node "<absolute-relay-root>/scripts/relay.mjs" ...`. No PATH installation is needed. Read the matching harness reference in `<relay-root>/skills/using-relay/references/`.
 
 Write instructions as strict STE-style drafts. Use short sentences, clear actors, and consistent terms. Keep code, commands, paths, identifiers, output markers, quotations, and evidence exact. For teacher explanations, adapt the words and detail to the learner. Use examples, analogies, and diagrams when they help.
 

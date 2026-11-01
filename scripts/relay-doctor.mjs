@@ -34,7 +34,7 @@ export function main(argv) {
     available = executable;
   } catch { /* Report missing executables without launching a process. */ }
   console.log(`Codex executable: ${available ?? 'not found (set RELAY_CODEX_BIN or --codex-bin)'}`);
-  const resources = ['bin/relay', 'roles/reviewer.md', 'codex/hooks.plugin.json', 'hooks/codex-spawn.mjs', 'skills/relay-plan/SKILL.md'];
+  const resources = ['scripts/relay.mjs', 'roles/reviewer.md', 'codex/hooks.plugin.json', 'hooks/codex-spawn.mjs', 'skills/relay-plan/SKILL.md'];
   const missing = resources.filter((p) => !existsSync(join(RELAY_ROOT, p)));
   console.log(`resources: ${missing.length ? `missing ${missing.join(', ')}` : 'complete'}`);
   const agents = join(project, '.codex', 'agents');

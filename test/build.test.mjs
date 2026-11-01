@@ -37,7 +37,7 @@ test('both renderers preserve protected literals and role contracts', () => {
   const fixture = {
     name: 'literal-fixture', tier: 'mid', description: 'Checks protected literals',
     tools: ['Read', 'Grep', 'Bash', 'Write'], readonly: true, maxTurns: 17,
-    body: 'Read src/cache-v2.ts.\nRun node bin/relay build --check.\nUse fork_turns: "none" and reasoning_effort.\nReturn DONE_WITH_CONCERNS.\nQuote: "Entries expire after 60 seconds."',
+    body: 'Read src/cache-v2.ts.\nRun node scripts/relay.mjs build --check.\nUse fork_turns: "none" and reasoning_effort.\nReturn DONE_WITH_CONCERNS.\nQuote: "Entries expire after 60 seconds."',
   };
   const claude = claudeAgent(fixture, routing);
   const codex = codexAgent(fixture, routing);

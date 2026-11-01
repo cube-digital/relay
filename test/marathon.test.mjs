@@ -22,7 +22,7 @@ async function waitFor(check, ms = 10_000) {
 // A marathon started the way Claude Code starts a background task: a child
 // process we do not wait on.
 function startMarathon(args, { cwd, env }) {
-  const child = spawn('node', [join(ROOT, 'bin', 'relay'), 'marathon', ...args], { cwd, env: { ...process.env, RELAY_HARNESS: 'claude', ...env }, stdio: ['ignore', 'pipe', 'pipe'] });
+  const child = spawn('node', [join(ROOT, 'scripts', 'relay.mjs'), 'marathon', ...args], { cwd, env: { ...process.env, RELAY_HARNESS: 'claude', ...env }, stdio: ['ignore', 'pipe', 'pipe'] });
   let out = '';
   child.stdout.on('data', (d) => (out += d));
   child.stderr.on('data', (d) => (out += d));
@@ -278,7 +278,7 @@ test('Codex pauses on its real weekly window and resumes its saved session to co
   const argv = readFileSync(file + '.argv', 'utf8').trim().split('\n').map(JSON.parse);
   assert.equal(argv[0][0], 'exec');
   assert.ok(argv[0].at(-1).includes(join(ROOT, 'skills/run-lanes/SKILL.md')));
-  assert.ok(argv[1].at(-1).includes(`node '${join(ROOT, 'bin/relay')}' ledger '${repo.planPath}' --harness codex`));
+  assert.ok(argv[1].at(-1).includes(`node '${join(ROOT, 'scripts/relay.mjs')}' ledger '${repo.planPath}' --harness codex`));
   assert.deepEqual(argv[1].slice(0, 6), ['exec', '--sandbox', 'workspace-write', '--approve-for-me', 'resume', '--json']);
   assert.ok(argv[1].includes('codex-thread-1'));
 });

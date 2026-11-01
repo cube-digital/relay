@@ -13,13 +13,16 @@ function roleNames() {
 test('packaged resources run outside the source checkout without relay on PATH', () => {
   const payload = realpathSync(mkdtempSync(join(tmpdir(), 'relay-payload-')));
   const manifest = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
-  assert.ok(manifest.files?.includes('bin'), 'package must declare executable resources');
+  assert.equal(existsSync(join(ROOT, 'bin')), false, 'hosted Claude plugins must not contain a top-level bin directory');
+  assert.ok(manifest.files?.includes('scripts'), 'package must declare executable resources');
   for (const entry of manifest.files) cpSync(join(ROOT, entry), join(payload, entry), { recursive: true });
   cpSync(join(ROOT, 'package.json'), join(payload, 'package.json'));
-  const result = spawnSync(process.execPath, [join(payload, 'bin/relay'), 'lanes', join(payload, 'skills/plan-with-tiers/template.md')], { cwd: tmpdir(), encoding: 'utf8', env: { PATH: '/usr/bin:/bin' } });
+  assert.equal(existsSync(join(payload, 'bin')), false, 'published payload must preserve the hosted layout');
+  const cli = join(payload, manifest.bin.relay);
+  const result = spawnSync(process.execPath, [cli, 'lanes', join(payload, 'skills/plan-with-tiers/template.md')], { cwd: tmpdir(), encoding: 'utf8', env: { PATH: '/usr/bin:/bin' } });
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /csv-export: 3 tasks/);
-  const forecast = spawnSync(process.execPath, [join(payload, 'bin/relay'), 'forecast', join(payload, 'skills/plan-with-tiers/template.md'), '--harness', 'codex', '--json'], { cwd: tmpdir(), encoding: 'utf8', env: { PATH: '/usr/bin:/bin', RELAY_HOME: join(payload, 'state'), CODEX_HOME: join(payload, 'empty') } });
+  const forecast = spawnSync(process.execPath, [cli, 'forecast', join(payload, 'skills/plan-with-tiers/template.md'), '--harness', 'codex', '--json'], { cwd: tmpdir(), encoding: 'utf8', env: { PATH: '/usr/bin:/bin', RELAY_HOME: join(payload, 'state'), CODEX_HOME: join(payload, 'empty') } });
   assert.equal(forecast.status, 0, forecast.stderr);
   assert.equal(JSON.parse(forecast.stdout).harness, 'codex');
   const spawn = spawnSync(process.execPath, [join(payload, 'hooks/codex-spawn.mjs')], { cwd: tmpdir(), encoding: 'utf8', input: JSON.stringify({ tool_name: 'spawn_agent', tool_input: { agent_type: 'relay-implementer', fork_turns: 'none', message: 'Test dispatch' } }), env: { PATH: '/usr/bin:/bin', RELAY_HOME: join(payload, 'state'), CODEX_HOME: join(payload, 'empty') } });
@@ -27,6 +30,9 @@ test('packaged resources run outside the source checkout without relay on PATH',
   assert.equal(JSON.parse(spawn.stdout).hookSpecificOutput.permissionDecision, 'allow');
   assert.equal(JSON.parse(spawn.stdout).hookSpecificOutput.updatedInput.message, 'Test dispatch');
   const plugin = JSON.parse(readFileSync(join(payload, '.codex-plugin/plugin.json'), 'utf8'));
+  const claudePlugin = JSON.parse(readFileSync(join(payload, '.claude-plugin/plugin.json'), 'utf8'));
+  assert.equal(plugin.version, manifest.version);
+  assert.equal(claudePlugin.version, manifest.version);
   assert.equal(plugin.hooks, './codex/hooks.plugin.json');
   assert.equal(plugin.extensions['com.openai'].onboardingSkill, './skills/relay-setup/SKILL.md');
   assert.match(readFileSync(join(payload, plugin.hooks), 'utf8'), /\$\{PLUGIN_ROOT\}/);
@@ -57,9 +63,16 @@ test('packaged resources run outside the source checkout without relay on PATH',
   const installedRoot = join(realpathSync(join(payload, 'skills/using-relay/SKILL.md')), '../../..');
   assert.equal(readFileSync(join(installedRoot, 'skills/using-relay/references/language-guide.md'), 'utf8'), readFileSync(join(ROOT, 'skills/using-relay/references/language-guide.md'), 'utf8'));
   assert.equal(readFileSync(join(installedRoot, 'skills/using-relay/references/software-glossary.md'), 'utf8'), readFileSync(join(ROOT, 'skills/using-relay/references/software-glossary.md'), 'utf8'));
+  const checkpointResources = ['skills/checkpoint-work/SKILL.md', 'skills/checkpoint-work/assets/checkpoint.md', 'commands/checkpoint.md'];
+  assert.deepEqual(checkpointResources.map(path => readFileSync(join(payload, path), 'utf8')),
+    checkpointResources.map(path => readFileSync(join(ROOT, path), 'utf8')));
   const relocatedProject = tempRepo().dir;
-  const setup = spawnSync(process.execPath, [join(payload, 'bin/relay'), 'setup', 'codex', relocatedProject], { cwd: tmpdir(), encoding: 'utf8', env: { PATH: '/usr/bin:/bin', RELAY_HOME: join(payload, 'state'), CODEX_HOME: join(payload, 'empty') } });
+  const setup = spawnSync(process.execPath, [cli, 'setup', 'codex', relocatedProject], { cwd: tmpdir(), encoding: 'utf8', env: { PATH: '/usr/bin:/bin', RELAY_HOME: join(payload, 'state'), CODEX_HOME: join(payload, 'empty') } });
   assert.equal(setup.status, 0, setup.stderr);
+  const checkpointPath = realpathSync(join(relocatedProject, '.agents/skills/checkpoint-work/SKILL.md'));
+  assert.equal(checkpointPath, join(payload, 'skills/checkpoint-work/SKILL.md'));
+  const checkpointTemplate = join(checkpointPath, '../assets/checkpoint.md');
+  assert.equal(readFileSync(checkpointTemplate, 'utf8'), readFileSync(join(payload, 'skills/checkpoint-work/assets/checkpoint.md'), 'utf8'));
   const designPath = realpathSync(join(relocatedProject, '.agents/skills/relay-design/SKILL.md'));
   assert.equal(designPath, join(payload, 'skills/relay-design/SKILL.md'));
   const designRoot = join(designPath, '../../..');
