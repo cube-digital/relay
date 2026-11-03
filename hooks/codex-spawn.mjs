@@ -6,7 +6,8 @@ import { routeSpawn } from '../codex-math/lib/budget.mjs';
 
 try {
   const input = await readInput();
-  if (!/(?:^|[.:/])(?:spawn_agent|Agent)$/.test(input.tool_name ?? '')) process.exit(0);
+  // Codex 0.163 names the V2 spawn tool `collaborationspawn_agent` (namespace + name, no separator).
+  if (!/(?:^|[.:/]|collaboration)spawn_agent$|(?:^|[.:/])Agent$/.test(input.tool_name ?? '')) process.exit(0);
   const args = input.tool_input ?? input.arguments;
   if (!args || typeof args !== 'object' || Array.isArray(args)) process.exit(0);
   const routing = loadCodexRouting();

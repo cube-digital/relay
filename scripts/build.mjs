@@ -99,7 +99,7 @@ export function codexHooks(plugin = false) {
         hooks: {
           SessionStart: [{ hooks: [cmd('session-start.mjs', ' --harness codex')] }],
           PreToolUse: [
-            { matcher: 'spawn_agent|Agent', hooks: [cmd('codex-spawn.mjs')] },
+            { matcher: 'collaborationspawn_agent|spawn_agent|Agent', hooks: [cmd('codex-spawn.mjs')] },
             { matcher: shell, hooks: [cmd('retest-guard.mjs'), cmd('protect-tests.mjs')] },
             { matcher: 'apply_patch|Edit|Write', hooks: [cmd('protect-tests.mjs')] },
           ],
