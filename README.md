@@ -719,7 +719,7 @@ See the [teaching and reverse-engineering guide](docs/guides/teaching-and-revers
 
 You need a recent **Claude Code** (run `claude update`), **git**, and **Node 20 or newer**. Relay's hooks and its `relay` command run on Node.
 
-Relay 0.6.1 places its Node entry point at `scripts/relay.mjs`. Hosted Claude plugins cannot contain a top-level `bin/` directory. See the [hosted marketplace packaging rule](https://code.claude.com/docs/en/plugins/host-marketplace#distribute-through-organization-settings). If you call Relay by path, replace `node scripts/relay.mjs` with `node scripts/relay.mjs` after updating. For an installed copy, use `node "<absolute-relay-root>/scripts/relay.mjs"`. The npm command remains `relay`, with the same subcommands.
+Relay 0.6.1 places its Node entry point at `scripts/relay.mjs`. Hosted Claude plugins cannot contain a top-level `bin/` directory. See the [hosted marketplace packaging rule](https://code.claude.com/docs/en/plugins/host-marketplace#distribute-through-organization-settings). If you call Relay by path, replace `node bin/relay` with `node scripts/relay.mjs` after updating. For an installed copy, use `node "<absolute-relay-root>/scripts/relay.mjs"`. The npm command remains `relay`, with the same subcommands.
 
 Existing cached 0.6.0 installations keep their own files. Update the complete plugin through the host, then confirm the installed version. If you used `npm link`, run it again after updating the checkout to recreate the command link. A local validator pass does not prove hosted server acceptance.
 
