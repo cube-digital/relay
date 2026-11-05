@@ -1,0 +1,18 @@
+/* The Overview view (ring.js): the orb, its nodes and the centre count. Scoped under .hq-ring. */
+.hq-ring{display:flex;justify-content:center;padding:8px 0 24px}
+.hq-ring .stage{position:relative;width:min(600px,88%);aspect-ratio:1/1;container-type:inline-size;margin:28px 0 64px;flex:none}
+.hq-ring .orb{position:absolute;left:50%;top:50%;width:58%;height:58%;transform:translate(-50%,-50%)}
+.hq-ring .ring{position:absolute;inset:0}
+.hq-ring .rb{position:absolute;width:clamp(56px,13cqw,78px);height:clamp(56px,13cqw,78px);translate:-50% -50%;padding:0;border-radius:50%;border:1px solid var(--line2);background:radial-gradient(circle at 50% 35%,var(--tile),var(--panel));display:grid;place-items:center;color:var(--ink);font:clamp(20px,4.6cqw,28px)/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;box-shadow:0 0 0 3px var(--bg);cursor:pointer;text-decoration:none}
+.hq-ring .rb:hover{border-color:var(--accent-line)}
+.hq-ring .rb.hot{border-color:var(--accent);box-shadow:0 0 14px color-mix(in srgb,var(--accent) 35%,transparent),0 0 0 3px var(--bg)}
+.hq-ring .rb .rl{position:absolute;top:calc(100% + 8px);left:50%;translate:-50% 0;display:flex;flex-direction:column;align-items:center;gap:4px;white-space:nowrap;pointer-events:none}
+.hq-ring .rb .rl b{font:600 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
+.hq-ring .rb .rl small{font:500 11px/1 var(--mono);color:var(--mute)}
+.hq-ring .rb.hot .rl small{color:var(--accent)}
+.hq-ring .core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;text-decoration:none;padding:12px;border-radius:50%}
+.hq-ring .core b{display:block;font-size:48px;color:var(--ink2)}
+.hq-ring .core.hot b{color:var(--accent);text-shadow:0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}
+.hq-ring .core small{letter-spacing:.24em;color:var(--ink2);font-size:10px;text-transform:uppercase}
+.hq-ring .core:hover small{color:var(--accent)}
+@media (max-width:700px){.hq-ring .stage{width:94%}.hq-ring .rb .rl b{font-size:10px;letter-spacing:.08em}.hq-ring .rb .rl small{font-size:10px}}

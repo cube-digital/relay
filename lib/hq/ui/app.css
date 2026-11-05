@@ -292,3 +292,5 @@ pre.log{max-height:70vh}
 @media (max-width:900px){.top .crumbs{flex-basis:100%}.top .budget{margin-left:auto}}
 @media (max-width:700px){.agents .kpis{grid-template-columns:repeat(2,1fr)}.need{flex-wrap:wrap}.need .nact{margin-left:30px}}
 @media (max-width:900px){.side .sep{display:none}.side .grow{flex:0}}
+.side .setup-compact,.setup-tabs{display:none}
+@media (max-width:900px){.side .sl{display:none}.side .setup-compact,.setup-tabs{display:flex}}

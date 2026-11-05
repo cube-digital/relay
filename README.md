@@ -781,9 +781,10 @@ The URL carries a fresh token every time the server starts. Open HQ through `rel
 
 A sidebar is on every page, and HQ opens on **★ All**.
 
+- **◎ Overview** is the ring: the number of items that need you in the centre, and around the orb Running, Ready to merge and the seven Setup sections, each with its count. A node opens its page; a node with a problem (a missing key, a connector that needs auth) glows.
 - **★ All** shows every project's work on one page. Its badge counts the items that need you.
 - **Projects**, in registry order. Each has a red **●n** badge for items that need you and a blue pulsing **▶n** for live runs.
-- **⚙ Setup** at the bottom.
+- **Setup**: Team, Flows, Skills, Connectors, API keys, Routines and Repositories, one link each. On a narrow window they fold into one **⚙ Setup** link with tabs.
 
 The top bar keeps the breadcrumb, Search (`/`) and the budget. The budget comes from your latest Claude Code session; "budget unknown" means there is no recent reading yet.
 
@@ -856,9 +857,9 @@ Marathon is Claude Code only for now.
 
 ### 6. Setup
 
-**⚙ Setup** has seven tabs, at `#/setup/<tab>`.
+Setup has seven sections, each a sidebar link at `#/setup/<section>`.
 
-| Tab | What it shows |
+| Section | What it shows |
 |---|---|
 | **Team** | relay's roles with their tier and model on both tools, their profile, their tools and where they are generated from, plus your other agents. |
 | **Flows** | relay's flows and the pieces at each point (from `flows/` and `pieces/`), what is generated from what (and whether it is in sync), and which command uses which skill and agent. |
@@ -870,7 +871,7 @@ Marathon is Claude Code only for now.
 
 **Repositories.** Nothing is added for you: you choose which repositories HQ shows. A **project** is a named group of repositories, for example a client's `web`, `api` and `infra`.
 
-- **In the page:** **Add repository** in the Repositories tab. Type the path, pick a project (or create one), Add.
+- **In the page:** **Add repository** in Setup › Repositories. Type the path, pick a project (or create one), Add.
 - **In a terminal:**
 
 ```bash
