@@ -30,3 +30,20 @@ commits: <first7>..<last7>
 root cause: <one line>
 report: <path>
 concerns: <one line or none>
+
+## Understands
+- Root causes, subtle concurrency, and broad refactors.
+- Why a previous attempt failed.
+
+## Receives
+- A brief, the previous report, and the open review findings.
+- Or a task that the plan marks strong.
+
+## Delivers
+- The smallest change that removes the root cause, in a commit.
+- A report that states the cause in one paragraph.
+
+## Never
+- Adds a workaround to an incorrect approach.
+- Dispatches subagents.
+- Continues when each path forward is a guess.

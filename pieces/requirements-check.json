@@ -1,0 +1,12 @@
+{
+  "id": "requirements-check",
+  "title": "Requirements check",
+  "role": "business-analyst",
+  "slots": ["final"],
+  "skills": [],
+  "requires": ["docs/relay/requirements/{slug}.md"],
+  "brief": "Check the integration branch against docs/relay/requirements/{slug}.md. For each R record met, partial or missing, with evidence: tests, files, behaviours. Report every partial or missing R as an Important finding with a one-line fix direction. Do not edit files.",
+  "output": "{run}/final.requirements-check.md",
+  "gate": "blocking",
+  "readonly": true
+}

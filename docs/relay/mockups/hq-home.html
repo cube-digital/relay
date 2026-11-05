@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>relay HQ · home v2 (mockup)</title>
+<style>
+:root{--bg:#090909;--panel:#0f0f0f;--line:#222;--line2:#2c2c2c;--ink:#efece6;--ink2:#a19c93;--mute:#6f6b64;--or:#7cc8ff;--or2:#a8dbff;--red:#ff5c5c;--amb:#9aa3ad;--grn:#c9d3dc;--blu:#9aa3ad;--vio:#c9d3dc;--pnk:#9aa3ad;--cya:#7cc8ff}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 600px at 50% 40%,#0f1216 0%,#090909 60%);color:var(--ink);font:13px/1.45 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+.grid{display:grid;grid-template-columns:330px minmax(0,1fr) 380px;gap:0;min-height:100vh}
+.col{border-right:1px solid var(--line);padding:18px 16px;display:flex;flex-direction:column;gap:18px}
+.col.r{border-right:0;border-left:1px solid var(--line)}
+.ph{display:flex;align-items:center;gap:10px;font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink);font-weight:700}
+.ph .ic{width:16px;height:16px;border:1.5px solid var(--ink2);border-radius:3px}
+.ph .act{margin-left:auto;display:flex;gap:6px}
+.btn{font:600 10px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);border:1px solid var(--line2);border-radius:5px;padding:5px 8px;background:#0c0c0c}
+.btn.or{color:var(--or);border-color:#24445e}
+.list .it{display:flex;gap:10px;align-items:flex-start;padding:7px 4px;border-bottom:1px solid #161616}
+.tile{width:28px;height:28px;border-radius:6px;display:grid;place-items:center;font:700 11px/1 ui-monospace,Menlo,monospace;color:#0a0a0a;flex:none}
+.it b{display:block;font-size:13px}
+.it small{color:var(--mute);font-size:11px}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px}
+.today .row{display:grid;grid-template-columns:52px 1fr auto;gap:8px;padding:6px 0;border-bottom:1px dashed #1c1c1c;align-items:center}
+.t{font:600 11px/1 ui-monospace,Menlo,monospace;color:var(--ink2)}
+.t.now{color:#0a0a0a;background:var(--or);border-radius:4px;padding:3px 4px;text-align:center}
+.tag{font:600 9px/1 ui-monospace,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;padding:3px 6px;border-radius:4px;border:1px solid var(--line2);color:var(--ink2)}
+.tag.or{color:var(--or);border-color:#24445e}.tag.r{color:var(--red);border-color:#5a1c1c}.tag.g{color:var(--ink);border-color:#333}.tag.b{color:var(--ink2);border-color:#333}
+/* centre */
+.centre{position:relative;display:flex;flex-direction:column;align-items:center;padding-top:18px;overflow:hidden}
+.mark{font-size:34px;font-weight:800;letter-spacing:.01em}
+.mark span{color:var(--or);font-weight:500}
+.mark .hex{display:inline-block;width:22px;height:22px;border:2px solid var(--or);border-radius:5px;transform:rotate(30deg);margin-right:12px;vertical-align:4px}
+.sub{letter-spacing:.32em;color:var(--ink2);font-size:12px;margin-top:2px}
+.icons{display:flex;gap:18px;margin-top:10px;color:var(--ink2);font-size:15px}
+.stage{position:relative;width:640px;height:640px;margin-top:6px}
+#orb{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+.ring{position:absolute;inset:0}
+.rb{position:absolute;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;border:1px solid #333;background:radial-gradient(circle at 50% 35%,#1a1a1a,#0c0c0c);display:grid;place-items:center;color:var(--ink);font-size:18px;box-shadow:0 0 0 3px #0a0a0a}
+.rb small{position:absolute;bottom:-14px;font:600 9px/1 ui-monospace,Menlo,monospace;color:var(--mute)}
+.rb.hot{border-color:var(--or);box-shadow:0 0 14px rgba(124,200,255,.35),0 0 0 3px #0a0a0a}
+.rb .tip{position:absolute;top:58px;font-size:10px;color:var(--ink2);white-space:nowrap;opacity:.0}
+.rb:hover .tip{opacity:1}
+.core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
+.core b{display:block;font-size:44px;color:var(--or);text-shadow:0 0 18px rgba(124,200,255,.45)}
+.core small{letter-spacing:.24em;color:var(--ink2);font-size:10px;text-transform:uppercase}
+/* agents panel */
+.agents{width:min(620px,92%);margin:6px auto 22px;border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:14px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}
+.kpi{border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:#0b0b0b}
+.kpi small{color:var(--mute);font-size:11px}.kpi b{display:block;font-size:20px}
+.grp{color:var(--mute);margin:10px 0 6px;font-size:12px}
+.ag{display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid #181818}
+.ag b{font-size:14px}
+.ag .meta{font-size:11px;color:var(--ink2)}
+.ag .meta i{font-style:normal}
+.pbar{height:5px;border-radius:3px;background:#1b1b1b;overflow:hidden;margin-top:6px}
+.pbar span{display:block;height:100%}
+@keyframes shimmer{0%{background-position:-200px 0}100%{background-position:200px 0}}
+.pbar span.run{background:linear-gradient(90deg,var(--or),#cdeaff,var(--or));background-size:200px 100%;animation:shimmer 1.6s linear infinite}
+/* right */
+.big{display:flex;align-items:baseline;gap:10px}
+.big b{font-size:44px;color:var(--or);line-height:1}
+.big small{font:600 10px/1.3 ui-monospace,Menlo,monospace;letter-spacing:.14em;color:var(--ink2);text-transform:uppercase}
+.flag{display:flex;gap:9px;align-items:center;padding:5px 0}
+.flag .x{width:15px;height:15px;border:1.5px solid var(--red);border-radius:3px;flex:none}
+.flag .x.a{border-color:var(--amb)}
+.flag span.w{margin-left:auto;color:var(--mute);font-size:11px}
+.mix{display:flex;gap:3px;margin-top:10px}
+.mix span{height:6px;border-radius:3px}
+.mixl{display:flex;gap:14px;margin-top:5px;font:600 9px/1 ui-monospace,Menlo,monospace;letter-spacing:.12em;color:var(--mute)}
+table.rt{width:100%;border-collapse:collapse;margin-top:6px}
+.rt th{font:600 9px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;color:var(--mute);text-align:left;padding:4px 0}
+.rt td{padding:6px 0;border-top:1px solid #171717;font-size:12px}
+.deck{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.card{border:1px solid var(--line2);border-radius:9px;padding:9px;background:#0c0c0c}
+.card b{font-size:13px}
+.card .mdl{font:700 10px/1.2 ui-monospace,Menlo,monospace;letter-spacing:.16em;margin:3px 0 7px}
+.card .acts{display:flex;gap:5px}
+.card .acts span{width:26px;height:22px;border:1px solid var(--line2);border-radius:5px;display:grid;place-items:center;font-size:11px;color:var(--ink2)}
+.card .acts span.pl{border-color:#24445e;color:var(--or)}
+.haiku,.sonnet,.opus{color:var(--ink2)}
+.note{position:fixed;left:12px;bottom:12px;max-width:520px;background:#0e1319;border:1px solid #1f3348;color:var(--ink2);padding:8px 10px;border-radius:8px;font-size:11px}
+</style></head><body>
+<div class="grid">
+
+<!-- LEFT -->
+<div class="col">
+  <div>
+    <div class="ph"><span class="ic"></span>Projects<span class="act"><span class="btn">Expand</span><span class="btn or">+ Add repo</span></span></div>
+    <div class="list" style="margin-top:10px">
+      <div class="it"><span class="tile" style="background:var(--or);color:#061018">PO</span><div><b>Polaris</b><small>2 repos · running wave 2/3 · <span style="color:var(--red)">1 blocked</span></small></div></div>
+      <div class="it"><span class="tile" style="background:#1d2329;color:var(--ink);border:1px solid #2c3640">EC</span><div><b>Eurocleaner</b><small>2 repos · <span style="color:var(--red)">CI red</span> on feat/booking</small></div></div>
+      <div class="it"><span class="tile" style="background:#1d2329;color:var(--ink);border:1px solid #2c3640">NA</span><div><b>Narrio</b><small>5 repos · 1 plan ready to merge</small></div></div>
+      <div class="it"><span class="tile" style="background:#1d2329;color:var(--ink);border:1px solid #2c3640">RE</span><div><b>relay</b><small>1 repo · routines plan complete</small></div></div>
+      <div class="it"><span class="tile" style="background:#444;color:var(--ink)">··</span><div><b>Unassigned</b><small>3 repos</small></div></div>
+    </div>
+  </div>
+  <div class="today">
+    <div class="ph"><span class="ic"></span>Today<span class="act"><span class="btn">Week</span></span></div>
+    <div style="margin-top:8px">
+      <div class="row"><span class="t">09:00</span><span>pr-hygiene · Polaris</span><span class="tag g">3 new</span></div>
+      <div class="row"><span class="t">10:42</span><span>run multi-tenant-billing</span><span class="tag b">Claude</span></div>
+      <div class="row"><span class="t">13:40</span><span>wave 1 merged · suite pass</span><span class="tag g">✓</span></div>
+      <div class="row"><span class="t now">14:05</span><span>lane f · fix round 2/5</span><span class="tag r">blocked</span></div>
+      <div class="row"><span class="t">16:00</span><span>weekly-report · all</span><span class="tag or">next</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- CENTRE -->
+<div class="centre">
+  <div class="mark"><span class="hex"></span>RELAY <span>Command Centre</span></div>
+  <div class="sub">cube-digital · engineering</div>
+  <div class="icons"><span title="Search">⌕</span><span title="Add repository">＋</span><span title="Run a skill">▶</span><span title="Budget">◔</span></div>
+  <div class="stage">
+    <canvas id="orb" width="420" height="420"></canvas>
+    <div class="ring" id="ring"></div>
+    <div class="core"><b>3</b><small>waiting on you</small></div>
+  </div>
+  <div class="agents">
+    <div class="ph" style="letter-spacing:.18em">Running now · multi-tenant-billing<span class="act"><span class="btn">Board</span><span class="btn">Team</span></span></div>
+    <div class="kpis">
+      <div class="kpi"><small>Green</small><b>18/30</b></div>
+      <div class="kpi"><small>Wave</small><b>2 / 3</b></div>
+      <div class="kpi"><small>Lanes</small><b>2 · 3 · 1</b></div>
+      <div class="kpi"><small>Time</small><b>1:12</b></div>
+    </div>
+    <div class="grp">Running · 2</div>
+    <div class="ag"><span class="mascot" data-c="#5aa9ff" data-hat="cap"></span><div><b>T15 Tenant switching</b><div class="meta"><i style="color:var(--blu)">Software Engineer</i> · lane e · sonnet · medium · 2/3 tasks</div><div class="pbar"><span class="run" style="width:66%"></span></div></div><span class="tag or">0:26</span></div>
+    <div class="ag"><span class="mascot" data-c="#a78bfa" data-hat="helmet"></span><div><b>T17 Usage aggregation</b><div class="meta"><i style="color:var(--vio)">Senior Engineer</i> · lane f · opus · high · fix round 2/5</div><div class="pbar"><span class="run" style="width:40%;background:var(--red)"></span></div></div><span class="tag r">blocked</span></div>
+    <div class="grp">Finished · 3</div>
+    <div class="ag"><span class="mascot" data-c="#f2b33d" data-hat="none"></span><div><b>Acceptance tests · lane e</b><div class="meta"><i style="color:var(--amb)">Test Engineer</i> · sonnet · medium · 2 tests protected</div><div class="pbar"><span style="width:100%;background:var(--amb)"></span></div></div><span class="tag g">✓</span></div>
+    <div class="grp">Planned · 1</div>
+    <div class="ag" style="opacity:.6"><span class="mascot" data-c="#5aa9ff" data-hat="cap"></span><div><b>Lane g · T28–T30</b><div class="meta">Software Engineer · after wave 2</div></div><span class="tag">◷</span></div>
+  </div>
+</div>
+
+<!-- RIGHT -->
+<div class="col r">
+  <div>
+    <div class="ph"><span class="ic"></span>Waiting on you</div>
+    <div class="big" style="margin-top:8px"><b>3</b><small>items<br>needs you now</small></div>
+    <div style="margin-top:8px">
+      <div class="flag"><span class="x"></span><b>Lane f blocked</b> <small style="color:var(--mute)">polaris-web</small><span class="w">4m</span></div>
+      <div class="flag"><span class="x"></span><b>CI red · feat/booking</b> <small style="color:var(--mute)">eurocleaner-app</small><span class="w">1h</span></div>
+      <div class="flag"><span class="x a"></span><b>PR #41 asks for review</b><span class="w">2h</span></div>
+    </div>
+    <div class="mix"><span style="flex:1;background:var(--red)"></span><span style="flex:1;background:var(--red);opacity:.6"></span><span style="flex:1;background:var(--amb)"></span><span style="flex:2;background:#2a2a2a"></span></div>
+    <div class="mixl"><span>1 BLOCKED</span><span>1 CI</span><span>1 REVIEW</span><span>2 ROUTINE</span></div>
+  </div>
+  <div>
+    <div class="ph"><span class="ic" style="border-radius:50%"></span>Routines<span class="act"><span class="btn">All</span></span></div>
+    <table class="rt">
+      <tr><th>TIME</th><th>ROUTINE</th><th>ON</th><th>STATUS</th></tr>
+      <tr><td><span class="t">09:00</span></td><td>pr-hygiene · Polaris</td><td><span class="tag b">Codex</span></td><td style="color:var(--grn)">3 NEW</td></tr>
+      <tr><td><span class="t now">16:00</span></td><td>weekly-report · all</td><td><span class="tag or">Claude</span></td><td style="color:var(--or)">NEXT</td></tr>
+      <tr><td><span class="t">09:00</span></td><td>pr-hygiene · Narrio</td><td><span class="tag b">Codex</span></td><td style="color:var(--mute)">TOMORROW</td></tr>
+    </table>
+  </div>
+  <div>
+    <div class="ph">⚡ Skills deck<span class="act"><span class="btn or">+ Add skill</span></span></div>
+    <div class="deck" style="margin-top:8px">
+      <div class="card"><b>/relay:plan</b><div class="mdl opus">OPUS · HIGH</div><div class="acts"><span class="pl">▶</span><span>⚙</span><span>⧉</span></div></div>
+      <div class="card"><b>/relay:run</b><div class="mdl sonnet">SONNET · MEDIUM</div><div class="acts"><span class="pl">▶</span><span>⚙</span><span>⧉</span></div></div>
+      <div class="card"><b>/relay:marathon</b><div class="mdl sonnet">SONNET · MEDIUM</div><div class="acts"><span class="pl">▶</span><span>⚙</span><span>⧉</span></div></div>
+      <div class="card"><b>qa-mindset</b><div class="mdl sonnet">SONNET · MEDIUM</div><div class="acts"><span class="pl">▶</span><span>⚙</span><span>⧉</span></div></div>
+      <div class="card"><b>/relay:connectors</b><div class="mdl haiku">HAIKU · LOW</div><div class="acts"><span class="pl">▶</span><span>⚙</span><span>⧉</span></div></div>
+      <div class="card"><b>handoff</b><div class="mdl haiku">HAIKU · LOW</div><div class="acts"><span class="pl">▶</span><span>⚙</span><span>⧉</span></div></div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="note">Mockup v2 · fewer colours, light-blue accent; red only for blocked or failed. The ring around the orb jumps to every section; ▶ on a skill opens the launch dialog; ⚙ sets its default model and effort.</div>
+
+<script>
+// ring of section buttons around the orb
+const items=[['▦','Projects','5'],['☰','Plans','4'],['◫','Board',''],['☺','Team','10'],['⇄','Flows','2'],['◆','Pieces','5'],['⚡','Skills','24'],['⚭','Connectors','22'],['⚿','Keys','3'],['◷','Routines','2'],['▶','Launches','12'],['≋','Activity',''],['✦','Recos','7'],['◔','Budget','45%']];
+const ring=document.getElementById('ring');const R=280,cx=320,cy=320;
+items.forEach(([ic,label,n],i)=>{const a=-Math.PI/2+i*(2*Math.PI/items.length);const b=document.createElement('div');b.className='rb'+(label==='Recos'||label==='Board'?' hot':'');b.style.left=(cx+R*Math.cos(a))+'px';b.style.top=(cy+R*Math.sin(a))+'px';b.innerHTML=ic+(n?`<small>${n}</small>`:'')+`<span class="tip">${label}</span>`;ring.appendChild(b);});
+// dotted sphere: grey shell, orange/blue core of "active work"
+const c=document.getElementById('orb'),x=c.getContext('2d');const pts=[];const N=900;
+for(let i=0;i<N;i++){const y=1-(i/(N-1))*2,r=Math.sqrt(1-y*y),th=i*2.399963;pts.push([Math.cos(th)*r,y,Math.sin(th)*r]);}
+const core=[];for(let i=0;i<420;i++){const u=Math.random()*2-1,t=Math.random()*6.283,rr=Math.cbrt(Math.random())*.45;const s=Math.sqrt(1-u*u);core.push([s*Math.cos(t)*rr,u*rr,s*Math.sin(t)*rr,Math.random()<.18]);}
+let ang=0;function draw(){x.clearRect(0,0,420,420);ang+=.004;const ca=Math.cos(ang),sa=Math.sin(ang);
+for(const [px,py,pz] of pts){const X=px*ca+pz*sa,Z=-px*sa+pz*ca;const s=200/(2.6-Z);x.fillStyle=`rgba(200,195,185,${.12+.35*(Z+1)/2})`;x.fillRect(210+X*s*1.3-1,210+py*s*1.3-1,1.6,1.6);}
+for(const [px,py,pz,blue] of core){const X=px*ca*1.6+pz*sa,Z=-px*sa+pz*ca;const s=200/(2.6-Z);x.fillStyle=blue?'rgba(255,255,255,.9)':`rgba(124,${180+Math.floor(30*(Z+1))},255,.85)`;x.fillRect(210+X*s*1.3-1,210+py*s*1.3-1,2,2);}
+requestAnimationFrame(draw);}draw();
+// pixel mascots per role colour
+document.querySelectorAll('.mascot').forEach(m=>{const col=m.dataset.c,hat=m.dataset.hat;const body=['..XXXXX..','.XXXXXXX.','XX.XXX.XX','XXXXXXXXX','.XXXXXXX.','.X.X.X.X.'];const hats={cap:['...HHHH..','..HHHHHH.'],helmet:['..HHHHH..','.HHHHHHH.'],none:['.........','.........']};const rows=[...hats[hat],...body];let s='<svg width="36" height="32" viewBox="0 0 9 8" shape-rendering="crispEdges">';rows.forEach((r,y)=>[...r].forEach((ch,xx)=>{if(ch==='X')s+=`<rect x="${xx}" y="${y}" width="1" height="1" fill="#aeb7c0"/>`;if(ch==='H')s+=`<rect x="${xx}" y="${y}" width="1" height="1" fill="${col}"/>`;}));m.innerHTML=s+'</svg>';});
+</script>
+</body></html>

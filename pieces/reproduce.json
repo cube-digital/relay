@@ -1,0 +1,13 @@
+{
+  "id": "reproduce",
+  "title": "Reproduce the bug",
+  "role": "test-author",
+  "slots": ["lane.before"],
+  "skills": ["qa-mindset"],
+  "requires": [],
+  "brief": "Write exactly one test that fails because of the bug this lane fixes, from the spec and the lane brief. Fix nothing. Run it once and confirm it fails for the bug's reason, not a setup error. Commit it on its own as \"<task id>: acceptance tests\" and list its path after protect: in your return.",
+  "output": "{run}/lane-{lane}.reproduce.md",
+  "gate": "blocking",
+  "readonly": false,
+  "protect": true
+}

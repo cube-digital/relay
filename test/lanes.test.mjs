@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { computeLanes, pathsOverlap, segmentsFor } from '../lib/lanes.mjs';
 import { parsePlan, validatePlan } from '../lib/plan.mjs';
-import { FIXTURES } from './helpers.mjs';
+import { FIXTURES, runCli, tempRepo } from './helpers.mjs';
 
 const task = (id, files, extra = {}) => ({ id, title: id, tier: 'mid', risk: 'low', files, deps: [], tests: 0, behaviors: [], code: 'prose', done: 'true', ...extra });
 const lanesOf = (tasks, opts) => computeLanes({ slug: 's', tasks }, opts);
@@ -99,4 +100,29 @@ test('validation warns about test budgets that do not match risk', () => {
   const { warnings } = validatePlan(plan);
   assert.ok(warnings.some((w) => /low risk with 3 new tests/.test(w)));
   assert.ok(warnings.some((w) => /high risk with no new test/.test(w)));
+});
+
+test('relay lanes: a plan without flow runs as feature; a builder role is its own segment; a reviewer role is rejected', () => {
+  const planText = (role2) => {
+    const t = (id, files, extra = {}) => ({ id, title: id, tier: 'mid', risk: 'low', files, tests: 0, done: 'true', ...extra });
+    const block = { slug: 'roles', suite: 'true', tasks: [t('T1', ['src/a.mjs']), t('T2', ['infra/main.tf'], { role: role2, deps: ['T1'] }), t('T3', ['src/a.mjs'], { deps: ['T2'] })] };
+    return `# Roles Plan\n\n**Goal:** g\n**Spec:** s\n\n## Tasks\n\n### T1: T1\nx\n\n### T2: T2\nx\n\n### T3: T3\nx\n\n\`\`\`relay-plan\n${JSON.stringify(block, null, 2)}\n\`\`\`\n`;
+  };
+  const { dir } = tempRepo();
+  const env = { RELAY_HOME: mkdtempSync(join(tmpdir(), 'relay-home-')) };
+  const plan = join(dir, 'docs/relay/plans/roles.md');
+  mkdirSync(join(dir, 'docs/relay/plans'), { recursive: true });
+  writeFileSync(plan, planText('platform-engineer'));
+  const ok = runCli(['lanes', plan, '--json'], { cwd: dir, env });
+  assert.equal(ok.code, 0, ok.stderr);
+  const lanes = JSON.parse(ok.stdout);
+  assert.equal(lanes.flow, 'feature');
+  const lane = lanes.waves[0].lanes[0];
+  assert.equal(lanes.waves[0].lanes.length, 1);
+  assert.deepEqual(lane.segments.map((s) => [s.agent, s.role, s.tasks.join('+')]), [[null, 'implementer', 'T1'], ['s2', 'platform-engineer', 'T2'], ['s3', 'implementer', 'T3']]);
+  assert.ok(lane.pieces.some((p) => p.piece === 'platform-review'));
+  writeFileSync(plan, planText('reviewer'));
+  const bad = runCli(['lanes', plan, '--json'], { cwd: dir, env });
+  assert.equal(bad.code, 1);
+  assert.match(bad.stderr, /task T2: role "reviewer" is a reviewer; a task's role must be a builder/);
 });

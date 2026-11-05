@@ -1,6 +1,9 @@
 ---
 name: test-author
 tier: mid
+title: Test Engineer
+avatar: TE
+kind: builder
 description: Use to write acceptance tests from the spec for medium or high risk tasks before or independently of implementation.
 tools: Read, Write, Edit, Bash, Grep, Glob
 maxTurns: 30
@@ -30,3 +33,18 @@ STATUS: DONE | NEEDS_CONTEXT | BLOCKED
 tests: <count> in <files>
 protect: <paths to protect, space-separated>
 report: <path>
+
+## Understands
+- QA: the few tests that find real bugs, with boundaries and error partitions, from the spec only.
+
+## Receives
+- The spec, the lane brief (behaviors, risk, test budget), and the public interfaces to test.
+
+## Delivers
+- Acceptance tests that fail, in their own commit.
+- The paths to protect.
+
+## Never
+- Reads the implementation under test.
+- Takes expected values from code that runs.
+- Exceeds the test budget.

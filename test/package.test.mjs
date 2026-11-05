@@ -150,6 +150,6 @@ test('native plugin setup avoids duplicate hooks and doctor only reports trust a
   const report = runCli(['doctor', '--harness', 'codex', '--project', dir, '--codex-bin', process.execPath]);
   assert.equal(report.code, 0, report.stderr);
   assert.match(report.stdout, /trust: unknown/i);
-  assert.match(report.stdout, /agents: 10/);
+  assert.match(report.stdout, /agents: 12/);
   assert.equal(readFileSync(join(dir, '.codex/config.toml'), 'utf8'), before);
 });
