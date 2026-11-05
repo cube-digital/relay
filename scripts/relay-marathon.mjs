@@ -3,8 +3,8 @@
 // relay marathon <plan.md> --stop [--now]
 //
 // Runs a plan unattended for up to N hours as a series of short headless
-// Claude Code sessions ("legs"). Each leg starts with an empty context and
-// continues from the ledger; when a leg stops for the usage window, the loop
+// Claude Code or Codex sessions ("legs"). Codex resumes its saved thread;
+// Claude starts fresh and continues from the ledger; when a leg stops for the usage window, the loop
 // waits for the reset and starts the next one. State is on disk the whole time,
 // so a marathon that was interrupted continues where it left off when started
 // again with the same command.
@@ -18,7 +18,10 @@
 //   --stop                 stop after the current leg; with --now, stop the current leg too
 //   --max-legs N           stop after N legs in this run (default 24)
 //   --max-turns N          turns per leg before it ends and a new leg starts (default 400)
-//   --model <alias>        the conductor's model (default sonnet)
+//   --harness H            claude | codex (also --codex); defaults to the active harness
+//   --codex-bin PATH       Codex executable override
+//   --effort LEVEL         Codex conductor reasoning effort (routing mid tier default)
+//   --model <alias>        the conductor's model (routing mid tier default)
 //   --permission-mode M    auto (default) | acceptEdits | bypassPermissions
 //   --allowed-tools "..."  extra --allowedTools rules (e.g. "Bash(pnpm test *)")
 //   --plugin-dir           load relay from this checkout (when it is not installed as a plugin)
@@ -28,19 +31,23 @@ import { randomUUID } from 'node:crypto';
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { delimiter, join, resolve } from 'node:path';
 import { parseArgs } from '../lib/args.mjs';
-import { readSnapshot, isStale, levelFor } from '../lib/budget.mjs';
-import { readCalibration } from '../lib/calibration.mjs';
-import { forecast, formatForecast } from '../lib/forecast.mjs';
+import { describeWindows, levelFor } from '../lib/budget.mjs';
+import { resolveHarness } from '../lib/harness.mjs';
+import { resolveCodexBin } from '../lib/codex-rpc.mjs';
+import { formatForecast } from '../lib/forecast.mjs';
 import { ensureExcluded, git, mainRoot } from '../lib/git.mjs';
-import { classifyLeg, decideNext, legPrompt, parseClaudeJson } from '../lib/marathon.mjs';
+import { classifyLeg, decideNext, legPrompt, parseClaudeJson, parseCodexJson } from '../lib/marathon.mjs';
 import { loadRouting, RELAY_ROOT } from '../lib/routing.mjs';
+import { formatForecast as formatCodexForecast } from '../codex-math/lib/forecast.mjs';
+import { forecastPlan } from './relay-forecast.mjs';
+import { readBudget, refreshBudget } from './relay-budget.mjs';
 import { refreshBoard } from './relay-board.mjs';
 import { ledgerPath } from './relay-ledger.mjs';
 import { planLanes, runDir } from './relay-lanes.mjs';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const USAGE =
-  'usage: relay marathon <plan.md> --hours N [--dry-run] [--max-legs N] [--max-turns N] [--model sonnet] [--permission-mode auto] [--allowed-tools "..."] [--plugin-dir]\n' +
+  'usage: relay marathon <plan.md> --hours N [--harness claude|codex] [--codex] [--effort medium] [--dry-run] [--max-legs N] [--max-turns N] [--model sonnet] [--permission-mode auto] [--allowed-tools "..."] [--plugin-dir]\n' +
   '       relay marathon <plan.md> --status\n' +
   '       relay marathon <plan.md> --stop [--now]';
 
@@ -48,10 +55,12 @@ function ledgerLines(path) {
   return existsSync(path) ? readFileSync(path, 'utf8').split('\n').filter((l) => l.startsWith('- ')) : [];
 }
 
-function budgetNow(routing) {
-  const snap = readSnapshot();
-  if (!snap || isStale(snap, routing.budget.staleAfterMinutes)) return undefined;
-  return { ...snap, level: levelFor(snap, routing.budget) };
+function budgetValue(reading, routing) {
+  if (!reading || reading.level === 'unknown') return undefined;
+  const snapshot = reading.snapshot;
+  const blocking = (snapshot?.windows ?? []).filter(window => levelFor({ windows: [window] }, routing.budget) === 'critical')
+    .map(window => window.resetsAt).filter(reset => Date.parse(reset) > Date.now()).sort((a, b) => Date.parse(b) - Date.parse(a));
+  return { ...snapshot, level: reading.level, blockedUntil: blocking[0] };
 }
 
 export function alive(pid) {
@@ -94,19 +103,61 @@ export function legArgs({ prompt, model, permissionMode, maxTurns, allowedTools,
   return args;
 }
 
+// Sandbox and approvals are parent exec options, including for resume.
+// Keep native hook trust and user configuration intact.
+export function codexLegArgs({ prompt, model, effort, sessionId }) {
+  const args = ['exec', '--sandbox', 'workspace-write', '--approve-for-me'];
+  if (sessionId) args.push('resume');
+  args.push('--json');
+  if (model) args.push('--model', model);
+  if (effort) args.push('-c', `model_reasoning_effort=${effort}`);
+  if (sessionId) args.push(sessionId);
+  args.push(prompt);
+  return args;
+}
+
 // One leg as a child process we can stop: a stop request or a signal must not
 // leave a headless session running on its own.
-function startLeg(bin, args, opts) {
-  const child = spawn(bin, args, { ...opts, stdio: ['ignore', 'pipe', 'pipe'] });
+function startLeg(bin, args, { deadline, onThread, ...opts }) {
+  const child = spawn(bin, args, { ...opts, detached: process.platform !== 'win32', stdio: ['ignore', 'pipe', 'pipe'] });
   let stdout = '';
   let stderr = '';
-  child.stdout.setEncoding('utf8').on('data', (d) => (stdout += d));
-  child.stderr.setEncoding('utf8').on('data', (d) => (stderr = (stderr + d).slice(-20_000)));
-  const done = new Promise((res) => {
-    child.on('error', (err) => res({ status: null, stdout, stderr: stderr + String(err) }));
-    child.on('close', (status, signal) => res({ status, signal, stdout, stderr }));
+  let events = '';
+  let timedOut = false;
+  let escalation;
+  const signal = sig => {
+    try {
+      if (process.platform === 'win32') child.kill(sig);
+      else if (child.pid) process.kill(-child.pid, sig);
+    } catch (err) { if (err.code !== 'ESRCH') throw err; }
+  };
+  const terminate = () => {
+    signal('SIGTERM');
+    escalation ??= setTimeout(() => signal('SIGKILL'), 1000);
+  };
+  const timer = setTimeout(() => { timedOut = true; terminate(); }, Math.max(1, deadline - Date.now()));
+  child.stdout.setEncoding('utf8').on('data', data => {
+    stdout = (stdout + data).slice(-2_000_000);
+    if (!onThread) return;
+    events += data;
+    let newline;
+    while ((newline = events.indexOf('\n')) >= 0) {
+      const line = events.slice(0, newline);
+      events = events.slice(newline + 1);
+      try {
+        const event = JSON.parse(line);
+        if (event.type === 'thread.started' && typeof event.thread_id === 'string') onThread(event.thread_id);
+      } catch { /* unrelated stdout is allowed */ }
+    }
+    events = events.slice(-2_000_000);
   });
-  return { child, done };
+  child.stderr.setEncoding('utf8').on('data', data => { stderr = (stderr + data).slice(-20_000); });
+  const done = new Promise(resolve => {
+    const complete = value => { clearTimeout(timer); clearTimeout(escalation); resolve(value); };
+    child.on('error', err => complete({ status: null, stdout, stderr: stderr + String(err), timedOut }));
+    child.on('close', (status, signal) => complete({ status, signal, stdout, stderr, timedOut }));
+  });
+  return { child, done, terminate };
 }
 
 const two = (n) => String(n).padStart(2, '0');
@@ -141,7 +192,7 @@ export function describeMarathon({ state, ledger, now = Date.now(), isAlive = al
     const cost = legs.reduce((a, l) => a + (l.costUsd ?? 0), 0);
     out.push(`legs ${legs.length}: ${legs.map((l) => l.outcome).join(', ')}` + (cost ? ` · api-equivalent $${cost.toFixed(2)}` : ''));
     const last = legs.at(-1);
-    out.push(`last  leg ${last.leg} ${last.outcome}: ${last.reason}` + (last.budget ? ` [5h ${last.budget.fiveHour ?? '?'}% · 7d ${last.budget.sevenDay ?? '?'}%]` : ''));
+    out.push(`last  leg ${last.leg} ${last.outcome}: ${last.reason}` + (last.budget ? (last.budget.windows ? ` [${describeWindows(last.budget)}]` : ` [5h ${last.budget.fiveHour ?? '?'}% · 7d ${last.budget.sevenDay ?? '?'}%]`) : ''));
   }
   const tail = (ledger ?? []).slice(-4);
   if (tail.length) out.push('ledger', ...tail.map((l) => `  ${l}`));
@@ -187,7 +238,7 @@ function fail(errors) {
 }
 
 export async function main(argv) {
-  const args = parseArgs(argv, { booleans: ['dry-run', 'plugin-dir', 'status', 'stop', 'now'] });
+  const args = parseArgs(argv, { booleans: ['dry-run', 'plugin-dir', 'status', 'stop', 'now', 'codex'] });
   const planPath = args._[0] && resolve(args._[0]);
   if (planPath && args.status) return status(planPath);
   if (planPath && args.stop) return stop(planPath, Boolean(args.now));
@@ -217,8 +268,10 @@ export async function main(argv) {
     console.error(`✗ the main checkout has uncommitted changes; commit or stash them first:\n${dirty.split('\n').slice(0, 5).join('\n')}`);
     return 1;
   }
-  const claudeBin = resolveClaudeBin();
-  if (!claudeBin) {
+  const harness = resolveHarness({ harness: args.harness, codex: args.codex });
+  let bin;
+  try { bin = harness === 'codex' ? resolveCodexBin({ codexBin: args['codex-bin'] }) : resolveClaudeBin(); } catch (err) { return fail([err.message]); }
+  if (!bin) {
     console.error('✗ no `claude` command found for the legs. Install the Claude Code CLI (https://code.claude.com/docs/en/setup), or set RELAY_CLAUDE_BIN to its path.');
     return 1;
   }
@@ -226,11 +279,14 @@ export async function main(argv) {
   mkdirSync(dir, { recursive: true });
   const ledger = ledgerPath(planPath);
   const hours = Number(args.hours);
+  if (!Number.isFinite(hours) || hours <= 0) return fail(['--hours must be a positive number']);
   const start = new Date();
   const deadline = new Date(start.getTime() + hours * 3_600_000);
   const options = {
-    model: args.model ?? 'sonnet',
-    permissionMode: args['permission-mode'] ?? 'auto',
+    harness,
+    model: args.model ?? routing.tiers.mid[harness].model,
+    effort: args.effort ?? routing.tiers.mid[harness].effort,
+    permissionMode: harness === 'codex' ? 'approve-for-me' : args['permission-mode'] ?? 'auto',
     maxTurns: Number(args['max-turns'] ?? 400),
     maxLegs: Number(args['max-legs'] ?? 24),
     allowedTools: args['allowed-tools'],
@@ -242,19 +298,23 @@ export async function main(argv) {
     appendFileSync(logPath, msg + '\n');
   };
 
-  const f = forecast({ plan: res.plan, lanes: res.lanes, routing, calibration: readCalibration(), budget: budgetNow(routing) });
-  console.log(formatForecast(f));
+  if (harness === 'codex' && (args['permission-mode'] || args['allowed-tools'] || args['plugin-dir'] || args['max-turns'])) return fail(['Codex uses native workspace-write approvals and installed plugins; Claude-only flags --permission-mode/--allowed-tools/--plugin-dir/--max-turns are unsupported']);
+  if (!Number.isInteger(options.maxLegs) || options.maxLegs < 1 || !Number.isInteger(options.maxTurns) || options.maxTurns < 1) return fail(['--max-legs and --max-turns must be positive integers']);
+  const f = forecastPlan(planPath, { harness }).forecast;
+  console.log(harness === 'codex' ? formatCodexForecast(f) : formatForecast(f));
   console.log('');
   if (f.time.totalMinutes > hours * 60) console.log(`! the forecast (~${Math.round(f.time.totalMinutes / 60)}h) exceeds --hours ${hours}; the run will stop at the deadline with work left`);
-  if (f.usage.fitsWeekly === false) console.log('! the forecast does not fit the weekly limit; expect a stop on the weekly reset');
+  if (f.usage?.fitsWeekly === false) console.log('! the forecast does not fit the weekly limit; expect a stop on the weekly reset');
 
+  if (previous?.options?.harness && previous.options.harness !== harness) return fail(['this marathon belongs to another harness; continue with --harness ' + previous.options.harness]);
   const state = previous ?? { slug: res.plan.slug, legs: [] };
+  const makeArgs = params => harness === 'codex' ? codexLegArgs({ ...options, sessionId: state.sessionId, ...params }) : legArgs({ ...options, ...params });
   state.legs ??= [];
   const firstLeg = state.legs.length + 1;
-  const firstArgs = legArgs({ ...options, prompt: legPrompt({ planPath, leg: firstLeg, deadline: deadline.toISOString(), slug: res.plan.slug }) });
+  const firstArgs = makeArgs({ prompt: legPrompt({ planPath, leg: firstLeg, deadline: deadline.toISOString(), slug: res.plan.slug, relayRoot: RELAY_ROOT, harness }) });
   if (args['dry-run']) {
-    console.log(`dry run. Leg ${firstLeg} would run in ${root}:\n  ${claudeBin} ${firstArgs.map((a) => (/\s/.test(a) ? JSON.stringify(a) : a)).join(' ')}`);
-    console.log(`claude: ${claudeBin}\nstate:  ${statePath}\nlog:    ${logPath}`);
+    console.log(`dry run. Leg ${firstLeg} would run in ${root}:\n  ${bin} ${firstArgs.map((a) => (/\s/.test(a) ? JSON.stringify(a) : a)).join(' ')}`);
+    console.log(`${harness}: ${bin}\nstate:  ${statePath}\nlog:    ${logPath}`);
     return 0;
   }
 
@@ -282,69 +342,94 @@ export async function main(argv) {
   };
 
   let current;
-  const onSignal = (sig) => {
-    if (current) current.child.kill('SIGTERM');
-    finish(`stopped by ${sig}`);
-    process.exit(sig === 'SIGINT' ? 130 : 143);
+  let signalStop;
+  const onSignal = sig => {
+    signalStop = sig;
+    current?.terminate();
   };
-  process.on('SIGTERM', () => onSignal('SIGTERM'));
-  process.on('SIGINT', () => onSignal('SIGINT'));
+  const onTerm = () => onSignal('SIGTERM');
+  const onInt = () => onSignal('SIGINT');
+  process.on('SIGTERM', onTerm);
+  process.on('SIGINT', onInt);
+  const waitForReset = async next => {
+    const until = Math.min(Date.parse(next.until) + 90_000, deadline.getTime());
+    state.phase = { kind: 'waiting', until: new Date(until).toISOString(), reason: next.reason, since: new Date().toISOString() };
+    save();
+    log(`waiting until ${next.until} (+90s) for the window to reset: ${next.reason}`);
+    while (process.env.RELAY_MARATHON_FAST !== '1' && Date.now() < until && !stopRequested() && !signalStop) await sleep(Math.min(250, until - Date.now()));
+  };
 
   const legsBefore = state.legs.length;
   save();
-  log(`marathon start: ${res.plan.slug}, ${hours}h, deadline ${deadline.toISOString()}, model ${options.model}, permission ${options.permissionMode}, pid ${process.pid}, claude ${claudeBin}`);
+  log(`marathon start: ${res.plan.slug}, ${hours}h, deadline ${deadline.toISOString()}, model ${options.model}, permission ${options.permissionMode}, pid ${process.pid}, ${harness} ${bin}`);
   let stalledStreak = 0;
-  for (;;) {
-    if (stopRequested()) {
-      finish('stopped on request');
-      return 3;
-    }
-    const leg = state.legs.length + 1;
-    const before = ledgerLines(ledger).length;
-    const prompt = legPrompt({ planPath, leg, deadline: deadline.toISOString(), slug: res.plan.slug });
-    const cmd = legArgs({ ...options, prompt });
-    const startedAt = new Date();
-    state.phase = { kind: 'leg', leg, since: startedAt.toISOString() };
-    save();
-    log(`leg ${leg}: starting`);
-    current = startLeg(claudeBin, cmd, { cwd: root, env: { ...process.env, RELAY_MARATHON_LEG: String(leg) } });
-    const run = await current.done;
-    current = undefined;
-    const result = parseClaudeJson(run.stdout) ?? { is_error: run.status !== 0, result: (run.stdout || run.stderr || '').trim().slice(-2000) };
-    const lines = ledgerLines(ledger);
-    const planComplete = lines.some((l) => /plan: complete/.test(l));
-    const budget = budgetNow(routing);
-    const outcome = classifyLeg({ result, ledgerGrew: lines.length > before, planComplete, budget });
-    stalledStreak = outcome.kind === 'stalled' || outcome.kind === 'error' ? stalledStreak + 1 : 0;
-    state.legs.push({
-      leg,
-      startedAt: startedAt.toISOString(),
-      endedAt: new Date().toISOString(),
-      sessionId: result.session_id,
-      exitCode: run.status,
-      costUsd: result.total_cost_usd,
-      ledgerLines: [before, lines.length],
-      outcome: outcome.kind,
-      reason: outcome.reason,
-      budget: budget ? { level: budget.level, fiveHour: budget.fiveHour?.percentUsed, sevenDay: budget.sevenDay?.percentUsed } : undefined,
-    });
-    save();
-    log(`leg ${leg}: ${outcome.kind} — ${outcome.reason}` + (result.total_cost_usd ? ` (api-equivalent $${result.total_cost_usd.toFixed(2)})` : '') + (budget ? ` [5h ${budget.fiveHour?.percentUsed ?? '?'}% · 7d ${budget.sevenDay?.percentUsed ?? '?'}%]` : ''));
-    if (outcome.kind === 'error') log(`leg ${leg}: stderr tail: ${(run.stderr || '').trim().slice(-500)}`);
-
-    const next = decideNext({ outcome, deadline, legsRun: state.legs.length - legsBefore, maxLegs: options.maxLegs, stalledStreak });
-    if (next.action === 'stop') {
-      finish(next.reason, outcome.kind === 'done' ? 'done' : 'stopped');
-      console.log(`\nledger: relay ledger ${planPath}\nstate:  ${statePath}`);
-      return outcome.kind === 'done' ? 0 : 2;
-    }
-    if (next.action === 'wait') {
-      const until = Date.parse(next.until) + 90_000;
-      state.phase = { kind: 'waiting', until: new Date(until).toISOString(), reason: next.reason, since: new Date().toISOString() };
+  try {
+    for (;;) {
+      if (signalStop) {
+        finish(`stopped by ${signalStop}`);
+        return signalStop === 'SIGINT' ? 130 : 143;
+      }
+      if (Date.now() >= deadline.getTime()) { finish('deadline reached'); return 2; }
+      if (stopRequested()) {
+        finish('stopped on request');
+        return 3;
+      }
+      const reading = await refreshBudget({ harness, codexBin: bin, timeoutMs: Math.min(2500, Math.max(50, deadline.getTime() - Date.now())) });
+      if (signalStop || stopRequested() || Date.now() >= deadline.getTime()) continue;
+      const beforeBudget = budgetValue(reading, routing);
+      if (harness === 'codex' && beforeBudget?.level === 'critical') {
+        const outcome = classifyLeg({ result: {}, budget: beforeBudget });
+        const next = decideNext({ outcome, deadline, legsRun: state.legs.length - legsBefore, maxLegs: options.maxLegs, stalledStreak });
+        if (next.action === 'stop') { finish(next.reason); return 2; }
+        await waitForReset(next);
+        continue;
+      }
+      const leg = state.legs.length + 1;
+      const before = ledgerLines(ledger).length;
+      const prompt = legPrompt({ planPath, leg, deadline: deadline.toISOString(), slug: res.plan.slug, relayRoot: RELAY_ROOT, harness });
+      const cmd = makeArgs({ prompt });
+      const startedAt = new Date();
+      state.phase = { kind: 'leg', leg, since: startedAt.toISOString() };
       save();
-      log(`waiting until ${next.until} (+90s) for the window to reset: ${next.reason}`);
-      // sleep in short steps so a stop request ends the wait promptly
-      while (process.env.RELAY_MARATHON_FAST !== '1' && Date.now() < until && !stopRequested()) await sleep(Math.min(15_000, until - Date.now()));
+      log(`leg ${leg}: starting`);
+      current = startLeg(bin, cmd, { cwd: root, deadline: deadline.getTime(), onThread: harness === 'codex' ? sessionId => { state.sessionId = sessionId; save(); } : undefined, env: { ...process.env, RELAY_HARNESS: harness, RELAY_MARATHON_LEG: String(leg) } });
+      const run = await current.done;
+      current = undefined;
+      if (signalStop) { finish(`stopped by ${signalStop}`); return signalStop === 'SIGINT' ? 130 : 143; }
+      if (run.timedOut) { finish('deadline reached'); return 2; }
+      const result = (harness === 'codex' ? parseCodexJson(run.stdout) : parseClaudeJson(run.stdout)) ?? { is_error: run.status !== 0, result: (run.stdout || run.stderr || '').trim().slice(-2000) };
+      const lines = ledgerLines(ledger);
+      const planComplete = lines.some((l) => /plan: complete/.test(l));
+      result.is_error ||= run.status !== 0;
+      const budget = budgetValue(harness === 'codex' ? await refreshBudget({ harness, codexBin: bin }) : readBudget({ harness }), routing);
+      const outcome = classifyLeg({ result, ledgerGrew: lines.length > before, planComplete, budget });
+      stalledStreak = outcome.kind === 'stalled' || outcome.kind === 'error' ? stalledStreak + 1 : 0;
+      state.legs.push({
+        leg,
+        startedAt: startedAt.toISOString(),
+        endedAt: new Date().toISOString(),
+        sessionId: result.session_id,
+        exitCode: run.status,
+        costUsd: result.total_cost_usd,
+        ledgerLines: [before, lines.length],
+        outcome: outcome.kind,
+        reason: outcome.reason,
+        budget: budget ? (harness === 'codex' ? { level: budget.level, windows: budget.windows } : { level: budget.level, fiveHour: budget.fiveHour?.percentUsed, sevenDay: budget.sevenDay?.percentUsed }) : undefined,
+      });
+      save();
+      log(`leg ${leg}: ${outcome.kind} — ${outcome.reason}` + (result.total_cost_usd ? ` (api-equivalent $${result.total_cost_usd.toFixed(2)})` : '') + (budget ? ` [${describeWindows(budget)}]` : ''));
+      if (outcome.kind === 'error') log(`leg ${leg}: stderr tail: ${(run.stderr || '').trim().slice(-500)}`);
+
+      const next = decideNext({ outcome, deadline, legsRun: state.legs.length - legsBefore, maxLegs: options.maxLegs, stalledStreak });
+      if (next.action === 'stop') {
+        finish(next.reason, outcome.kind === 'done' ? 'done' : 'stopped');
+        console.log(`\nledger: relay ledger ${planPath}\nstate:  ${statePath}`);
+        return outcome.kind === 'done' ? 0 : 2;
+      }
+      if (next.action === 'wait') await waitForReset(next);
     }
+  } finally {
+    process.off('SIGTERM', onTerm);
+    process.off('SIGINT', onInt);
   }
 }

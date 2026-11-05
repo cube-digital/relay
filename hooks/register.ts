@@ -19,8 +19,10 @@ const ROUTING = {
     "implementer-fast": "cheap",
     "implementer": "mid",
     "platform-engineer": "mid",
+    "reverse-engineer": "mid",
     "reviewer": "mid",
     "scout": "cheap",
+    "teacher": "mid",
     "test-author": "mid"
   },
   "team": {
@@ -80,6 +82,14 @@ const ROUTING = {
       "kind": "builder",
       "tier": "mid"
     },
+    "reverse-engineer": {
+      "title": "Reverse Engineer",
+      "avatar": "RV",
+      "color": "purple",
+      "hex": "#8b5cf6",
+      "kind": "finder",
+      "tier": "mid"
+    },
     "reviewer": {
       "title": "Code Reviewer",
       "avatar": "CR",
@@ -95,6 +105,14 @@ const ROUTING = {
       "hex": "#5ee7ff",
       "kind": "finder",
       "tier": "cheap"
+    },
+    "teacher": {
+      "title": "Teacher",
+      "avatar": "TC",
+      "color": "pink",
+      "hex": "#f472b6",
+      "kind": "finder",
+      "tier": "mid"
     },
     "test-author": {
       "title": "Test Engineer",

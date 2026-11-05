@@ -1,0 +1,12 @@
+{"type":"thread.started","thread_id":"01a163ab-9609-74b2-9558-8c830b4bf773"}
+{"type":"item.completed","item":{"id":"item_0","type":"error","message":"Codex is ignoring 1 unrecognized configuration setting. Check for typos or deprecated settings.\n  user ($HOME/.codex/config.toml): `model_providers.nvidia.api_key` is ignored."}}
+{"type":"item.completed","item":{"id":"item_1","type":"error","message":"Codex is ignoring 1 unrecognized configuration setting. Check for typos or deprecated settings.\n  user ($HOME/.codex/config.toml): `model_providers.nvidia.api_key` is ignored."}}
+{"type":"turn.started"}
+{"type":"item.started","item":{"id":"item_2","type":"collab_tool_call","tool":"wait","sender_thread_id":"01a163ab-9609-74b2-9558-8c830b4bf773","receiver_thread_ids":[],"prompt":null,"agents_states":{},"status":"in_progress"}}
+{"type":"item.completed","item":{"id":"item_2","type":"collab_tool_call","tool":"wait","sender_thread_id":"01a163ab-9609-74b2-9558-8c830b4bf773","receiver_thread_ids":[],"prompt":null,"agents_states":{},"status":"completed"}}
+{"type":"item.started","item":{"id":"item_3","type":"collab_tool_call","tool":"wait","sender_thread_id":"01a163ab-9609-74b2-9558-8c830b4bf773","receiver_thread_ids":[],"prompt":null,"agents_states":{},"status":"in_progress"}}
+{"type":"item.completed","item":{"id":"item_3","type":"collab_tool_call","tool":"wait","sender_thread_id":"01a163ab-9609-74b2-9558-8c830b4bf773","receiver_thread_ids":[],"prompt":null,"agents_states":{},"status":"completed"}}
+{"type":"item.started","item":{"id":"item_4","type":"collab_tool_call","tool":"wait","sender_thread_id":"01a163ab-9609-74b2-9558-8c830b4bf773","receiver_thread_ids":[],"prompt":null,"agents_states":{},"status":"in_progress"}}
+{"type":"item.completed","item":{"id":"item_4","type":"collab_tool_call","tool":"wait","sender_thread_id":"01a163ab-9609-74b2-9558-8c830b4bf773","receiver_thread_ids":[],"prompt":null,"agents_states":{},"status":"completed"}}
+{"type":"item.completed","item":{"id":"item_5","type":"agent_message","text":"Successful spawns: 3  \nFirst error: `collab spawn failed: agent thread limit reached`  \nAgent IDs: `/root/explorer1`, `/root/explorer2`, `/root/explorer3`"}}
+{"type":"turn.completed","usage":{"input_tokens":198678,"cached_input_tokens":179840,"cache_write_input_tokens":0,"output_tokens":362,"reasoning_output_tokens":0}}

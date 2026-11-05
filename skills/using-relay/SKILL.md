@@ -1,12 +1,51 @@
 ---
 name: using-relay
-description: Use at the start of any session that will plan, delegate or run multi-step coding work. Sets relay's rules for model tiers, the usage budget, lanes and testing.
+description: Use when starting a conversation or when the task changes.
 ---
 # Relay rules
 
-1. **Plan first.** Multi-step work gets a plan from the plan-with-tiers skill: every task has a tier, risk, files, deps, a test budget and a `done` check. Judgment is spent once, at plan time.
-2. **Delegate to relay agents, never to a bare general-purpose agent.** scout (find), implementer-fast / implementer / implementer-deep (build), test-author (tests from spec), reviewer (review), architect (plan, final review), conductor (run a whole plan). In Claude Code they are `relay:<role>`; in Codex `relay-<role>` with model and reasoning effort set on every spawn.
-3. **Run plans with the run-lanes skill.** Related tasks share a lane: one worktree, one implementer, one commit per task. Workers write reports to files and return at most 8 lines. Never paste file contents or session history into a dispatch.
-4. **Test like QA (qa-mindset skill).** Test budget per task, narrowest check first, never rerun an unchanged test, never edit a protected test.
-5. **Budget.** `relay budget` prints the 5-hour/7-day level. normal: route by plan tier. tight: Opus only for the final review; prefer cheap tiers where the plan holds complete code. critical: finish the current wave, commit, write a handoff (handoff skill), start nothing new. unknown: act as tight.
-6. **Keep the cache warm.** Pick the main model and effort at session start and keep them; a mid-session switch re-reads the whole conversation uncached. Use `/clear` between unrelated tasks.
+If you are an assigned worker, follow your role and task. Skip this lead workflow.
+
+## Skill selection
+
+Before responding or acting, check the request, context, and skill descriptions. Include clarification and source inspection. If a Relay skill may apply, load and follow it first. Users need not name Relay. Check again when the task changes. Reuse loaded instructions. Announce the skill and purpose.
+
+User instructions take precedence. Preserve decisions, scope, and authorization. Continue the active workflow when applicable. If no skill applies, respond directly.
+
+## Resources and language
+
+Resolve this SKILL.md's real path. `<relay-root>` is two directories above its directory. Read `<relay-root>/skills/using-relay/references/<harness>.md` (`codex` or `claude-code`). `relay <args>` means `node "<absolute-relay-root>/scripts/relay.mjs" <args>`. Resolve bundled resources there; do not use project copies or PATH.
+
+Read `language-guide.md` and `software-glossary.md` there. Write short STE-style drafts with clear actors and consistent terms. Preserve code, commands, paths, identifiers, markers, quotations, and evidence. Adapt explanations to the learner. If references are unavailable, retain this policy and report the gap. Do not claim a full language review or load unrelated workflows.
+
+## Design
+
+For architecture choices or documents, load `relay-design` here. Concept questions can use teaching or a direct answer. Use `relay-plan` for requested planning of accepted designs. Design alone does not start planning or coding.
+
+## Research
+
+Load `relay-teach` for teaching or `relay-reverse-engineer` for reconstruction. Both use `research-and-explain` here. No coding plans, lanes, worktrees, tests, installation, commits, or persistence. Lead answers follow requested depth, without the worker's eight-line limit.
+
+## Tickets
+
+For tickets from an existing plan, specification, or agreed discussion, load `relay-to-tickets`. Preserve source decisions. Prepare tickets here. Ticket preparation does not start implementation, create a second plan, or publish without a request.
+
+## Implementation
+
+1. **Plan first.** Use `plan-with-tiers` for multi-step implementation. Set each task's tier, risk, files, deps, test budget, and `done` check.
+2. Use `run-lanes` to execute an existing plan when authorized. Related tasks share a lane and worktree. Use one implementer and one commit per task. Workers write reports and return at most 8 lines.
+3. Follow `qa-mindset`. Respect test budgets. Use narrow checks first. Never rerun unchanged tests or edit protected tests.
+
+## Dispatch
+
+Use Relay roles: scout for search; implementer-fast / implementer / implementer-deep to build; test-author for acceptance tests; reviewer for review; architect for design, plans, and architectural review; conductor for plans; teacher for teaching/research; reverse-engineer for reconstruction. Helpers with `mode=research-only` or `mode=design-review` cannot delegate.
+
+Claude: `relay:<role>`. Codex: `relay-<role>`. Follow the host reference for fallback and clean spawns. Set Codex model and effort from routing. Supply the installed root. Briefs contain no file contents or session history except role instructions for supported fallback.
+
+## Budget and cache
+
+Read `relay budget --harness <harness>`. Normal: use plan tiers. Tight or unknown: keep Opus for final review. Prefer cheap tiers for complete planned code.
+
+At critical during implementation, finish the wave, commit, and use `handoff`. Start nothing new. At critical during design or research, start no helpers. Finish the bounded answer or requested document and disclose gaps. Do not commit or start an implementation handoff.
+
+Keep the session's model and effort to retain its cache. Use `/clear` between unrelated tasks.

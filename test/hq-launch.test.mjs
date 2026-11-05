@@ -3,7 +3,6 @@ import { chmodSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from '
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { stripFrontmatter } from '../lib/frontmatter.mjs';
 import { buildCommand, evaluateGuards, normalizeIntent, startFromIntent } from '../lib/hq/launch.mjs';
 import { startLaunch, stopLaunch } from '../lib/hq/launches.mjs';
 import { addRepo } from '../lib/hq/registry.mjs';
@@ -27,7 +26,6 @@ test('run, plan and skills invoke relay as defined on both harnesses, and user t
   const repo = registeredRepo();
   const env = { RELAY_CLAUDE_BIN: STUB, RELAY_CODEX_BIN: STUB, PATH: process.env.PATH };
   const cmd = (intent) => buildCommand(normalizeIntent({ repo, ...intent }), { env, sessionId: 'SID' });
-  const commandText = (name, args) => stripFrontmatter(readFileSync(join(ROOT, 'commands', `${name}.md`), 'utf8')).replaceAll('$ARGUMENTS', args).replaceAll('${CLAUDE_PLUGIN_ROOT}', ROOT).trim();
   const c = routing.tiers.mid.claude;
   const x = routing.tiers.mid.codex;
 
@@ -36,7 +34,7 @@ test('run, plan and skills invoke relay as defined on both harnesses, and user t
   assert.deepEqual(run.argv, ['-p', `/relay:run --unattended ${absPlan}`, '--plugin-dir', ROOT, '--session-id', 'SID', '--model', c.model, '--effort', c.effort, '--permission-mode', 'auto', '--output-format', 'json']);
   assert.equal(run.cwd, repo);
   const codexRun = cmd({ action: 'run', plan: PLAN, harness: 'codex' });
-  assert.deepEqual(codexRun.argv, ['exec', commandText('run', `--unattended ${absPlan}`), '-m', x.model, '-c', `model_reasoning_effort=${x.effort}`, '--sandbox', 'workspace-write', '--json']);
+  assert.deepEqual(codexRun.argv, ['exec', `$relay-run --unattended ${absPlan}`, '-m', x.model, '-c', `model_reasoning_effort=${x.effort}`, '--sandbox', 'workspace-write', '--json']);
   assert.doesNotMatch(codexRun.argv[1], /^---|\$ARGUMENTS|\$\{CLAUDE_PLUGIN_ROOT\}/);
 
   const goal = 'billing export"; rm -rf ~';
@@ -45,7 +43,7 @@ test('run, plan and skills invoke relay as defined on both harnesses, and user t
   assert.equal(plan.argv.length, 14);
   assert.equal(cmd({ action: 'plan', goal, flow: 'bugfix', harness: 'claude' }).argv[1], `/relay:plan --unattended --flow bugfix ${goal}`);
   const codexPlan = cmd({ action: 'plan', goal, harness: 'codex' });
-  assert.equal(codexPlan.argv[1], commandText('plan', `--unattended ${goal}`));
+  assert.equal(codexPlan.argv[1], `$relay-plan --unattended ${goal}`);
   assert.equal(codexPlan.argv.length, 9);
   assert.equal(codexPlan.argv.filter((a) => a.includes(goal)).length, 1);
   // the business analyst joins only with a business documentation path inside the repository
@@ -54,8 +52,8 @@ test('run, plan and skills invoke relay as defined on both harnesses, and user t
   const docsGuard = (businessDocs) => evaluateGuards(normalizeIntent({ repo, action: 'plan', goal, businessDocs, harness: 'claude' }), { env }).errors;
   assert.deepEqual(docsGuard('docs/business'), []);
   for (const bad of ['docs/nowhere', '/etc', '../outside']) assert.ok(docsGuard(bad).includes('business docs must be a path inside the repository'), bad);
-  // the mode HQ relies on is defined in the commands themselves
-  for (const text of [codexRun.argv[1], codexPlan.argv[1]]) assert.match(text, /\*\*Unattended\.\*\*/);
+  // the mode HQ relies on is defined in the skills themselves
+  for (const name of ['relay-run', 'relay-plan']) assert.match(readFileSync(join(ROOT, 'skills', name, 'SKILL.md'), 'utf8'), /\*\*Unattended\.\*\*/);
 
   // relay's skills are plugin skills on Claude; Codex names a skill with $
   assert.equal(cmd({ action: 'skill', skill: 'qa-mindset', prompt: 'check lane b', harness: 'claude' }).argv[1], '/relay:qa-mindset check lane b');

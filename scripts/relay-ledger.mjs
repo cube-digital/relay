@@ -9,10 +9,13 @@
 import { appendFileSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { parseArgs } from '../lib/args.mjs';
-import { isStale, readSnapshot } from '../lib/budget.mjs';
+import { isStale, readSnapshot, snapshotPath } from '../lib/budget.mjs';
+import { resolveHarness } from '../lib/harness.mjs';
+import { formatStamp } from '../codex-math/lib/calibration.mjs';
 import { parsePlan } from '../lib/plan.mjs';
 import { refreshBoard } from './relay-board.mjs';
 import { runDir } from './relay-lanes.mjs';
+import { refreshBudget } from './relay-budget.mjs';
 
 // A stamp is a measurement: only a reading from the last few minutes is written.
 export const STAMP_FRESH_MINUTES = 20;
@@ -24,6 +27,7 @@ export function ledgerPath(planPath) {
 
 export function usageStamp(snapshot, staleAfterMinutes, now = Date.now()) {
   if (!snapshot || isStale(snapshot, staleAfterMinutes, now)) return '';
+  if (snapshot.windows) return formatStamp(snapshot);
   const parts = [];
   if (snapshot.fiveHour) {
     // the reset time (UTC, like the line's own time) lets calibration drop waves that cross it
@@ -40,27 +44,39 @@ export function formatLine(text, { now = new Date(), snapshot, staleAfterMinutes
   return `- ${when}${usageStamp(snapshot, staleAfterMinutes, now.getTime())} ${text}\n`;
 }
 
-export function appendLedger(planPath, text) {
+export function appendLedger(planPath, text, options = {}) {
   const plan = parsePlan(readFileSync(planPath, 'utf8'));
   const dir = runDir(planPath, plan.slug);
   const path = join(dir, 'ledger.md');
   mkdirSync(dir, { recursive: true });
   if (!existsSync(path)) appendFileSync(path, `# relay ledger — plan: ${resolve(planPath)}\n`);
-  const line = formatLine(text, { snapshot: readSnapshot() });
+  const snapshot = Object.hasOwn(options, 'snapshot')
+    ? options.snapshot
+    : readSnapshot(snapshotPath(resolveHarness(options)));
+  const line = formatLine(text, { snapshot });
   appendFileSync(path, line);
   refreshBoard(planPath);
   return line;
 }
 
-export function main(argv) {
-  const args = parseArgs(argv, { booleans: ['rulings'] });
+export async function main(argv) {
+  const args = parseArgs(argv, { booleans: ['rulings', 'codex'] });
   const [planPath, ...words] = args._;
   if (!planPath) {
     console.error('usage: relay ledger <plan.md> ["line"] [--rulings]');
     return 64;
   }
   if (words.length) {
-    appendLedger(planPath, words.join(' '));
+    const harness = resolveHarness({ harness: args.harness, codex: args.codex });
+    const options = { harness };
+    if (harness === 'codex') {
+      const budget = await refreshBudget({ harness, codexBin: args['codex-bin'] });
+      // A failed refresh must not re-stamp the pre-wave reading as a fresh
+      // end-of-wave measurement. The ledger entry itself still succeeds.
+      options.snapshot = budget.refreshError ? null : budget.snapshot;
+      if (budget.refreshError) console.error(`relay ledger: usage stamp omitted (${budget.refreshError})`);
+    }
+    appendLedger(planPath, words.join(' '), options);
     return 0;
   }
   const path = ledgerPath(planPath);

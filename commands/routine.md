@@ -1,10 +1,10 @@
 ---
 description: Enable, disable or refresh a relay routine as a Claude desktop scheduled task.
 argument-hint: "enable <routine> (--project <id> | --repo <path> | --all) [--days mon,…] [--at HH:MM] | disable <instance> | refresh"
-allowed-tools: Bash(relay routine*), mcp__scheduled-tasks__create_scheduled_task, mcp__scheduled-tasks__update_scheduled_task, mcp__scheduled-tasks__list_scheduled_tasks
+allowed-tools: Bash(node *scripts/relay.mjs routine*), mcp__scheduled-tasks__create_scheduled_task, mcp__scheduled-tasks__update_scheduled_task, mcp__scheduled-tasks__list_scheduled_tasks
 disable-model-invocation: true
 ---
-Arguments: `$ARGUMENTS`. `relay` is on your PATH; run it by name. Show every relay output unchanged, in a code block.
+Arguments: `$ARGUMENTS`. In these instructions, `relay <args>` means `node "${CLAUDE_PLUGIN_ROOT}/scripts/relay.mjs" <args>`. Never require a `relay` command on PATH. Show every relay output unchanged, in a code block.
 
 First check that you have the scheduled-tasks tool. If you do not, reply with exactly one line, `Scheduled tasks need the Claude desktop app: run /relay:routine $ARGUMENTS in a desktop session.`, and stop; a pending routine stays pending.
 

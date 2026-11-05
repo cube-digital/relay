@@ -46,7 +46,7 @@ export function recosFixture() {
     mkdirSync(join(relayHome, 'routines', 'pr-hygiene@all'), { recursive: true });
     writeFileSync(join(relayHome, 'routines', 'enabled.json'), JSON.stringify({
       version: 1,
-      instances: [instance('pr-hygiene@all', join(ROOT, 'bin', 'relay')), instance('pr-hygiene@x', join(relayHome, 'no-such-relay'))],
+      instances: [instance('pr-hygiene@all', join(ROOT, 'scripts', 'relay.mjs')), instance('pr-hygiene@x', join(relayHome, 'no-such-relay'))],
     }, null, 2));
     const finding = { id: `${rid}:relay-branches:demo`, kind: 'relay-branches', repo, repoName: 'demo', text: '2 branches of finished plan demo', href: null, command: null };
     writeFileSync(join(relayHome, 'routines', 'pr-hygiene@all', 'state.json'), JSON.stringify({

@@ -49,7 +49,7 @@ test('enable --harness codex writes only its relay folder, and needs a harness a
   assert.equal(t.model, cheap.model);
   assert.equal(t.reasoning_effort, cheap.effort);
   assert.deepEqual(t.cwds, [realpathSync(dir)]);
-  assert.ok(t.prompt.includes(join(ROOT, 'bin', 'relay')));
+  assert.ok(t.prompt.includes(join(ROOT, 'scripts', 'relay.mjs')));
   assert.ok(t.prompt.includes('routine run tidy@'));
   assert.equal(existsSync(join(folder, 'memory.md')), true);
 

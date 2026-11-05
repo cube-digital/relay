@@ -6,12 +6,21 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"__RELAY_ROOT__/hooks/session-start.mjs\""
+            "command": "node \"__RELAY_ROOT__/hooks/session-start.mjs\" --harness codex"
           }
         ]
       }
     ],
     "PreToolUse": [
+      {
+        "matcher": "spawn_agent|Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"__RELAY_ROOT__/hooks/codex-spawn.mjs\""
+          }
+        ]
+      },
       {
         "matcher": "Bash|shell|exec_command|local_shell|unified_exec",
         "hooks": [

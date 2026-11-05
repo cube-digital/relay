@@ -97,7 +97,7 @@ async function start(args) {
   else {
     mkdirSync(hqDir(), { recursive: true, mode: 0o700 });
     const fd = openSync(join(hqDir(), 'server.log'), 'a');
-    const child = spawn(process.execPath, [join(RELAY_ROOT, 'bin', 'relay'), 'hq', 'serve', '--port', String(Number(args.port) || 4747)], { detached: true, stdio: ['ignore', fd, fd] });
+    const child = spawn(process.execPath, [join(RELAY_ROOT, 'scripts', 'relay.mjs'), 'hq', 'serve', '--port', String(Number(args.port) || 4747)], { detached: true, stdio: ['ignore', fd, fd] });
     closeSync(fd);
     let exited = false;
     child.on('exit', () => (exited = true));

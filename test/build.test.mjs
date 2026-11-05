@@ -19,16 +19,40 @@ test('claude agent gets model, effort and read-only guard from the routing table
   const md = claudeAgent(role, routing);
   assert.match(md, /^model: sonnet$/m);
   assert.match(md, /^effort: medium$/m);
-  assert.match(md, /^disallowedTools: Edit, Write, NotebookEdit$/m);
+  assert.match(md, /^disallowedTools: Edit, NotebookEdit$/m);
   assert.match(md, /^description: "Reviews: lanes"$/m);
 });
 
-test('codex agent gets the codex model and a read-only instruction', () => {
+test('codex agent leaves dispatch model precedence intact and permits assigned report output', () => {
   const toml = codexAgent(role, routing);
   assert.match(toml, /^name = "relay-reviewer"$/m);
-  assert.match(toml, /^model = "gpt-6\.1-sol"$/m);
-  assert.match(toml, /^model_reasoning_effort = "medium"$/m);
-  assert.match(toml, /You are read-only/);
+  assert.doesNotMatch(toml, /^model(?:_reasoning_effort)? =/m);
+  assert.match(toml, /Do not create, change, or delete project code\./);
+  assert.match(toml, /Do not commit\./);
+  assert.match(toml, /Write only the report file that the caller assigns\./);
+});
+
+test('both renderers preserve protected literals and role contracts', () => {
+  const fixture = {
+    name: 'literal-fixture', tier: 'mid', description: 'Checks protected literals',
+    tools: ['Read', 'Grep', 'Bash', 'Write'], readonly: true, maxTurns: 17,
+    body: 'Read src/cache-v2.ts.\nRun node scripts/relay.mjs build --check.\nUse fork_turns: "none" and reasoning_effort.\nReturn DONE_WITH_CONCERNS.\nQuote: "Entries expire after 60 seconds."',
+  };
+  const claude = claudeAgent(fixture, routing);
+  const codex = codexAgent(fixture, routing);
+  assert.match(claude, /^name: literal-fixture$/m);
+  assert.match(claude, /^model: sonnet$/m);
+  assert.match(claude, /^effort: medium$/m);
+  assert.match(claude, /^tools: Read, Grep, Bash, Write$/m);
+  assert.match(claude, /^disallowedTools: Edit, NotebookEdit$/m);
+  assert.match(claude, /^maxTurns: 17$/m);
+  assert.equal(claude.slice(claude.indexOf('\n---\n') + 5), fixture.body + '\n');
+  assert.match(codex, /^name = "relay-literal-fixture"$/m);
+  assert.doesNotMatch(codex, /^model(?:_reasoning_effort)? =/m);
+  assert.equal(codex.slice(codex.indexOf("developer_instructions = '''\n")),
+    "developer_instructions = '''\n" +
+    'Do not create, change, or delete project code. Do not commit. Write only the report file that the caller assigns.\n\n' +
+    fixture.body + "\n'''\n");
 });
 
 test('the mod routing block is replaced between its markers only', () => {
@@ -60,7 +84,7 @@ test('every hook script referenced by hooks.json exists', () => {
 
 test('build --check fails for a piece with an unknown role, a piece placed outside its slots, and a role without its profile, and a routine with an unknown check or a bad schedule', () => {
   const dir = mkdtempSync(join(tmpdir(), 'relay-flow-'));
-  for (const d of ['agents', 'bin', 'codex', 'config', 'flows', 'hooks', 'pieces', 'roles', 'skills']) cpSync(join(ROOT, d), join(dir, d), { recursive: true });
+  for (const d of ['agents', 'scripts', 'codex', 'config', 'flows', 'hooks', 'pieces', 'roles', 'skills']) cpSync(join(ROOT, d), join(dir, d), { recursive: true });
   assert.equal(main(['--check'], dir), 0);
   const ghost = JSON.parse(readFileSync(join(dir, 'pieces', 'platform-review.json'), 'utf8'));
   writeFileSync(join(dir, 'pieces', 'ghost.json'), JSON.stringify({ ...ghost, id: 'ghost', role: 'no-such-role' }));

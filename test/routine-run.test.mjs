@@ -18,7 +18,7 @@ test('run stops at the weekly cap and while another run holds the lock', async (
   updateEnabled((doc) => {
     doc.instances.push({
       id: 'nudge@all', routine: 'nudge', harness: 'claude', scope: { all: true },
-      schedule: { days: DAYS, at: '09:00' }, options: {}, relayCli: join(ROOT, 'bin', 'relay'),
+      schedule: { days: DAYS, at: '09:00' }, options: {}, relayCli: join(ROOT, 'scripts', 'relay.mjs'),
       registration: { state: 'active', taskId: 'relay-nudge-all' }, enabledAt: new Date().toISOString(),
     });
   });
@@ -39,7 +39,7 @@ test('run stops at the weekly cap and while another run holds the lock', async (
   updateEnabled((doc) => {
     doc.instances.push({
       id: 'pr-hygiene@all', routine: 'pr-hygiene', harness: 'claude', scope: { all: true },
-      schedule: { days: DAYS, at: '09:00' }, options: {}, relayCli: join(ROOT, 'bin', 'relay'),
+      schedule: { days: DAYS, at: '09:00' }, options: {}, relayCli: join(ROOT, 'scripts', 'relay.mjs'),
       registration: { state: 'active', taskId: 'relay-pr-hygiene-all' }, enabledAt: new Date().toISOString(),
     });
   });

@@ -1,0 +1,797 @@
+{
+ "live": "/home/claude/work/relay/codex-math/evidence/live",
+ "runs": [
+  {
+   "label": "01-luna-low-mid",
+   "model": "gpt-6-luna",
+   "effort": "low",
+   "speed": "standard",
+   "units": 3,
+   "threadId": "01a16387-da16-7083-b864-d86d1a33036b",
+   "wallSeconds": 17,
+   "exitStatus": 0,
+   "usage": {
+    "model": "gpt-6-luna",
+    "speed": "standard",
+    "inputTokens": 84541,
+    "cachedInputTokens": 64256,
+    "outputTokens": 955,
+    "reasoningOutputTokens": 0
+   },
+   "ratedCredits": 0.078714,
+   "before": [
+    {
+     "id": "primary",
+     "usedPercent": 24,
+     "windowMinutes": 10080,
+     "resetsAt": "2026-10-27T08:32:06.000Z"
+    }
+   ],
+   "after": [
+    {
+     "id": "primary",
+     "usedPercent": 24,
+     "windowMinutes": 10080,
+     "resetsAt": "2026-10-27T08:32:06.000Z"
+    }
+   ],
+   "planType": "self_serve_business_prolite"
+  },
+  {
+   "label": "02-luna-low-cheap",
+   "model": "gpt-6-luna",
+   "effort": "low",
+   "speed": "standard",
+   "units": 1,
+   "threadId": "01a1638c-2d88-7251-8b9c-811294946e1f",
+   "wallSeconds": 9,
+   "exitStatus": 0,
+   "usage": {
+    "model": "gpt-6-luna",
+    "speed": "standard",
+    "inputTokens": 48699,
+    "cachedInputTokens": 46976,
+    "outputTokens": 194,
+    "reasoningOutputTokens": 0
+   },
+   "ratedCredits": 0.0184765,
+   "before": [
+    {
+     "id": "primary",
+     "usedPercent": 24,
+     "windowMinutes": 10080,
+     "resetsAt": "2026-10-27T08:32:06.000Z"
+    }
+   ],
+   "after": [
+    {
+     "id": "primary",
+     "usedPercent": 24,
+     "windowMinutes": 10080,
+     "resetsAt": "2026-10-27T08:32:06.000Z"
+    }
+   ],
+   "planType": "self_serve_business_prolite"
+  },
+  {
+   "label": "03-sol61-medium-mid",
+   "model": "gpt-6.1-sol",
+   "effort": "medium",
+   "speed": "standard",
+   "units": 3,
+   "threadId": "01a16390-651f-7bb2-bdee-ec6a0f3086d1",
+   "wallSeconds": 34,
+   "exitStatus": 0,
+   "usage": {
+    "model": "gpt-6.1-sol",
+    "speed": "standard",
+    "inputTokens": 70323,
+    "cachedInputTokens": 48256,
+    "outputTokens": 943,
+    "reasoningOutputTokens": 40
+   },
+   "ratedCredits": 1.45974,
+   "before": [
+    {
+     "id": "primary",
+     "usedPercent": 24,
+     "windowMinutes": 10080,
+     "resetsAt": "2026-10-27T08:32:06.000Z"
+    }
+   ],
+   "after": [
+    {
+     "id": "primary",
+     "usedPercent": 24,
+     "windowMinutes": 10080,
+     "resetsAt": "2026-10-27T08:32:06.000Z"
+    }
+   ],
+   "planType": "self_serve_business_prolite"
+  },
+  {
+   "label": "04-luna-low-mid",
+   "model": "gpt-6-luna",
+   "effort": "low",
+   "speed": "standard",
+   "units": 3,
+   "threadId": "01a16394-fe86-7000-b671-39215e22ef53",
+   "wallSeconds": 17,
+   "exitStatus": 0,
+   "usage": {
+    "model": "gpt-6-luna",
+    "speed": "standard",
+    "inputTokens": 84496,
+    "cachedInputTokens": 74240,
+    "outputTokens": 927,
+    "reasoningOutputTokens": 0
+   },
+   "ratedCredits": 0.0557875,
+   "before": [
+    {
+     "id": "primary",
+     "usedPercent": 24,
+     "windowMinutes": 10080,
+     "resetsAt": "2026-10-27T08:32:06.000Z"
+    }
+   ],
+   "after": [
+    {
+     "id": "primary",
+     "usedPercent": 24,
+     "windowMinutes": 10080,
+     "resetsAt": "2026-10-27T08:32:06.000Z"
+    }
+   ],
+   "planType": "self_serve_business_prolite"
+  },
+  {
+   "label": "05-sol61-medium-mid",
+   "model": "gpt-6.1-sol",
+   "effort": "medium",
+   "speed": "standard",
+   "units": 3,
+   "threadId": "01a16399-5b99-7172-b839-349faac71bf7",
+   "wallSeconds": 38,
+   "exitStatus": 0,
+   "usage": {
+    "model": "gpt-6.1-sol",
+    "speed": "standard",
+    "inputTokens": 72915,
+    "cachedInputTokens": 63232,
+    "outputTokens": 1079,
+    "reasoningOutputTokens": 68
+   },
+   "ratedCredits": 0.91198,
+   "before": [
+    {
+     "id": "primary",
+     "usedPercent": 24,
+     "windowMinutes": 10080,
+     "resetsAt": "2026-10-27T08:32:06.000Z"
+    }
+   ],
+   "after": [
+    {
+     "id": "primary",
+     "usedPercent": 24,
+     "windowMinutes": 10080,
+     "resetsAt": "2026-10-27T08:32:06.000Z"
+    }
+   ],
+   "planType": "self_serve_business_prolite"
+  },
+  {
+   "label": "06-sol61-high-mid",
+   "model": "gpt-6.1-sol",
+   "effort": "high",
+   "speed": "standard",
+   "units": 3,
+   "threadId": "01a1639e-0cbb-7c73-ba5c-18262f02d5b4",
+   "wallSeconds": 38,
+   "exitStatus": 0,
+   "usage": {
+    "model": "gpt-6.1-sol",
+    "speed": "standard",
+    "inputTokens": 67001,
+    "cachedInputTokens": 45184,
+    "outputTokens": 1123,
+    "reasoningOutputTokens": 148
+   },
+   "ratedCredits": 1.48456,
+   "before": [
+    {
+     "id": "primary",
+     "usedPercent": 24,
+     "windowMinutes": 10080,
+     "resetsAt": "2026-10-27T08:32:06.000Z"
+    }
+   ],
+   "after": [
+    {
+     "id": "primary",
+     "usedPercent": 24,
+     "windowMinutes": 10080,
+     "resetsAt": "2026-10-27T08:32:06.000Z"
+    }
+   ],
+   "planType": "self_serve_business_prolite"
+  },
+  {
+   "label": "07-sol61-medium-fast",
+   "model": "gpt-6.1-sol",
+   "effort": "medium",
+   "speed": "fast",
+   "units": 3,
+   "threadId": "01a163a2-ba09-73a2-b0d0-c758c9a6df86",
+   "wallSeconds": 27,
+   "exitStatus": 0,
+   "usage": {
+    "model": "gpt-6.1-sol",
+    "speed": "fast",
+    "inputTokens": 70684,
+    "cachedInputTokens": 64512,
+    "outputTokens": 939,
+    "reasoningOutputTokens": 27
+   },
+   "ratedCredits": 1.761575,
+   "before": [
+    {
+     "id": "primary",
+     "usedPercent": 24,
+     "windowMinutes": 10080,
+     "resetsAt": "2026-10-27T08:32:06.000Z"
+    }
+   ],
+   "after": [
+    {
+     "id": "primary",
+     "usedPercent": 24,
+     "windowMinutes": 10080,
+     "resetsAt": "2026-10-27T08:32:06.000Z"
+    }
+   ],
+   "planType": "self_serve_business_prolite"
+  },
+  {
+   "label": "08-astra-high-mid",
+   "model": "gpt-6-astra",
+   "effort": "high",
+   "speed": "standard",
+   "units": 3,
+   "threadId": "01a163a6-d45f-7130-92f2-b78993fa3ec5",
+   "wallSeconds": 44,
+   "exitStatus": 0,
+   "usage": {
+    "model": "gpt-6-astra",
+    "speed": "standard",
+    "inputTokens": 70498,
+    "cachedInputTokens": 64256,
+    "outputTokens": 1009,
+    "reasoningOutputTokens": 34
+   },
+   "ratedCredits": 2.214075,
+   "before": [
+    {
+     "id": "primary",
+     "usedPercent": 24,
+     "windowMinutes": 10080,
+     "resetsAt": "2026-10-27T08:32:06.000Z"
+    }
+   ],
+   "after": [
+    {
+     "id": "primary",
+     "usedPercent": 24,
+     "windowMinutes": 10080,
+     "resetsAt": "2026-10-27T08:32:06.000Z"
+    }
+   ],
+   "planType": "self_serve_business_prolite"
+  },
+  {
+   "label": "09-spawn-limit",
+   "model": "gpt-6-luna",
+   "effort": "low",
+   "speed": "standard",
+   "units": 0,
+   "threadId": "01a163ab-9609-74b2-9558-8c830b4bf773",
+   "wallSeconds": 22,
+   "exitStatus": 0,
+   "usage": {
+    "model": "gpt-6-luna",
+    "speed": "standard",
+    "inputTokens": 198678,
+    "cachedInputTokens": 179840,
+    "outputTokens": 362,
+    "reasoningOutputTokens": 0
+   },
+   "ratedCredits": 0.09658,
+   "before": [
+    {
+     "id": "primary",
+     "usedPercent": 24,
+     "windowMinutes": 10080,
+     "resetsAt": "2026-10-27T08:32:06.000Z"
+    }
+   ],
+   "after": [
+    {
+     "id": "primary",
+     "usedPercent": 24,
+     "windowMinutes": 10080,
+     "resetsAt": "2026-10-27T08:32:06.000Z"
+    }
+   ],
+   "planType": "self_serve_business_prolite"
+  }
+ ],
+ "readingsFromRollouts": 5286,
+ "samples": [
+  {
+   "v": "codex-1",
+   "kind": "tier",
+   "slug": "live",
+   "wave": "01-luna-low-mid",
+   "tier": "cheap",
+   "units": 3,
+   "credits": 0.078714,
+   "model": "gpt-6-luna",
+   "effort": "low",
+   "speed": "standard",
+   "measured": "tokens"
+  },
+  {
+   "v": "codex-1",
+   "kind": "tier",
+   "slug": "live",
+   "wave": "02-luna-low-cheap",
+   "tier": "cheap",
+   "units": 1,
+   "credits": 0.0184765,
+   "model": "gpt-6-luna",
+   "effort": "low",
+   "speed": "standard",
+   "measured": "tokens"
+  },
+  {
+   "v": "codex-1",
+   "kind": "tier",
+   "slug": "live",
+   "wave": "03-sol61-medium-mid",
+   "tier": "mid",
+   "units": 3,
+   "credits": 1.45974,
+   "model": "gpt-6.1-sol",
+   "effort": "medium",
+   "speed": "standard",
+   "measured": "tokens"
+  },
+  {
+   "v": "codex-1",
+   "kind": "tier",
+   "slug": "live",
+   "wave": "04-luna-low-mid",
+   "tier": "cheap",
+   "units": 3,
+   "credits": 0.0557875,
+   "model": "gpt-6-luna",
+   "effort": "low",
+   "speed": "standard",
+   "measured": "tokens"
+  },
+  {
+   "v": "codex-1",
+   "kind": "tier",
+   "slug": "live",
+   "wave": "05-sol61-medium-mid",
+   "tier": "mid",
+   "units": 3,
+   "credits": 0.91198,
+   "model": "gpt-6.1-sol",
+   "effort": "medium",
+   "speed": "standard",
+   "measured": "tokens"
+  },
+  {
+   "v": "codex-1",
+   "kind": "tier",
+   "slug": "live",
+   "wave": "06-sol61-high-mid",
+   "tier": "mid",
+   "units": 3,
+   "credits": 1.48456,
+   "model": "gpt-6.1-sol",
+   "effort": "high",
+   "speed": "standard",
+   "measured": "tokens"
+  },
+  {
+   "v": "codex-1",
+   "kind": "tier",
+   "slug": "live",
+   "wave": "07-sol61-medium-fast",
+   "tier": "mid",
+   "units": 3,
+   "credits": 1.761575,
+   "model": "gpt-6.1-sol",
+   "effort": "medium",
+   "speed": "fast",
+   "measured": "tokens"
+  },
+  {
+   "v": "codex-1",
+   "kind": "tier",
+   "slug": "live",
+   "wave": "08-astra-high-mid",
+   "tier": "strong",
+   "units": 3,
+   "credits": 2.214075,
+   "model": "gpt-6-astra",
+   "effort": "high",
+   "speed": "standard",
+   "measured": "tokens"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 46.49077749999901,
+   "at": "2026-10-19T15:51:44.711Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 79.28113000000099,
+   "at": "2026-10-19T20:58:31.996Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 60.137039999999615,
+   "at": "2026-10-19T21:11:06.445Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 64.05665000000022,
+   "at": "2026-10-19T21:30:49.782Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 61.96438999999941,
+   "at": "2026-10-19T21:46:00.573Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 29.883239999999887,
+   "at": "2026-10-20T08:42:49.737Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 61.19122000000107,
+   "at": "2026-10-20T09:02:14.142Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 73.87576749999994,
+   "at": "2026-10-20T09:24:07.116Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 80.87340649999942,
+   "at": "2026-10-20T18:39:39.847Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 46.8965634999995,
+   "at": "2026-10-21T17:33:13.189Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 57.36727800000017,
+   "at": "2026-10-21T17:39:55.693Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 58.06729999999993,
+   "at": "2026-10-21T17:45:12.792Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 50.237760000000435,
+   "at": "2026-10-21T17:51:24.883Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 64.38783000000012,
+   "at": "2026-10-21T18:00:00.137Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 61.47660000000042,
+   "at": "2026-10-21T18:07:31.122Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 62.742359999998826,
+   "at": "2026-10-21T18:12:48.166Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 51.2074100000018,
+   "at": "2026-10-21T18:17:25.381Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 54.63215999999966,
+   "at": "2026-10-21T18:25:16.071Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 79.00404999999955,
+   "at": "2026-10-21T18:39:35.557Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 66.43633999999929,
+   "at": "2026-10-21T18:52:22.002Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 74.62227999999868,
+   "at": "2026-10-21T19:28:46.612Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 78.15623999999798,
+   "at": "2026-10-21T20:13:28.757Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 34.68346699999893,
+   "at": "2026-10-21T20:17:15.907Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 89.99681099999952,
+   "at": "2026-10-21T20:50:48.845Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 44.06870000000072,
+   "at": "2026-10-21T20:53:17.933Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 59.0639749999973,
+   "at": "2026-10-21T21:18:05.091Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 61.12378100000069,
+   "at": "2026-10-22T07:29:09.452Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 64.1955299999986,
+   "at": "2026-10-22T08:51:54.879Z"
+  },
+  {
+   "v": "codex-1",
+   "kind": "capacity",
+   "slug": "rollouts:self_serve_business_prolite",
+   "window": "primary",
+   "dU": 1,
+   "dC": 75.04485599999907,
+   "at": "2026-10-22T10:34:00.901Z"
+  }
+ ],
+ "notes": [
+  "interval 1: the primary window did not move; 0.08 credits carried to the next reading",
+  "interval 3: the primary window did not move; 0.02 credits carried to the next reading",
+  "interval 5: the primary window did not move; 1.46 credits carried to the next reading",
+  "interval 7: the primary window did not move; 0.06 credits carried to the next reading",
+  "interval 9: the primary window did not move; 0.91 credits carried to the next reading",
+  "interval 11: the primary window did not move; 1.48 credits carried to the next reading",
+  "interval 13: the primary window did not move; 1.76 credits carried to the next reading",
+  "interval 15: the primary window did not move; 2.21 credits carried to the next reading",
+  "interval 17: the primary window did not move; 0.1 credits carried to the next reading",
+  "rollouts: plan types pro, team, self_serve_business_prolite (pooled for self_serve_business_prolite; pro, team left out); window minutes seen: 10080, 300"
+ ],
+ "rollouts": {
+  "planType": "self_serve_business_prolite",
+  "readings": 3623,
+  "threads": 103,
+  "streams": 114,
+  "windowMinutes": [
+   10080
+  ],
+  "resets": 1
+ },
+ "planType": "self_serve_business_prolite",
+ "summary": {
+  "n": 37,
+  "ignored": 0,
+  "runs": 2,
+  "planType": "self_serve_business_prolite",
+  "windowCapacityCredits": {
+   "primary": 6176.430734482727
+  },
+  "windowCapacityRange": {
+   "primary": [
+    2988.3239999999887,
+    8999.681099999952
+   ]
+  },
+  "nCapacity": {
+   "primary": 29
+  },
+  "tierSamplesAtOtherSettings": {
+   "mid": 2
+  },
+  "creditsPerUnit": {
+   "cheap": 0.021854000000000002,
+   "mid": 0.3952866666666666,
+   "strong": 0.7380249999999999
+  },
+  "creditsPerUnitAt": {
+   "cheap": {
+    "model": "gpt-6-luna",
+    "effort": "low",
+    "speed": "standard"
+   },
+   "mid": {
+    "model": "gpt-6.1-sol",
+    "effort": "medium",
+    "speed": "standard"
+   },
+   "strong": {
+    "model": "gpt-6-astra",
+    "effort": "high",
+    "speed": "standard"
+   }
+  },
+  "nTier": {
+   "cheap": 3,
+   "mid": 2,
+   "strong": 1
+  },
+  "lastAt": "2026-10-22T10:34:00.901Z"
+ },
+ "calibration": {
+  "windowCapacityCredits": {
+   "primary": 6176.430734482727
+  },
+  "creditsPerUnit": {
+   "cheap": 0.021854000000000002,
+   "mid": 0.3952866666666666,
+   "strong": 0.7380249999999999
+  },
+  "creditsPerUnitAt": {
+   "cheap": {
+    "model": "gpt-6-luna",
+    "effort": "low",
+    "speed": "standard"
+   },
+   "mid": {
+    "model": "gpt-6.1-sol",
+    "effort": "medium",
+    "speed": "standard"
+   },
+   "strong": {
+    "model": "gpt-6-astra",
+    "effort": "high",
+    "speed": "standard"
+   }
+  },
+  "planType": "self_serve_business_prolite"
+ }
+}

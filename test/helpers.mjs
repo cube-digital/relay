@@ -38,12 +38,12 @@ export function runHook(script, input, env = {}) {
   const res = spawnSync('node', [join(ROOT, 'hooks', script)], {
     input: JSON.stringify(input),
     encoding: 'utf8',
-    env: { ...process.env, ...env },
+    env: { ...process.env, RELAY_HARNESS: 'claude', ...env },
   });
   return { code: res.status, stdout: res.stdout, stderr: res.stderr };
 }
 
 export function runCli(args, { cwd = ROOT, env = {}, input } = {}) {
-  const res = spawnSync('node', [join(ROOT, 'bin', 'relay'), ...args], { cwd, encoding: 'utf8', ...(input === undefined ? {} : { input }), env: { ...process.env, ...env } });
+  const res = spawnSync('node', [join(ROOT, 'scripts', 'relay.mjs'), ...args], { cwd, encoding: 'utf8', ...(input === undefined ? {} : { input }), env: { ...process.env, RELAY_HARNESS: 'claude', ...env } });
   return { code: res.status, stdout: res.stdout, stderr: res.stderr };
 }

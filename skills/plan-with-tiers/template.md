@@ -2,16 +2,17 @@
 
 **Goal:** <one sentence>
 **Spec:** docs/relay/specs/<file>.md
+**Design (when supplied):** <path and revision or dated state; omit when absent>
 **Architecture:** <two or three sentences>
 
 ## Global Constraints
 
-- <project-wide rule with exact values, copied from the spec>
-- <version floors, naming rules, error format, ...>
+- <Copy a project-wide rule and its exact values from the spec.>
+- <State version floors, naming rules, and error formats.>
 
 ## Review Focus
 
-- <failure modes the spec implies that no task's tests exercise; the final review looks here>
+- <List failure modes from the spec that task tests do not cover. The final review checks these.>
 
 ## Tasks
 
@@ -23,10 +24,10 @@ export type ExportRow = { id: string; amountCents: number; currency: 'EUR' | 'US
 ```
 
 ### T2: CSV writer
-`writeCsv(rows: ExportRow[]): string` in `src/export/csv.ts`. Header `id,amount,currency`; amount as `12.34` (two decimals, dot); RFC 4180 quoting.
+Add `writeCsv(rows: ExportRow[]): string` in `src/export/csv.ts`. Use header `id,amount,currency`. Format amounts as `12.34` with two decimals and a dot. Use RFC 4180 quoting.
 
 ### T3: Export endpoint
-`GET /api/export.csv` streams `writeCsv(await listRows(userId))`, `Content-Type: text/csv; charset=utf-8`, 401 without a session.
+Make `GET /api/export.csv` stream `writeCsv(await listRows(userId))`. Set `Content-Type: text/csv; charset=utf-8`. Return 401 without a session.
 
 ```relay-plan
 {

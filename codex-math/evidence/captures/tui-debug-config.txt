@@ -1,0 +1,20 @@
+  >_ OpenAI Codex (v0.163.0)
+     ~/work
+  Tip: Maximize usage with GPT-6.1 Sol. Try it on complex work for near-Astra performance at a lower cost.
+/debug-config
+Config layer stack (lowest precedence first):
+  1. packaged defaults (/home/claude/targets/codex/plat/package/vendor/x86_64-unknown-linux-musl/bin/codex) (enabled)
+  2. system (/etc/codex/config.toml) (enabled)
+  3. user (/home/claude/codex-home/.codex/config.toml) (enabled)
+Requirements:
+  <none>
+[agents]:
+  - enabled = true
+  - max_concurrent_threads_per_session = <unset>
+  - max_depth = 1 (V1 only; ignored by V2)
+  - default_subagent_model = gpt-6-luna
+  - default_subagent_reasoning_effort = low
+  - interrupt_message = true
+› /quit  exit Codex
+› /quit
+  GPT-6.1-Sol medium · ~/work

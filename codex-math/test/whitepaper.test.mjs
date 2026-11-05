@@ -1,0 +1,52 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { test } from 'node:test';
+import { CODEX_MATH_ROOT, loadCodexRouting, loadHarness } from '../lib/harness.mjs';
+import { tierCreditRatios } from '../lib/pricing.mjs';
+import { forecast } from '../lib/forecast.mjs';
+import { parsePlan } from '../../lib/plan.mjs';
+import { computeLanes } from '../../lib/lanes.mjs';
+
+// The whitepaper quotes these numbers; if the model or the priors change, rebuild the page (docs/whitepaper/README.md).
+test('the Codex whitepaper numbers are what the model computes', () => {
+  const dir = join(CODEX_MATH_ROOT, 'docs', 'whitepaper');
+  const harness = loadHarness();
+  const routing = loadCodexRouting();
+  const plan = parsePlan(readFileSync(join(dir, 'example-plan.md'), 'utf8'));
+  const lanes = computeLanes(plan);
+  const windows = [{ id: 'primary', usedPercent: 0, windowMinutes: 300 }, { id: 'secondary', usedPercent: 0, windowMinutes: 10080 }];
+  const f = forecast({ plan, lanes, routing, harness, snapshot: { planType: 'plus', updatedAt: new Date().toISOString(), windows } });
+  assert.deepEqual([f.lanes, f.waves, f.units, f.agents.expectedFixRounds], [7, 3, 108.4, 4.7]);
+  assert.deepEqual([f.credits.base, f.credits.expected, f.credits.sd], [102.37, 130.77, 8.43]);
+  const r = tierCreditRatios(routing, harness);
+  assert.deepEqual([Math.round(r.mid), Math.round(r.strong)], [15, 62]);
+  assert.deepEqual(['cheap', 'mid', 'strong'].map((t) => Math.round(f.profiles[t].creditsPerUnit * 1000) / 1000), [0.027, 0.405, 1.654]);
+  const primary = f.usage.find((u) => u.id === 'primary');
+  const secondary = f.usage.find((u) => u.id === 'secondary');
+  assert.deepEqual([primary.capacityCredits, primary.pct, primary.windowsUsed], [210, 62.3, 2], 'measured Team capacity: the plan rolls into a second 5-hour window without a pause');
+  assert.deepEqual([secondary.capacityCredits, secondary.pct, secondary.windowsUsed], [1400, 9.3, 1]);
+  assert.deepEqual([f.time.workMinutes, f.time.waitMinutes, f.time.totalMinutes], [351, 0, 351]);
+  assert.deepEqual(f.fastLane.map((x) => [x.wave, x.minutesSaved, Math.round(x.extraCredits)]), [[1, 32, 10], [2, 93, 102], [3, 34, 33]]);
+  const sol = structuredClone(routing);
+  sol.tiers.strong = { model: 'gpt-6.1-sol', effort: 'xhigh', speed: 'standard' };
+  const g = forecast({ plan, lanes, routing: sol, harness, snapshot: { planType: 'plus', updatedAt: new Date().toISOString(), windows } });
+  assert.deepEqual([g.credits.expected, g.time.totalMinutes], [66.17, 351]);
+  const business = forecast({ plan, lanes, routing, harness, snapshot: { planType: 'self_serve_business_prolite', updatedAt: new Date().toISOString(), windows: [{ id: 'primary', usedPercent: 0, windowMinutes: 10080 }] } });
+  assert.deepEqual(business.usage.map((u) => [u.id, u.capacityCredits, u.pct]), [['primary', 6200, 2.1]]);
+  const data = JSON.parse(readFileSync(join(dir, 'data.json'), 'utf8'));
+  assert.equal(Math.round(data.credits.mean * 100) / 100, f.credits.expected, 'data.json is current');
+  assert.ok(Math.abs(data.credits.sd - data.credits.sdFormula) < 1e-9, 'exact SD over all outcomes equals the closed form');
+  assert.equal(data.expected.totalMinutes, f.time.totalMinutes);
+  assert.equal(data.lastWaitCapacity, 135);
+  assert.equal(data.harness.version, harness.target.version);
+  // the measured meter behind Figure 1b: two Business weekly windows, 29 integer steps, ≈ 62 credits per point
+  assert.equal(data.meter.planType, 'self_serve_business_prolite');
+  assert.equal(data.meter.points, 29);
+  assert.equal(data.meter.windows.length, 2);
+  assert.equal(Math.round(data.meter.capacityCredits), 6176);
+  assert.equal(Math.round(data.meter.creditsPerPoint), 62);
+  assert.equal(routing.forecast.prior.windowCapacityCredits.self_serve_business_prolite.primary, Math.round(data.meter.capacityCredits / 100) * 100, 'the routing prior is the measurement, rounded');
+  const tex = readFileSync(join(dir, 'whitepaper.tex'), 'utf8');
+  for (const s of ['1:15:62', '131 credits', '6\\,176', '62 credits per point', '210 credits', '5\\,h\\,51\\,min', '135 credits', '66 credits', '0.027, 0.41 and 1.65', '\\mathrm{SD}=8.4', '244\\,800', 'default 3', '32\\,min for 10 credits', '93\\,min for 102']) assert.ok(tex.includes(s), `the page quotes ${s}`);
+});
