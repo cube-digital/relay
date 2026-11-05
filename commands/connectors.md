@@ -1,5 +1,5 @@
 ---
-description: Record which MCP connectors this session can reach, including claude.ai account connectors, for relay HQ's Brain.
+description: Record which MCP connectors this session can reach, including claude.ai account connectors, for relay HQ's Setup.
 allowed-tools: Bash(node *scripts/relay.mjs hq connectors*)
 disable-model-invocation: true
 ---

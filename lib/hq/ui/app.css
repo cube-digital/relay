@@ -1,5 +1,3 @@
-@import url("/home.css");
-@import url("/recos.css");
 /* relay HQ stylesheet: greys plus one light-blue accent, red only for blocked or failed.
    Dark is the default; light follows the system. Tokens, shell layout and the shared class vocabulary. */
 :root{color-scheme:dark;
@@ -24,8 +22,6 @@ a{color:inherit}
 .shell{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
 .content{min-width:0;display:flex;flex-direction:column}
 .top{display:flex;align-items:center;gap:12px;padding:10px 24px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;background:var(--bg)}
-body.home .top,body.home .side{display:none}
-body.home .shell{grid-template-columns:minmax(0,1fr)}
 .crumbs{flex:1;display:flex;gap:6px;flex-wrap:wrap;color:var(--ink2);font-size:13px;min-width:0}
 .crumbs a{color:var(--ink2);text-decoration:none}
 .crumbs a:hover{color:var(--accent)}
@@ -49,6 +45,12 @@ kbd{font:600 10px/1 var(--mono);border:1px solid var(--line2);border-radius:4px;
 .side a:hover{background:var(--soft);color:var(--ink)}
 .side a[aria-current=page]{background:var(--sel-bg);color:var(--sel-ink)}
 .side a[aria-current=page] .gl{color:var(--accent)}
+.side .sep{height:1px;background:var(--line);margin:8px 6px}
+.side .grow{flex:1}
+.side .b{margin-left:auto;display:flex;gap:4px}
+.n{font:600 10px/1 var(--mono);padding:3px 6px;border-radius:9px}
+.n.r{background:var(--red-line);color:var(--red)}
+.n.l{background:var(--accent-line);color:var(--accent);animation:pulse 1.6s infinite}
 .badge{font:600 10px/1 var(--mono);padding:3px 6px;border-radius:9px;background:var(--soft);color:var(--ink2)}
 .badge.hot{background:var(--accent);color:var(--on-accent)}
 .badge.red{background:transparent;color:var(--red);border:1px solid var(--red-line)}
@@ -289,3 +291,4 @@ pre.log{max-height:70vh}
 .tabs a .n.hot{color:var(--red)}
 @media (max-width:900px){.top .crumbs{flex-basis:100%}.top .budget{margin-left:auto}}
 @media (max-width:700px){.agents .kpis{grid-template-columns:repeat(2,1fr)}.need{flex-wrap:wrap}.need .nact{margin-left:30px}}
+@media (max-width:900px){.side .sep{display:none}.side .grow{flex:0}}

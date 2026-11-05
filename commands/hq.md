@@ -1,5 +1,5 @@
 ---
-description: Open relay HQ, the command centre for all your projects (what is waiting on you, runs, plans down to the task, launches, the Brain), in your browser.
+description: Open relay HQ, the command centre for all your projects (what is waiting on you, runs, plans down to the task, launches, Setup), in your browser.
 argument-hint: "[--port N]"
 allowed-tools: Bash(node *scripts/relay.mjs hq*)
 disable-model-invocation: true
