@@ -30,6 +30,10 @@ Load `relay-teach` for teaching or `relay-reverse-engineer` for reconstruction. 
 
 For tickets from an existing plan, specification, or agreed discussion, load `relay-to-tickets`. Preserve source decisions. Prepare tickets here. Ticket preparation does not start implementation, create a second plan, or publish without a request.
 
+## Pull requests
+
+Load `pre-pr-quiz` before opening one.
+
 ## Implementation
 
 1. **Plan first.** Use `plan-with-tiers` for multi-step implementation. Set each task's tier, risk, files, deps, test budget, and `done` check.

@@ -850,6 +850,7 @@ Claude Code provides the command wrappers, board UI command, and shared design a
 | `/relay:calibrate [plan]` | Learns your account's real usage and speed from a finished run; without a plan, shows the current calibration. |
 | `/relay:budget` | The 5-hour and weekly level relay routes by: normal, tight or critical. |
 | `/relay:checkpoint [task or destination]` | Saves the current chat and work state as a timestamped checkpoint for another person or agent. |
+| `/relay:quiz [base branch or focus]` | Before a pull request: shows what the checks did and did not cover, quizzes you on the change until you pass, then asks which evidence you want next. Does not open the pull request. |
 | `/relay:relay-teach <question>` | Uses the shared teaching skill to explain a topic from evidence in the current conversation. |
 | `/relay:relay-reverse-engineer <system>` | Uses the shared reconstruction skill to explain mechanisms, constraints and rationale from evidence. |
 
@@ -857,7 +858,7 @@ Commands that operate on an existing plan use the newest plan in `docs/relay/pla
 
 ### Skills
 
-Relay contains **21 shared skills**: 14 public entry points and 7 engines or supporting skills. Both hosts load the same source instructions.
+Relay contains **22 shared skills**: 15 public entry points and 7 engines or supporting skills. Both hosts load the same source instructions.
 
 The session-start hook loads `using-relay`. Before responding or acting, the lead checks the request and conversation context, then loads an applicable Relay skill. You do not need to name Relay or invoke a skill explicitly. The lead checks again when the task changes and preserves your instructions, scope, and existing authorization. Assigned workers follow their role and task. Selection is model-driven; it depends on skill discovery and the bootstrap being loaded by the host.
 
@@ -875,6 +876,7 @@ The session-start hook loads `using-relay`. Before responding or acting, the lea
 | Entry point | `relay-calibrate` | Learning usage and time rates from completed work. |
 | Entry point | `relay-budget` | Reading the current usage level. |
 | Entry point | `checkpoint-work` | Saving current-session progress or preparing a handoff for another person or agent. |
+| Entry point | `pre-pr-quiz` | Checking that you understand an agent-written change, and its evidence, before a pull request. |
 | Entry point | `relay-teach` | Independent interactive teaching in the current conversation. |
 | Entry point | `relay-reverse-engineer` | Independent interactive reconstruction of an existing system. |
 | Engine/support | `using-relay` | Selecting a workflow and applying shared language, budget and dispatch rules. |
