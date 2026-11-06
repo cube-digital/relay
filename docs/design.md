@@ -62,7 +62,7 @@ Most of these studies are recent, read through summaries, and measured mainly on
 - `codex mcp-server` was removed; Claude → Codex goes through the official [`openai/codex-plugin-cc`](https://github.com/openai/codex-plugin-cc) or `codex exec`. Its review gate "may drain usage limits quickly".
 - superpowers ships one skills tree to both harnesses with a per-harness tool-mapping reference; its Codex notes require setting both `model` and `reasoning_effort` on every spawn. [codex-tools.md](https://github.com/obra/superpowers/blob/main/skills/using-superpowers/references/codex-tools.md)
 
-→ Shared roles and tier settings generate host definitions, while the Codex role-to-tier registry is maintained separately. Codex account windows come from the usage reading; Relay does not assume that every account has a five-hour window. [Current routing configuration](configuration/README.md)
+→ Shared roles and tier settings generate host definitions. The Codex routing file is a build source; the build checks its role tiers against the roles. Codex account windows come from the usage reading; Relay does not assume that every account has a five-hour window. [Current routing configuration](configuration/README.md)
 
 ## 6. Current research and language instructions — 2026-10-26
 

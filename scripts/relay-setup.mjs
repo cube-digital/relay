@@ -2,7 +2,9 @@
 //   Prints (or merges into <repo>/.claude/settings.json) the settings relay relies on.
 //   A plugin cannot set these itself: plugin settings only accept `agent` and `subagentStatusLine`.
 // relay setup codex <project-dir>
-//   Installs relay's Codex agents and hooks into <project>/.codex/ and the [agents] backstop.
+//   Installs relay's Codex agents and hooks into <project>/.codex/, registers each role as
+//   [agents.relay-<role>] in <project>/.codex/config.toml (missing tables are appended, existing
+//   bytes are kept as a prefix) and sets the [agents] backstop for a new config.
 
 import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, symlinkSync, lstatSync } from 'node:fs';
 import { join, resolve } from 'node:path';
@@ -95,12 +97,29 @@ function setupCodex(args) {
   }
 
   const snippet = readFileSync(join(RELAY_ROOT, 'codex', 'config.snippet.toml'), 'utf8');
-  if (existsSync(configFile)) {
-    console.log(`! ${configFile} exists and was preserved; merge missing defaults yourself:\n${snippet}`);
-  } else {
-    writeFileSync(configFile, (config ? config.trimEnd() + '\n\n' : '') + snippet);
-    console.log(`✓ [agents] defaults → ${configFile}`);
+  const dirLiteral = JSON.stringify(agentsDir).slice(1, -1);
+  const registrations = readFileSync(join(RELAY_ROOT, 'codex', 'agents.snippet.toml'), 'utf8').replaceAll('__RELAY_AGENTS_DIR__', dirLiteral);
+  const blocks = registrations.split(/^(?=\[agents\.relay-)/m).slice(1).map((b) => b.trimEnd() + '\n');
+  const missing = [];
+  for (const block of blocks) {
+    const role = block.match(/^\[agents\.relay-([^\]]+)\]/)[1];
+    if (new RegExp(`^\\s*\\[\\s*agents\\s*\\.\\s*"?relay-${role}"?\\s*\\]`, 'm').test(config)) console.log(`! preserved [agents.relay-${role}] in ${configFile}`);
+    else missing.push(block);
   }
+  const exists = existsSync(configFile);
+  if (exists) console.log(`! ${configFile} exists and was preserved; merge missing defaults yourself:\n${snippet}`);
+  let written = false;
+  if (!exists || missing.length) {
+    const text = exists ? config + (config && !config.endsWith('\n') ? '\n' : '') + '\n' + missing.join('\n') : snippet + '\n' + missing.join('\n');
+    const bad = configProblem(text);
+    if (bad) console.log(`! not writing ${configFile} (${bad}); merge these role registrations yourself:\n${missing.join('\n')}`);
+    else {
+      writeFileSync(configFile, text);
+      written = true;
+      if (!exists) console.log(`✓ [agents] defaults → ${configFile}`);
+    }
+  }
+  console.log(`✓ ${blocks.length - missing.length + (written ? missing.length : 0)} roles registered in ${configFile}`);
   if (!args.plugin) {
     const skillsDir = join(project, '.agents', 'skills');
     mkdirSync(skillsDir, { recursive: true });

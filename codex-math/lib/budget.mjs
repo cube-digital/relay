@@ -4,7 +4,7 @@
 // against per-window stop lines, or critical outright when the backend reports a limit reached.
 // Degrading a spawn follows the order the prices dictate: speed first (Fast meters 2.5× the
 // included usage for a 1.5–2× speedup), then reasoning effort (output tokens cost 5× input), then
-// the model (astra : sol 6.1 : luna ≈ 100 : 18 : 1 per token at the agent mix). Relay's Claude mod only had the
+// the model (astra : sol 6.1 : luna ≈ 100 : 14 : 1 per token at published rates and the prior token mix; 62 : 15 : 1 per relay unit on the included meter, where Astra counts half and effort scales output). Relay's Claude mod only had the
 // third lever.
 
 import { TIERS, effortRank, tierOfCodexModel } from './harness.mjs';

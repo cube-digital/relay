@@ -4,7 +4,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { checkFlow, checkRoles, checkSkills, claudeAgent, codexAgent, injectModRouting, main } from '../scripts/build.mjs';
+import * as build from '../scripts/build.mjs';
 import { checkRoutines } from '../lib/routines/templates.mjs';
+import { loadCodexRouting, loadHarness } from '../codex-math/lib/harness.mjs';
 import { loadRouting } from '../lib/routing.mjs';
 import { ROOT, runCli } from './helpers.mjs';
 
@@ -82,9 +84,34 @@ test('every hook script referenced by hooks.json exists', () => {
   }
 });
 
+test('build reports codex role tiers that disagree with roles/*.md and roles with no file', () => {
+  const problems = build.checkCodexRouting(
+    [{ name: 'scout', tier: 'cheap' }],
+    { roles: { scout: 'mid', ghost: 'mid' }, tiers: loadCodexRouting().tiers },
+    loadHarness());
+  assert.equal(problems.length, 2);
+  assert.match(problems[0], /roles\.scout/);
+  assert.match(problems[1], /roles\.ghost/);
+  assert.ok(problems.every((p) => p.startsWith('codex-math/config/codex-routing.json: ')));
+});
+
+test('build reports a codex tier whose effort the model does not advertise', () => {
+  const tiers = structuredClone(loadCodexRouting().tiers);
+  tiers.mid.effort = 'ultra-not-real';
+  const problems = build.checkCodexRouting([], { roles: {}, tiers }, loadHarness());
+  assert.equal(problems.length, 1);
+  assert.match(problems[0], /tiers\.mid: gpt-6\.1-sol does not advertise effort "ultra-not-real"/);
+});
+
+test('build reports a codex number that has no source label', () => {
+  const problems = build.checkCodexSources({ lanes: { $sources: { maxLaneTasks: 'policy: x' }, maxLaneTasks: 6, maxParallelLanes: 4 } });
+  assert.equal(problems.length, 1);
+  assert.match(problems[0], /lanes\.maxParallelLanes needs a source label/);
+});
+
 test('build --check fails for a piece with an unknown role, a piece placed outside its slots, and a role without its profile, and a routine with an unknown check or a bad schedule', () => {
   const dir = mkdtempSync(join(tmpdir(), 'relay-flow-'));
-  for (const d of ['agents', 'scripts', 'codex', 'config', 'flows', 'hooks', 'pieces', 'roles', 'skills']) cpSync(join(ROOT, d), join(dir, d), { recursive: true });
+  for (const d of ['agents', 'scripts', 'codex', 'codex-math', 'config', 'flows', 'hooks', 'pieces', 'roles', 'skills']) cpSync(join(ROOT, d), join(dir, d), { recursive: true });
   assert.equal(main(['--check'], dir), 0);
   const ghost = JSON.parse(readFileSync(join(dir, 'pieces', 'platform-review.json'), 'utf8'));
   writeFileSync(join(dir, 'pieces', 'ghost.json'), JSON.stringify({ ...ghost, id: 'ghost', role: 'no-such-role' }));
