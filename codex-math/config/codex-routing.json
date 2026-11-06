@@ -16,7 +16,9 @@
     "implementer": "mid",
     "reviewer": "mid",
     "scout": "cheap",
-    "test-author": "mid"
+    "test-author": "mid",
+    "business-analyst": "strong",
+    "platform-engineer": "mid"
   },
   "budget": {
     "$comment": "Stop lines by window: `windows` is keyed by position (primary, secondary) for accounts with a short primary window; `weekly` applies to any window of seven days or more whatever its position, so a Pro account (weekly window only, reported as primary) is gated by the weekly lines.",

@@ -1,0 +1,8 @@
+{
+  "id": "bugfix",
+  "title": "Bug fix",
+  "slots": {
+    "lane.before": ["reproduce", "acceptance-tests"],
+    "lane.after": ["platform-review"]
+  }
+}

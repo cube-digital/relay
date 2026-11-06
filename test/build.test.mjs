@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync, mkdirSync, readFileSync } from 'node:fs';
+import { cpSync, mkdtempSync, writeFileSync, mkdirSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { checkSkills, claudeAgent, codexAgent, injectModRouting, main } from '../scripts/build.mjs';
+import { checkFlow, checkRoles, checkSkills, claudeAgent, codexAgent, injectModRouting, main } from '../scripts/build.mjs';
 import * as build from '../scripts/build.mjs';
+import { checkRoutines } from '../lib/routines/templates.mjs';
 import { loadCodexRouting, loadHarness } from '../codex-math/lib/harness.mjs';
 import { loadRouting } from '../lib/routing.mjs';
 import { ROOT, runCli } from './helpers.mjs';
@@ -106,4 +107,29 @@ test('build reports a codex number that has no source label', () => {
   const problems = build.checkCodexSources({ lanes: { $sources: { maxLaneTasks: 'policy: x' }, maxLaneTasks: 6, maxParallelLanes: 4 } });
   assert.equal(problems.length, 1);
   assert.match(problems[0], /lanes\.maxParallelLanes needs a source label/);
+});
+
+test('build --check fails for a piece with an unknown role, a piece placed outside its slots, and a role without its profile, and a routine with an unknown check or a bad schedule', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'relay-flow-'));
+  for (const d of ['agents', 'scripts', 'codex', 'codex-math', 'config', 'flows', 'hooks', 'pieces', 'roles', 'skills']) cpSync(join(ROOT, d), join(dir, d), { recursive: true });
+  assert.equal(main(['--check'], dir), 0);
+  const ghost = JSON.parse(readFileSync(join(dir, 'pieces', 'platform-review.json'), 'utf8'));
+  writeFileSync(join(dir, 'pieces', 'ghost.json'), JSON.stringify({ ...ghost, id: 'ghost', role: 'no-such-role' }));
+  const featurePath = join(dir, 'flows', 'feature.json');
+  const feature = JSON.parse(readFileSync(featurePath, 'utf8'));
+  feature.slots['lane.after'].push('requirements');
+  writeFileSync(featurePath, JSON.stringify(feature));
+  const scoutPath = join(dir, 'roles', 'scout.md');
+  writeFileSync(scoutPath, readFileSync(scoutPath, 'utf8').replace(/## Never\n[^\n]*\n/, ''));
+  const flowProblems = checkFlow(dir).join('\n');
+  assert.match(flowProblems, /pieces\/ghost\.json: role "no-such-role" is not a role/);
+  assert.match(flowProblems, /flows\/feature\.json: piece "requirements" cannot sit at lane\.after/);
+  assert.match(checkRoles(dir).join('\n'), /roles\/scout\.md: profile section "## Never"/);
+  mkdirSync(join(dir, 'routines'));
+  writeFileSync(join(dir, 'routines', 'ghost.json'), JSON.stringify({ id: 'ghost', title: 'Ghost', kind: 'passive', type: 'check', check: 'no-such-check', schedule: { days: ['mon'], at: '09:00' }, cap: { runsPerWeek: 7 } }));
+  writeFileSync(join(dir, 'routines', 'late.json'), JSON.stringify({ id: 'late', title: 'Late', kind: 'active', type: 'prompt', prompt: 'hi', schedule: { days: ['mon'], at: '25:00' } }));
+  const routineProblems = checkRoutines(dir).join('\n');
+  assert.match(routineProblems, /routines\/ghost\.json: check "no-such-check" has no module/);
+  assert.match(routineProblems, /routines\/late\.json: schedule\.at "25:00"/);
+  assert.equal(main(['--check'], dir), 1);
 });

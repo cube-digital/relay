@@ -36,3 +36,19 @@ commits: <first7>..<last7>
 tests: +<added> -<removed>, ran: <commands> → pass/fail
 report: <path>
 concerns: <one line or none>
+
+## Understands
+- Changes across files, integration, and debugging in the part of the codebase that one lane owns.
+
+## Receives
+- A lane brief with global constraints, tasks, files, test budgets, and `done` checks.
+- Later, review findings to fix.
+
+## Delivers
+- One commit for each task, tests within budget, rulings on ambiguity, and a report.
+
+## Never
+- Runs the full suite.
+- Edits protected tests.
+- Dispatches subagents.
+- Changes files outside the task without a statement of the reason.

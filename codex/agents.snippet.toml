@@ -5,6 +5,10 @@
 description = "Use when designing software architecture, comparing technical approaches, writing a Relay plan, or reviewing a design or finished branch."
 config_file = "__RELAY_AGENTS_DIR__/relay-architect.toml"
 
+[agents.relay-business-analyst]
+description = "Use for the requirements and requirements-check pieces. Writes the requirements document (R1…Rn with Given / When / Then) from the business documentation of a plan, then checks the finished branch against it. Joins a plan only with /relay:plan --business-docs <path>."
+config_file = "__RELAY_AGENTS_DIR__/relay-business-analyst.toml"
+
 [agents.relay-conductor]
 description = "Use when asked to execute a whole Relay plan through lanes, reviews, fixes, and merges."
 config_file = "__RELAY_AGENTS_DIR__/relay-conductor.toml"
@@ -20,6 +24,10 @@ config_file = "__RELAY_AGENTS_DIR__/relay-implementer-fast.toml"
 [agents.relay-implementer]
 description = "Use for related tasks in one lane that need changes across files, integration, or debugging."
 config_file = "__RELAY_AGENTS_DIR__/relay-implementer.toml"
+
+[agents.relay-platform-engineer]
+description = "Use for lane tasks with role platform-engineer (infrastructure, CI/CD, deploy, configuration, observability) and for the platform-review piece."
+config_file = "__RELAY_AGENTS_DIR__/relay-platform-engineer.toml"
 
 [agents.relay-reverse-engineer]
 description = "Use when reconstructing an existing system and explaining its mechanisms, constraints, failures, and design rationale."

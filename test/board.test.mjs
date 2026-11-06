@@ -47,6 +47,10 @@ test('lights follow the run: planned, in progress, done, merged, blocked', () =>
   assert.equal(blocked.status, 'blocked');
   assert.equal(blocked.waves[0].state, 'blocked');
 
+  const piece = (status, path) => board({ ledgerText: ledgerText + `\n- 2026-10-20 10:45 piece platform-review lane b: ${status} (${path})` });
+  assert.notEqual(lane(piece('pass', '.relay/runs/x/blocked-notes.md'), 'b').state, 'blocked', 'a report path is not a status');
+  assert.equal(lane(piece('blocked', '.relay/runs/x/notes.md'), 'b').state, 'blocked');
+
   const failed = board({ ledgerText: ledgerText + '\n- 2026-10-20 11:00 wave 1: merged @ abc, suite fail' });
   assert.equal(failed.waves[0].state, 'blocked', 'a red suite holds the wave');
   const fixed = board({ ledgerText: ledgerText + '\n- 2026-10-20 11:00 wave 1: merged @ abc, suite fail\n- 2026-10-20 11:10 wave 1: merged @ abd, suite pass' });

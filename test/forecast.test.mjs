@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { makespan, parseLedgerLine, readCalibration, summarize, waveSamples } from '../lib/calibration.mjs';
 import { forecast, formatForecast, simulate } from '../lib/forecast.mjs';
+import { attachPieces } from '../lib/flows.mjs';
 import { computeLanes } from '../lib/lanes.mjs';
 import { parsePlan } from '../lib/plan.mjs';
 import { loadRouting } from '../lib/routing.mjs';
@@ -90,7 +91,8 @@ test('a forecast built from a calibrated run predicts that run: fix rounds are c
 });
 
 test('forecast counts agents and worktrees from the plan, gives the fix-round spread and flags placeholder rates', () => {
-  const f = forecast({ plan, lanes, routing, calibration: { samples: [] } });
+  const withPieces = attachPieces(plan, computeLanes(plan));
+  const f = forecast({ plan, lanes: withPieces, routing, calibration: { samples: [] } });
   assert.equal(f.lanes, 4);
   assert.equal(f.waves, 2);
   assert.equal(f.agents.counts.reviewer, 4);
@@ -98,7 +100,8 @@ test('forecast counts agents and worktrees from the plan, gives the fix-round sp
   assert.equal(f.agents.counts['implementer-deep'], 1);
   assert.equal(f.worktrees, 4, '3 parallel lanes + integration');
   assert.equal(f.baseUnits, 21.6);
-  assert.equal(f.units, Math.round((sum(W1) + W2[0]) * 10) / 10);
+  assert.equal(f.units, Math.round((sum(W1) + W2[0] + 9) * 10) / 10, 'three acceptance-tests pieces at mid weight 3 add work');
+  assert.equal(f.pieceUnits, 9);
   // SD = κ·√Σ W²p(1−p) = 0.35·√(3.8²·.25 + 0.8²·.16 + 3²·.25 + 14²·.16)
   assert.equal(f.usage.pctSd, Math.round(0.35 * Math.sqrt(3.8 ** 2 * 0.25 + 0.8 ** 2 * 0.16 + 9 * 0.25 + 196 * 0.16) * 10) / 10);
   assert.equal(f.calibrated, false);

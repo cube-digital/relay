@@ -1,0 +1,42 @@
+/* All and project page (overview.js). Scoped with ov- so app.css classes stay untouched. */
+.ov h2{font:600 11px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--ink2);margin:22px 0 10px;display:flex;gap:8px;align-items:center}
+.ov h2 .c{color:var(--mute)}
+.ov-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.ov-top h1{margin:0;font-size:20px}
+.ov-meta{color:var(--mute);font-size:12px}
+.ov-topacts{margin-left:auto;display:flex;gap:8px;align-items:center}
+.ov .btn{font:600 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:8px 10px;border-radius:6px;border:1px solid var(--line2);background:var(--panel);color:var(--ink2);cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-block}
+.ov .btn.p{border-color:var(--accent-line);color:var(--accent);background:var(--accent-bg)}
+.ov .btn.d{border-color:var(--red-line);color:var(--red)}
+.ov .btn:disabled{opacity:.5;cursor:default}
+.ov-needs{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.ov-need{display:grid;grid-template-columns:10px 120px 1fr auto;gap:12px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--panel)}
+.ov-need:last-child{border-bottom:0}
+.ov-dot{width:8px;height:8px;border-radius:50%;background:var(--red)}
+.ov-dot.y{background:#e0b25a}
+.ov-proj{font:600 11px/1 var(--mono);color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ov-what b{font-weight:600}
+.ov-small{color:var(--mute);font-size:12px}
+.ov-acts{display:flex;gap:6px;align-items:center}
+.ov-answer{grid-column:3/5;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ov-answer input{flex:1;min-width:200px;background:var(--bg);border:1px solid var(--line2);border-radius:6px;color:var(--ink);padding:7px 9px;font:inherit}
+.ov-err{color:var(--red);font-size:12px}
+.ov-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.ov-card{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:14px;min-width:0}
+.ov-h{display:flex;align-items:baseline;gap:8px;text-decoration:none;color:inherit}
+.ov-h b{font-size:15px}
+.ov-r{margin-left:auto;color:var(--mute);font-size:12px}
+.ov-bar{height:6px;border-radius:3px;background:var(--tile);margin:10px 0 4px;overflow:hidden}
+.ov-bar span{display:block;height:100%;background:var(--accent)}
+.ov-lane{display:grid;grid-template-columns:46px 40px 1fr auto;gap:8px;align-items:center;padding:6px 0;border-top:1px dashed var(--line)}
+.ov-id{font:600 11px/1 var(--mono);color:var(--ink2);white-space:nowrap}
+.ov-lane.red .ov-id,.ov-lane.red .ov-t{color:var(--red)}
+.ov-t{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ov-stats{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;font-size:12px;color:var(--ink2)}
+.ov-stats b{color:var(--ink);font-size:16px;display:block}
+.ov-cardacts{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;align-items:center}
+.ov-details{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:10px 14px;margin-top:10px;color:var(--ink2)}
+.ov-details summary{cursor:pointer;font:600 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase}
+.ov-details[open] summary{margin-bottom:10px}
+.ov-finished{display:flex;flex-direction:column;gap:4px}
+@media (max-width:900px){.ov-need{grid-template-columns:10px 1fr}.ov-need .ov-proj{display:none}.ov-answer{grid-column:1/-1}.ov-acts{grid-column:2}}

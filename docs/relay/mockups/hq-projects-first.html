@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>relay HQ · projects first</title>
+<style>
+:root{color-scheme:dark;--bg:#090909;--panel:#0f0f0f;--line:#222;--line2:#2c2c2c;--ink:#efece6;--ink2:#a19c93;--mute:#6f6b64;--accent:#7cc8ff;--accent-line:#24445e;--accent-bg:#0f1a24;--red:#ff5c5c;--red-line:#5a1c1c;--tile:#1c1c1c;--mono:ui-monospace,Menlo,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+.screen{display:grid;grid-template-columns:220px 1fr;min-height:100vh;border-bottom:1px solid var(--line)}
+.label{font:600 10px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--mute);padding:14px 20px;border-bottom:1px solid var(--line);background:#0b0b0b}
+aside{border-right:1px solid var(--line);padding:16px 10px;display:flex;flex-direction:column;gap:2px}
+aside .brand{font-weight:800;font-size:16px;padding:4px 10px 14px}.brand span{color:var(--accent);font-weight:500}
+aside a{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;color:var(--ink2);text-decoration:none}
+aside a.on{background:var(--accent-bg);color:var(--accent)}
+aside .sep{height:1px;background:var(--line);margin:8px 6px}
+aside .grow{flex:1}
+.b{margin-left:auto;display:flex;gap:4px}
+.n{font:600 10px/1 var(--mono);padding:3px 6px;border-radius:9px}
+.n.r{background:var(--red-line);color:#ffb3b3}.n.l{background:var(--accent-line);color:var(--accent);animation:p 1.6s infinite}
+@keyframes p{50%{opacity:.5}}
+main{padding:18px 26px 40px;min-width:0}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.top h1{margin:0;font-size:20px}.top .meta{color:var(--mute);font-size:12px}
+.top .act{margin-left:auto;display:flex;gap:8px}
+.btn{font:600 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:8px 10px;border-radius:6px;border:1px solid var(--line2);background:var(--panel);color:var(--ink2);cursor:pointer;white-space:nowrap}
+.btn.p{border-color:var(--accent-line);color:var(--accent);background:var(--accent-bg)}
+.btn.d{border-color:var(--red-line);color:#ffb3b3}
+h2{font:600 11px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--ink2);margin:22px 0 10px;display:flex;gap:8px;align-items:center}
+h2 .c{color:var(--mute)}
+.needs{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.row{display:grid;grid-template-columns:10px 120px 1fr auto;gap:12px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--panel)}
+.row:last-child{border-bottom:0}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--red)}.dot.y{background:#e0b25a}.dot.g{background:var(--mute)}
+.proj{font:600 11px/1 var(--mono);color:var(--ink2)}
+.what b{font-weight:600}.what .s{color:var(--ink2);font-size:12px}
+.acts{display:flex;gap:6px}
+.answer{grid-column:3/5;display:flex;gap:8px}
+.answer input{flex:1;background:var(--bg);border:1px solid var(--line2);border-radius:6px;color:var(--ink);padding:7px 9px;font:inherit}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:14px}
+.card .h{display:flex;align-items:baseline;gap:8px}.card .h b{font-size:15px}.card .h .r{margin-left:auto;color:var(--mute);font-size:12px}
+.bar{height:6px;border-radius:3px;background:var(--tile);margin:10px 0 4px;overflow:hidden}.bar span{display:block;height:100%;background:var(--accent)}
+.small{color:var(--mute);font-size:12px}
+.lane{display:grid;grid-template-columns:46px 28px 1fr auto;gap:8px;align-items:center;padding:6px 0;border-top:1px dashed var(--line)}
+.lane .id{font:600 11px/1 var(--mono);color:var(--ink2);white-space:nowrap}
+.lane.red .id,.lane.red .t{color:#ffb3b3}
+.tag{font:600 9px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;padding:4px 6px;border:1px solid var(--line2);border-radius:4px;color:var(--ink2)}
+.tag.ac{border-color:var(--accent-line);color:var(--accent)}.tag.red{border-color:var(--red-line);color:#ffb3b3}
+.stats{display:flex;gap:16px;margin:10px 0;font-size:12px;color:var(--ink2)}.stats b{color:var(--ink);font-size:16px;display:block}
+.cardacts{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+details{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:10px 14px;margin-top:10px;color:var(--ink2)}
+summary{cursor:pointer;font:600 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase}
+svg.m{width:27px;height:24px;fill:#6f6b64}svg.m.on{fill:var(--accent)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px}
+.wave{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:12px 14px;margin-bottom:10px}
+.wave .wh{display:flex;gap:8px;align-items:center;font:600 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink2);margin-bottom:6px}
+.task{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 0 82px}
+.tk{font:600 10px/1 var(--mono);padding:4px 6px;border-radius:4px;background:var(--tile);color:var(--ink2)}.tk.done{color:var(--mute);text-decoration:line-through}.tk.now{background:var(--accent-bg);color:var(--accent)}
+pre{margin:0;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;font:12px/1.5 var(--mono);color:var(--ink2);white-space:pre-wrap;max-height:260px;overflow:auto}
+.review{border:1px solid var(--accent-line);border-radius:10px;padding:14px;background:var(--accent-bg)}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="body" viewBox="0 0 9 8"><g><rect x="2" y="2" width="5" height="1"/><rect x="1" y="3" width="7" height="1"/><rect x="0" y="4" width="2" height="1"/><rect x="3" y="4" width="3" height="1"/><rect x="7" y="4" width="2" height="1"/><rect x="0" y="5" width="9" height="1"/><rect x="1" y="6" width="7" height="1"/><rect x="1" y="7" width="1" height="1"/><rect x="3" y="7" width="1" height="1"/><rect x="5" y="7" width="1" height="1"/><rect x="7" y="7" width="1" height="1"/></g></symbol>
+</defs></svg>
+
+<div class="label">Screen 1 · All (a project page looks the same, for one project)</div>
+<div class="screen">
+  <aside>
+    <div class="brand">RELAY <span>HQ</span></div>
+    <a class="on" href="#">★ All <span class="b"><span class="n r">3</span></span></a>
+    <div class="sep"></div>
+    <a href="#">narrio <span class="b"><span class="n r">2</span><span class="n l">▶1</span></span></a>
+    <a href="#">relay <span class="b"><span class="n r">1</span><span class="n l">▶1</span></span></a>
+    <a href="#">cube-website</a>
+    <div class="grow"></div>
+    <a href="#">⚙ Setup</a>
+  </aside>
+  <main>
+    <div class="top"><h1>All projects</h1><span class="meta">3 projects · 2 running · budget 5h 24%</span>
+      <span class="act"><button class="btn">Run plan</button><button class="btn p">+ New plan</button></span></div>
+
+    <h2>Needs you <span class="c">3</span></h2>
+    <div class="needs">
+      <div class="row"><span class="dot"></span><span class="proj">narrio</span>
+        <span class="what"><b>billing-export · lane b blocked</b><div class="s">"The export must include refunded invoices? The spec says paid only."</div></span>
+        <span class="acts"><button class="btn">Open run</button></span>
+        <div class="answer"><input placeholder="Your answer becomes a ruling; the run resumes from the ledger"><button class="btn p">Answer and resume</button></div>
+      </div>
+      <div class="row"><span class="dot"></span><span class="proj">relay</span>
+        <span class="what"><b>launch failed · /relay:run hq-sync</b><div class="s">exit 1 after 3m · 14:02</div></span>
+        <span class="acts"><button class="btn">Log</button><button class="btn p">Retry</button></span></div>
+      <div class="row"><span class="dot y"></span><span class="proj">setup</span>
+        <span class="what"><b>gh is not signed in</b><div class="s">Open PR and PR hygiene need it</div></span>
+        <span class="acts"><button class="btn">Copy command</button><button class="btn">Open Setup</button></span></div>
+    </div>
+
+    <h2>Running <span class="c">2</span></h2>
+    <div class="cards">
+      <div class="card">
+        <div class="h"><b>narrio · billing-export</b><span class="tag">feature</span><span class="r">41m · ~1h left</span></div>
+        <div class="bar"><span style="width:58%"></span></div><div class="small">wave 2/3 · 7 of 12 tasks</div>
+        <div class="lane"><span class="id">lane a</span><svg class="m on" viewBox="0 0 9 8" shape-rendering="crispEdges"><use href="#body"/><rect x="3" y="0" width="4" height="1" fill="#60a5fa"/><rect x="2" y="1" width="6" height="1" fill="#60a5fa"/></svg><span class="t">T7 · retry logic for the export job</span><span class="tag ac">working</span></div>
+        <div class="lane red"><span class="id">lane b</span><svg class="m" viewBox="0 0 9 8" shape-rendering="crispEdges"><use href="#body"/><rect x="3" y="0" width="4" height="1" fill="#8b5cf6"/><rect x="2" y="1" width="6" height="1" fill="#8b5cf6"/></svg><span class="t">T9 · refunded invoices</span><span class="tag red">blocked</span></div>
+        <div class="lane"><span class="id">lane c</span><svg class="m on" viewBox="0 0 9 8" shape-rendering="crispEdges"><use href="#body"/><rect x="0" y="1" width="9" height="1" fill="#fb923c"/></svg><span class="t">review · reviewer</span><span class="tag ac">review</span></div>
+      </div>
+      <div class="card">
+        <div class="h"><b>relay · hq-sync</b><span class="tag">feature</span><span class="r">12m · ~2h left</span></div>
+        <div class="bar"><span style="width:18%"></span></div><div class="small">wave 1/2 · 2 of 9 tasks</div>
+        <div class="lane"><span class="id">lane a</span><svg class="m on" viewBox="0 0 9 8" shape-rendering="crispEdges"><use href="#body"/><rect x="3" y="0" width="4" height="1" fill="#60a5fa"/><rect x="2" y="1" width="6" height="1" fill="#60a5fa"/></svg><span class="t">T2 · sidebar with project badges</span><span class="tag ac">working</span></div>
+        <div class="lane"><span class="id">lane b</span><svg class="m on" viewBox="0 0 9 8" shape-rendering="crispEdges"><use href="#body"/><rect x="3" y="0" width="4" height="1" fill="#f59e0b"/><rect x="2" y="1" width="6" height="1" fill="#f59e0b"/></svg><span class="t">T4 · POST /api/plans/merge</span><span class="tag ac">tests first</span></div>
+      </div>
+    </div>
+
+    <h2>Ready to merge <span class="c">1</span></h2>
+    <div class="cards">
+      <div class="card">
+        <div class="h"><b>relay · routines</b><span class="r">done 2h ago</span></div>
+        <div class="small">relay/routines/integration → relay-hq</div>
+        <div class="stats"><span><b>+14</b>tests</span><span><b>−0</b>tests</span><span><b>3</b>rulings</span><span><b>0</b>open findings</span><span><b>✓</b>suite</span></div>
+        <div class="cardacts"><button class="btn">Review</button><button class="btn p">Open PR</button><button class="btn">Merge locally</button><button class="btn">Mark merged</button></div>
+      </div>
+    </div>
+
+    <details><summary>Finished · 4</summary><p>flows-team · merged 2w ago · hq · merged 2w ago · …</p></details>
+    <details><summary>Activity and launches</summary><p>14:02 relay · launch failed · 13:40 narrio · wave 1 merged @ 5fee542 · …</p></details>
+  </main>
+</div>
+
+<div class="label">Screen 2 · Run page (narrio · billing-export)</div>
+<div class="screen">
+  <aside>
+    <div class="brand">RELAY <span>HQ</span></div>
+    <a href="#">★ All <span class="b"><span class="n r">3</span></span></a>
+    <div class="sep"></div>
+    <a class="on" href="#">narrio <span class="b"><span class="n r">2</span><span class="n l">▶1</span></span></a>
+    <a href="#">relay <span class="b"><span class="n r">1</span><span class="n l">▶1</span></span></a>
+    <a href="#">cube-website</a>
+    <div class="grow"></div>
+    <a href="#">⚙ Setup</a>
+  </aside>
+  <main>
+    <div class="top"><h1>billing-export</h1><span class="meta">narrio · flow feature · relay/billing-export/integration · 41m · ~1h left</span>
+      <span class="act"><button class="btn d">Stop</button></span></div>
+    <div class="grid2">
+      <div>
+        <div class="wave"><div class="wh">Wave 1 <span class="tag">merged @ 5fee542 · suite ✓</span></div>
+          <div class="lane"><span class="id">lane a</span><svg class="m" viewBox="0 0 9 8" shape-rendering="crispEdges"><use href="#body"/><rect x="3" y="0" width="4" height="1" fill="#60a5fa"/><rect x="2" y="1" width="6" height="1" fill="#60a5fa"/></svg><span class="t">Software Engineer · T1–T3</span><span class="tag">merged</span></div></div>
+        <div class="wave"><div class="wh">Wave 2 <span class="tag ac">running</span></div>
+          <div class="lane"><span class="id">lane a</span><svg class="m on" viewBox="0 0 9 8" shape-rendering="crispEdges"><use href="#body"/><rect x="3" y="0" width="4" height="1" fill="#60a5fa"/><rect x="2" y="1" width="6" height="1" fill="#60a5fa"/></svg><span class="t">Software Engineer · fix round 1/5</span><span class="tag ac">working</span></div>
+          <div class="task"><span class="tk done">T6</span><span class="tk now">T7 retry logic</span><span class="tk">T8</span></div>
+          <div class="lane red"><span class="id">lane b</span><svg class="m" viewBox="0 0 9 8" shape-rendering="crispEdges"><use href="#body"/><rect x="3" y="0" width="4" height="1" fill="#8b5cf6"/><rect x="2" y="1" width="6" height="1" fill="#8b5cf6"/></svg><span class="t">Senior Engineer · T9 blocked</span><span class="tag red">blocked</span></div>
+          <div class="task"><span class="tk now">T9 refunded invoices</span><span class="small">acceptance-tests ✓ · reviewer —</span></div>
+          <div class="lane"><span class="id">lane c</span><svg class="m on" viewBox="0 0 9 8" shape-rendering="crispEdges"><use href="#body"/><rect x="0" y="1" width="9" height="1" fill="#fb923c"/></svg><span class="t">Code Reviewer · reviewing T10</span><span class="tag ac">review</span></div></div>
+        <div class="wave"><div class="wh">Wave 3 <span class="tag">planned</span></div>
+          <div class="lane"><span class="id">lane d</span><svg class="m" viewBox="0 0 9 8" shape-rendering="crispEdges"><use href="#body"/><rect x="3" y="0" width="4" height="1" fill="#34d399"/><rect x="2" y="1" width="6" height="1" fill="#34d399"/></svg><span class="t">Engineer · T11–T12</span><span class="tag">planned</span></div></div>
+      </div>
+      <div>
+        <h2 style="margin-top:0">Live log</h2>
+<pre>14:31 Lane a: fix round 1/5 (1 addressed)
+14:28 Lane b: T9 BLOCKED, needs a decision on refunds
+14:20 wave 1: merged @ 5fee542, suite pass
+14:02 piece acceptance-tests lane b: pass
+…
+[launch 20261105-1350] dispatching reviewer for lane c</pre>
+        <h2>Launches</h2>
+        <div class="small">/relay:run --unattended · running 41m · <a href="#" style="color:var(--accent)">Log</a></div>
+        <h2>Review and merge</h2>
+        <div class="review"><div class="small">Shown when the plan is complete: tests added and removed, rulings, final-review findings, reports.</div>
+          <div class="cardacts"><button class="btn p">Open PR</button><button class="btn">Merge locally</button><button class="btn">Mark merged</button></div></div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

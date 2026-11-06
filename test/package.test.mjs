@@ -159,13 +159,13 @@ test('native plugin setup avoids duplicate hooks and doctor only reports trust a
   const report = runCli(['doctor', '--harness', 'codex', '--project', dir, '--codex-bin', process.execPath]);
   assert.equal(report.code, 0, report.stderr);
   assert.match(report.stdout, /trust: unknown/i);
-  assert.match(report.stdout, /agents: 10/);
+  assert.match(report.stdout, /agents: 12/);
   assert.equal(readFileSync(join(dir, '.codex/config.toml'), 'utf8'), before);
 });
 
 test('setup codex registers every role with an existing absolute config_file, with and without --plugin', () => {
   const roles = roleNames();
-  assert.equal(roles.length, 10);
+  assert.ok(roles.length > 0);
   for (const extra of [[], ['--plugin']]) {
     const { dir } = tempRepo();
     const result = runCli(['setup', 'codex', dir, ...extra]);
@@ -178,9 +178,9 @@ test('setup codex registers every role with an existing absolute config_file, wi
       assert.equal(file, join(dir, '.codex/agents', `relay-${role}.toml`));
       assert.ok(existsSync(file), file);
     }
-    assert.equal(config.match(/^\[agents\.relay-[\w-]+\]$/gm).length, 10);
+    assert.equal(config.match(/^\[agents\.relay-[\w-]+\]$/gm).length, roles.length);
     const report = runCli(['doctor', '--harness', 'codex', '--project', dir, '--codex-bin', process.execPath]);
-    assert.match(report.stdout, /registered in \.codex\/config\.toml: 10/);
+    assert.match(report.stdout, new RegExp(`registered in \\.codex/config\\.toml: ${roles.length}\\b`));
   }
 });
 
