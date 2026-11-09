@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { chmodSync, mkdirSync, writeFileSync, copyFileSync, readFileSync } from 'node:fs';
+import { chmodSync, mkdirSync, writeFileSync, copyFileSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { tempRepo, runCli, runHook } from './helpers.mjs';
 
@@ -213,4 +213,48 @@ test('weekly reset date survives a wave crossing its clock time several days ear
   const samples = codexWaveSamples(text,parsed.lanes,parsed.plan.slug,Object.fromEntries(parsed.plan.tasks.map(task=>[task.id,task]))).samples;
   assert.equal(samples.find(sample=>sample.kind==='usage').dU,20);
   assert.equal(samples.find(sample=>sample.kind==='wave').wallMinutes,60);
+});
+
+function writeSnapshot(home, snapshot) {
+  mkdirSync(join(home, 'codex'), { recursive: true });
+  writeFileSync(join(home, 'codex', 'budget.json'), JSON.stringify({ updatedAt: new Date().toISOString(), ...snapshot }));
+}
+
+function codexLevel(dir, home) {
+  const res = runCli(['budget', '--harness', 'codex', '--json'], { cwd: dir, env: { RELAY_HOME: home, CODEX_HOME: join(dir, 'empty'), RELAY_CODEX_BIN: join(dir, 'missing') } });
+  assert.equal(res.code, 0, res.stderr);
+  return JSON.parse(res.stdout).level;
+}
+
+test('a Codex secondary window shorter than a week is judged by the secondary lines 80/95', () => {
+  const { dir } = tempRepo(); const home = join(dir, 'home');
+  const at = pct => writeSnapshot(home, { windows: [{ id: 'primary', usedPercent: 10, windowMinutes: 300 }, { id: 'secondary', usedPercent: pct, windowMinutes: 1440 }] });
+  at(79); assert.equal(codexLevel(dir, home), 'normal');
+  at(80); assert.equal(codexLevel(dir, home), 'tight');
+  at(94); assert.equal(codexLevel(dir, home), 'tight');
+  at(95); assert.equal(codexLevel(dir, home), 'critical');
+});
+
+test('a weekly-only Codex account uses 80/95 and the spawn hook keeps the strong tier below the line and caps it when unknown', () => {
+  const { dir } = tempRepo(); const home = join(dir, 'home');
+  const weekly = pct => writeSnapshot(home, { planType: 'pro', windows: [{ id: 'primary', usedPercent: pct, windowMinutes: 10080 }] });
+  const env = { RELAY_HOME: home, CODEX_HOME: join(dir, 'empty') };
+  const input = { tool_name: 'spawn_agent', tool_input: { agent_type: 'relay-implementer-deep', message: 'Build', fork_turns: 'none' } };
+  weekly(79);
+  assert.equal(codexLevel(dir, home), 'normal');
+  const normal = runHook('codex-spawn.mjs', input, env);
+  assert.equal(normal.code, 0, normal.stderr);
+  const routed = JSON.parse(normal.stdout).hookSpecificOutput;
+  assert.equal(routed.permissionDecision, 'allow');
+  assert.equal(routed.updatedInput.model, 'gpt-6-astra');
+  assert.equal(routed.updatedInput.reasoning_effort, 'high');
+  weekly(80);
+  assert.equal(codexLevel(dir, home), 'tight');
+  rmSync(join(home, 'codex', 'budget.json'));
+  const unknown = runHook('codex-spawn.mjs', input, env);
+  assert.equal(unknown.code, 0, unknown.stderr);
+  const capped = JSON.parse(unknown.stdout).hookSpecificOutput;
+  assert.equal(capped.permissionDecision, 'allow');
+  assert.equal(capped.updatedInput.model, 'gpt-6.1-sol');
+  assert.equal(capped.updatedInput.reasoning_effort, 'medium');
 });

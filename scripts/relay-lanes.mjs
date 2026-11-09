@@ -9,6 +9,8 @@ import { mainRoot } from '../lib/git.mjs';
 import { attachPieces, loadFlowSet, planFlowProblems } from '../lib/flows.mjs';
 import { agentName, computeLanes } from '../lib/lanes.mjs';
 import { parsePlan, validatePlan } from '../lib/plan.mjs';
+import { resolveHarness } from '../lib/harness.mjs';
+import { codexRouting } from '../lib/codex-integration.mjs';
 import { loadRouting } from '../lib/routing.mjs';
 import { loadTeam } from '../lib/team.mjs';
 
@@ -27,13 +29,14 @@ export function planLanes(planPath, opts = {}) {
   const errors = [...validated.errors, ...flowCheck.errors];
   const warnings = [...validated.warnings, ...flowCheck.warnings];
   if (errors.length) return { plan, errors, warnings };
-  const cfg = loadRouting().lanes ?? {};
+  const harness = resolveHarness({ harness: opts.harness, codex: opts.codex });
+  const cfg = (harness === 'codex' ? codexRouting().lanes : loadRouting().lanes) ?? {};
   const lanes = computeLanes(plan, {
     maxLaneTasks: Number(opts.maxLaneTasks ?? cfg.maxLaneTasks ?? 6),
     maxParallelLanes: Number(opts.maxLanes ?? cfg.maxParallelLanes ?? 4),
   });
   attachPieces(plan, lanes, set, team);
-  return { plan, errors, warnings: [...warnings, ...lanes.warnings], lanes, specLine: /^\*\*Spec:\*\*\s*(.+)$/m.exec(text)?.[1]?.trim() };
+  return { plan, errors, warnings: [...warnings, ...lanes.warnings], lanes, harness, specLine: /^\*\*Spec:\*\*\s*(.+)$/m.exec(text)?.[1]?.trim() };
 }
 
 export function describeSegments(lane) {
@@ -72,13 +75,13 @@ export function renderBrief({ plan, planPath, lane, dir, specLine }) {
 }
 
 export function main(argv) {
-  const args = parseArgs(argv, { booleans: ['json', 'write'] });
+  const args = parseArgs(argv, { booleans: ['json', 'write', 'codex'] });
   const planPath = args._[0];
   if (!planPath) {
-    console.error('usage: relay lanes <plan.md> [--json] [--write] [--max-lanes N] [--max-lane-tasks N]');
+    console.error('usage: relay lanes <plan.md> [--json] [--write] [--max-lanes N] [--max-lane-tasks N] [--harness claude|codex]');
     return 64;
   }
-  const res = planLanes(planPath, { maxLanes: args['max-lanes'], maxLaneTasks: args['max-lane-tasks'] });
+  const res = planLanes(planPath, { maxLanes: args['max-lanes'], maxLaneTasks: args['max-lane-tasks'], harness: args.harness, codex: args.codex });
   if (res.errors.length) {
     for (const e of res.errors) console.error(`✗ ${e}`);
     for (const w of res.warnings) console.error(`! ${w}`);

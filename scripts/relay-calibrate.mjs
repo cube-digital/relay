@@ -39,7 +39,7 @@ export function main(argv) {
     console.log(`file: ${calPath}`);
     return planPath || args.show ? 0 : 64;
   }
-  const res = planLanes(planPath);
+  const res = planLanes(planPath, { harness });
   if (res.errors.length) {
     for (const e of res.errors) console.error(`✗ ${e}`);
     return 1;

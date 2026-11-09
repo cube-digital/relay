@@ -35,8 +35,8 @@ function writeJson(path, value) {
   writeFileSync(path, JSON.stringify(value, null, 2) + '\n');
 }
 
-function context(planPath) {
-  const res = planLanes(planPath);
+function context(planPath, opts = {}) {
+  const res = planLanes(planPath, opts);
   if (res.errors.length) throw new Error(`plan is invalid:\n  ${res.errors.join('\n  ')}`);
   const root = mainRoot(dirname(resolve(planPath)));
   if (!root) throw new Error('the plan must live inside a git repository');
@@ -291,7 +291,7 @@ export function clean(ctx) {
 
 export function main(argv) {
   const [cmd, ...rest] = argv;
-  const args = parseArgs(rest, { booleans: ['suite', 'final'] });
+  const args = parseArgs(rest, { booleans: ['suite', 'final', 'codex'] });
   try {
     if (cmd === 'status') {
       const root = args._[0] ? mainRoot(dirname(resolve(args._[0]))) : mainRoot(process.cwd());
@@ -299,18 +299,19 @@ export function main(argv) {
     }
     const planPath = args._[0];
     if (!['sync', 'merge', 'pack', 'clean'].includes(cmd) || !planPath) {
-      console.error('usage: relay worktrees <sync|merge|pack|status|clean> <plan.md> [--wave N] [--suite] [<lane> [--from REF] | --final]');
+      console.error('usage: relay worktrees <sync|merge|pack|status|clean> <plan.md> [--harness claude|codex] [--wave N] [--suite] [<lane> [--from REF] | --final]');
       return 64;
     }
-    const ctx = { ...context(planPath), planPath };
+    const hopts = { harness: args.harness, codex: args.codex };
+    const ctx = { ...context(planPath, hopts), planPath };
     if (cmd === 'sync') {
       const ok = sync(ctx, Number(args.wave ?? 1));
-      refreshBoard(planPath);
+      refreshBoard(planPath, hopts);
       return ok ? 0 : 1;
     }
     if (cmd === 'merge') {
       const code = merge(ctx, Number(args.wave ?? 1), { suite: Boolean(args.suite) });
-      refreshBoard(planPath);
+      refreshBoard(planPath, hopts);
       return code;
     }
     if (cmd === 'pack') return pack(ctx, args._[1], { from: args.from, final: Boolean(args.final) }) ? 0 : 1;

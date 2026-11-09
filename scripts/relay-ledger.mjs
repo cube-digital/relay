@@ -55,7 +55,7 @@ export function appendLedger(planPath, text, options = {}) {
     : readSnapshot(snapshotPath(resolveHarness(options)));
   const line = formatLine(text, { snapshot });
   appendFileSync(path, line);
-  refreshBoard(planPath);
+  refreshBoard(planPath, { harness: resolveHarness(options) });
   return line;
 }
 

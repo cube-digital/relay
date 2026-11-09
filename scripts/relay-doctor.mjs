@@ -1,9 +1,24 @@
 // Read-only local diagnostics. Hook installation is observable; user trust is not.
-import { accessSync, constants, existsSync, readFileSync, readdirSync } from 'node:fs';
+import { accessSync, constants, existsSync, readFileSync, readdirSync, realpathSync } from 'node:fs';
+import { homedir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { parseArgs } from '../lib/args.mjs';
 import { RELAY_ROOT } from '../lib/routing.mjs';
 import { resolveCodexBin } from '../lib/codex-rpc.mjs';
+
+function projectTrust(project) {
+  const userConfig = join(process.env.CODEX_HOME || join(homedir(), '.codex'), 'config.toml');
+  try {
+    const text = readFileSync(userConfig, 'utf8');
+    const paths = new Set([project]);
+    try { paths.add(realpathSync(project)); } catch { /* keep the given path */ }
+    const trusted = [...text.matchAll(/^\s*\[\s*projects\s*\.\s*(?:"((?:[^"\\]|\\.)*)"|'([^']*)')\s*\]\s*(?:#.*)?\n((?:(?!\s*\[).*\n?)*)/gm)]
+      .filter((m) => /^\s*trust_level\s*=\s*["']trusted["']/m.test(m[3]))
+      .map((m) => (m[1] !== undefined ? m[1].replace(/\\(.)/g, '$1') : m[2]));
+    if ([...paths].some((p) => trusted.includes(p))) return 'project trust: trusted';
+    return `project trust: not trusted in ${userConfig}; Codex ignores ${project}/.codex/config.toml (role registrations and [agents] defaults) until you trust the project`;
+  } catch { return 'project trust: unknown'; }
+}
 
 export function main(argv) {
   const args = parseArgs(argv);
@@ -24,7 +39,11 @@ export function main(argv) {
   console.log(`resources: ${missing.length ? `missing ${missing.join(', ')}` : 'complete'}`);
   const agents = join(project, '.codex', 'agents');
   const count = existsSync(agents) ? readdirSync(agents).filter((f) => /^relay-.*\.toml$/.test(f)).length : 0;
-  console.log(`project agents: ${count} (discovered on next Codex session)`);
+  const projectConfig = join(project, '.codex', 'config.toml');
+  let registered = 0;
+  try { registered = (readFileSync(projectConfig, 'utf8').match(/^\s*\[\s*agents\s*\.\s*"?relay-[\w-]+"?\s*\]/gm) ?? []).length; } catch { /* missing config: none registered */ }
+  console.log(`project agents: ${count}; registered in .codex/config.toml: ${registered}`);
+  console.log(projectTrust(project));
   const hookFile = join(project, '.codex', 'hooks.json');
   let malformed = false;
   if (existsSync(hookFile)) {
