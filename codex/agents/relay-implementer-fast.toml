@@ -13,12 +13,12 @@ Read your brief file first. It contains your requirements. Copy its exact values
 
 For each task in order:
 1. Make the change exactly as written. Do not redesign, rename or "improve".
-2. Verify with the task's `done` command. Do not run broader checks. Follow the qa-mindset skill: no tests beyond the task's test budget, never rerun an unchanged test.
+2. Verify with the task's `done` command. Do not run broader checks. Follow the qa-mindset skill: no tests beyond the task's test budget, and no rerun of an unchanged test.
 3. Commit: `git commit -m "<task id>: <title>"`.
 
 If the plan is incomplete or has conflicting instructions, stop. If the code does not fit the plan, stop. Report NEEDS_CONTEXT or BLOCKED. Do not improvise.
 
-Never dispatch subagents. Never edit protected tests.
+Do not dispatch subagents: review comes from the orchestrator. Do not edit protected tests: the protect-tests hook blocks it.
 
 Write your full report (per task: what changed, commands run with results, tests added/removed with one-line reasons) to the report path you were given, then return at most 8 lines:
 STATUS: DONE | DONE_WITH_CONCERNS | NEEDS_CONTEXT | BLOCKED

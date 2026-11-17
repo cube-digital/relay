@@ -3,7 +3,7 @@ name: run-lanes
 description: Use when executing a Relay plan through worktree lanes.
 ---
 
-Resolve this SKILL.md to its absolute real path. The installed Relay root is two directories above its containing directory. Read `<relay-root>/skills/using-relay/references/<harness>.md` (`codex` or `claude-code`). In all instructions, `relay <args>` means `node "<absolute-relay-root>/scripts/relay.mjs" <args>`. Substitute the resolved path on every call. Resolve all bundled skills, templates and roles from that same root. Never require a `relay` command on PATH or look for bundled files in the target project.
+Resolve this SKILL.md to its absolute real path. The installed Relay root is two directories above its containing directory. Read `<relay-root>/skills/using-relay/references/<harness>.md` (`codex` or `claude-code`). In all instructions, `relay <args>` means `node "<absolute-relay-root>/scripts/relay.mjs" <args>`. Substitute the resolved path on every call. Resolve all bundled skills, templates and roles from that same root. Do not require a `relay` command on PATH or look for bundled files in the target project: only the installed root is reliable.
 
 Write instructions as strict STE-style drafts. Use short sentences, clear actors, and consistent terms. Keep code, commands, paths, identifiers, output markers, quotations, and evidence exact. For teacher explanations, adapt the words and detail to the learner. Use examples, analogies, and diagrams when they help.
 
@@ -11,9 +11,9 @@ Read `<absolute-relay-root>/skills/using-relay/references/language-guide.md` and
 
 # Run lanes
 
-Coordinate the run. Never implement, test, or fix code in this context. Use the `relay` CLI for mechanical actions. Do not pause between tasks or waves to check in. Stop only for the reasons under **Stop**.
+Coordinate the run. Do not implement, test, or fix code in this context: lane agents do that, and this context must stay small for the whole run. Use the `relay` CLI for mechanical actions. Do not pause between tasks or waves to check in. Stop only for the reasons under **Stop**.
 
-Record every event with `relay ledger <plan> "<line>"`. After compaction, trust `relay ledger <plan>` and `git log` over your recollection. Never re-dispatch a lane the ledger marks complete.
+Record every event with `relay ledger <plan> "<line>"`. After compaction, trust `relay ledger <plan>` and `git log` over your recollection. Do not re-dispatch a lane the ledger marks complete: its commits are already on the lane branch.
 
 ## 0. Setup (once)
 
@@ -33,7 +33,7 @@ Record every event with `relay ledger <plan> "<line>"`. After compaction, trust 
    - DONE / DONE_WITH_CONCERNS → `relay worktrees pack <plan> <lane>` and dispatch the reviewer with the brief, report and package paths. For lanes with risk high, or when the budget is tight, let Codex review instead: `codex exec --sandbox read-only -o <review path> "Review per <absolute-relay-root>/roles/reviewer.md: brief <path>, report <path>, package <path>"`. A different model family has different blind spots, and it spends the other subscription's window. Tell the reviewer its findings path: the package path with `.review.md` replaced by `.findings.md`. For Codex, that is the `-o` path. At the same time, run the piece rule at `lane.after` for the lane. Start the fix loop of the lane only after these steps: the reviewer returned, each `lane.after` piece returned, and `relay flow done` ran for each piece. A read-only piece that checks a lane after a fix commit reports a false `blocked`.
    - NEEDS_CONTEXT → answer from the plan and spec, resume the same agent.
    - BLOCKED → decide: missing context (resume with it), too hard (escalate, below), plan wrong (rule, ledger the ruling, resume with it).
-5. **Fix loop** when the review has spec ❌ or Critical/Important findings, or when a blocking `lane.after` piece reported them. Minor findings go to the ledger as `deferred minor` and never enter the loop.
+5. **Fix loop** when the review has spec ❌ or Critical/Important findings, or when a blocking `lane.after` piece reported them. Minor findings go to the ledger as `deferred minor` and stay out of the loop.
    - Rounds 1–3: resume the same lane agent with the findings verbatim (from the reviewer and from the pieces). Its context is warm.
    - Rounds 4–5: dispatch implementer-deep (named `lane-<id>-r<round>`) with brief, report and findings: "a previous implementer tried <n> times. You own it now".
    - Each round: `relay worktrees pack <plan> <lane> --from <head the last review saw>` and a scoped re-review. The findings go to the `.findings.md` path of the new package. If a piece had findings in the round, run that piece again through the piece rule on the fixed lane.
@@ -66,7 +66,7 @@ Inside `relay marathon`, and in a run started with `--unattended` (a launch from
 
 ## Budget during the run
 
-Check `relay budget --harness <harness>` before each wave and after each merge. tight: implementer-deep only after round 3. Reviews on mid tier; Codex takes reviews. critical: finish in-flight lanes and their fix rounds, merge, write a handoff with the handoff skill, stop. Never start a wave at critical.
+Check `relay budget --harness <harness>` before each wave and after each merge. tight: implementer-deep only after round 3. Reviews on mid tier; Codex takes reviews. critical: finish in-flight lanes and their fix rounds, merge, write a handoff with the handoff skill, stop. Do not start a wave at critical: it cannot finish inside the window.
 
 ## Stop
 

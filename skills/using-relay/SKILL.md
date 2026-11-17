@@ -38,7 +38,7 @@ Load `pre-pr-quiz` before opening one.
 
 1. **Plan first.** Use `plan-with-tiers` for multi-step implementation. Set each task's tier, risk, files, deps, test budget, and `done` check.
 2. Use `run-lanes` to execute an existing plan when authorized. Related tasks share a lane and worktree. Use one implementer and one commit per task. Workers write reports and return at most 8 lines.
-3. Follow `qa-mindset`. Respect test budgets. Use narrow checks first. Never rerun unchanged tests or edit protected tests.
+3. Follow `qa-mindset`. Respect test budgets. Use narrow checks first. Do not rerun unchanged tests or edit protected tests: Relay's hooks block both.
 
 ## Dispatch
 

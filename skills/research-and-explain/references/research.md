@@ -22,7 +22,7 @@ Read the existing budget guidance and matching host reference under `<absolute-r
 
 Partition unresolved work into independent questions. Give each question non-overlapping ownership. Do not assign the same investigation twice or perform assigned work concurrently yourself. Use scout for narrow local search. Use teacher or reverse-engineer with `mode=research-only` for deeper synthesis or tracing.
 
-Before each dispatch, use actual host capacity information. Count the lead, ancestors, and other active agents against the total global limit. Available spawning capacity is the minimum of remaining global slots and `max-helpers` minus this lead's active helpers. Refresh the count before each spawn. Release completed helpers only through supported lifecycle tools. Never stop unrelated agents to make room.
+Before each dispatch, use actual host capacity information. Count the lead, ancestors, and other active agents against the total global limit. Available spawning capacity is the minimum of remaining global slots and `max-helpers` minus this lead's active helpers. Refresh the count before each spawn. Release completed helpers only through supported lifecycle tools. Do not stop unrelated agents to make room: they belong to other work.
 
 Use zero helpers if nested agents are forbidden, the host has no spawn tool, or remaining global capacity is unknown. Native Claude child roles have no Agent tool and research serially. Interactive main-session leads may dispatch only when active tools and capacity permit. At critical usage, start no helpers. At unknown/tight usage, prefer solo work. Use only essential narrow helpers through existing tier/cap policy.
 

@@ -3,7 +3,7 @@ name: plan-with-tiers
 description: Use when turning a spec or agreed design into an implementation plan, before writing code.
 ---
 
-Resolve this SKILL.md to its absolute real path. The installed Relay root is two directories above its containing directory. Read `<relay-root>/skills/using-relay/references/<harness>.md` (`codex` or `claude-code`). In all instructions, `relay <args>` means `node "<absolute-relay-root>/scripts/relay.mjs" <args>`. Substitute the resolved path on every call. Resolve all bundled skills, templates and roles from that same root. Never require a `relay` command on PATH or look for bundled files in the target project.
+Resolve this SKILL.md to its absolute real path. The installed Relay root is two directories above its containing directory. Read `<relay-root>/skills/using-relay/references/<harness>.md` (`codex` or `claude-code`). In all instructions, `relay <args>` means `node "<absolute-relay-root>/scripts/relay.mjs" <args>`. Substitute the resolved path on every call. Resolve all bundled skills, templates and roles from that same root. Do not require a `relay` command on PATH or look for bundled files in the target project: only the installed root is reliable.
 
 Write instructions as strict STE-style drafts. Use short sentences, clear actors, and consistent terms. Keep code, commands, paths, identifiers, output markers, quotations, and evidence exact. For teacher explanations, adapt the words and detail to the learner. Use examples, analogies, and diagrams when they help.
 
@@ -34,7 +34,7 @@ For every task write a `### <id>: <title>` section (what to build, interfaces, e
 | `deps` | Task ids that must land first. Only real dependencies. |
 | `behaviors` | The observable behaviors this task adds or changes, one short line each, from the spec. |
 | `tests` | Budget of NEW tests (qa-mindset): low risk 0–1, medium one per behavior, high one per behavior plus boundaries or one property test. 0 is right when existing tests or the type checker cover it. |
-| `done` | The narrowest command that proves the task: the related tests, a typecheck of the touched package. Never the full suite. |
+| `done` | The narrowest command that proves the task: the related tests, a typecheck of the touched package. Not the full suite: the CLI runs it once per wave. |
 
 Plan-level fields: `flow` (the flow you were given: `feature`, `bugfix`, or another file in `flows/`), `slug` (kebab-case), `suite` (full test command, run once per wave by the CLI), `setup` (dependency install for a fresh worktree, optional).
 When a requirements document exists (`docs/relay/requirements/<slug>.md`), start each behavior with the requirement it serves: `R2: amounts render with two decimals`.

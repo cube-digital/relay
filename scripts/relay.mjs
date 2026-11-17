@@ -21,6 +21,7 @@ const COMMANDS = {
   budget: ['./relay-budget.mjs', 'print the 5h/7d budget level (--json, --codex, --exit-code)'],
   doctor: ['./relay-doctor.mjs', 'read-only Codex install diagnostics: --harness codex [--project <dir>] [--codex-bin <path>]'],
   setup: ['./relay-setup.mjs', 'claude [--write-project] | codex <project-dir> [--plugin]'],
+  audit: ['./relay-audit.mjs', 'lint relay prompts for habits written for older models: [paths…] [--json]'],
 };
 
 const [cmd, ...rest] = process.argv.slice(2);

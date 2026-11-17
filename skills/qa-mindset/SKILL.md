@@ -3,7 +3,7 @@ name: qa-mindset
 description: Use when writing, changing, running or reviewing tests, or deciding how to verify a change.
 ---
 
-Resolve this SKILL.md to its absolute real path. The installed Relay root is two directories above its containing directory. Read `<relay-root>/skills/using-relay/references/<harness>.md` (`codex` or `claude-code`). In all instructions, `relay <args>` means `node "<absolute-relay-root>/scripts/relay.mjs" <args>`. Substitute the resolved path on every call. Resolve all bundled skills, templates and roles from that same root. Never require a `relay` command on PATH or look for bundled files in the target project.
+Resolve this SKILL.md to its absolute real path. The installed Relay root is two directories above its containing directory. Read `<relay-root>/skills/using-relay/references/<harness>.md` (`codex` or `claude-code`). In all instructions, `relay <args>` means `node "<absolute-relay-root>/scripts/relay.mjs" <args>`. Substitute the resolved path on every call. Resolve all bundled skills, templates and roles from that same root. Do not require a `relay` command on PATH or look for bundled files in the target project: only the installed root is reliable.
 
 Write instructions as strict STE-style drafts. Use short sentences, clear actors, and consistent terms. Keep code, commands, paths, identifiers, output markers, quotations, and evidence exact. For teacher explanations, adapt the words and detail to the learner. Use examples, analogies, and diagrams when they help.
 
@@ -23,12 +23,12 @@ Write a test only when it catches a real bug that other checks do not catch. Eac
 
 ## Write tests that catch bugs
 
-- Derive expected values from the spec or brief. Never run the code to determine the expected result.
+- Derive expected values from the spec or brief. Do not run the code to determine the expected result: a test that copies the code's output proves nothing.
 - Test behavior through public interfaces. Do not assert private methods, call order, or internal structure. A refactor must not break the test.
-- Mock only at process boundaries (network, clock, randomness, filesystems you don't own). Never mock the unit under test.
+- Mock only at process boundaries (network, clock, randomness, filesystems you don't own). Do not mock the unit under test: the test then checks the mock.
 - Strong assertions: exact values and states. No print-only tests, no `toBeTruthy` / not-null checks where a value is known, no loops or conditionals inside tests, no giant snapshots.
 - See the new test fail once for the right reason (or break the code on purpose and see it fail) before trusting it.
-- Never add code paths that special-case test inputs.
+- Do not add code paths that special-case test inputs: they pass the test and fail in use.
 
 ## Verify narrowly, once
 
@@ -39,11 +39,11 @@ Use the narrowest check that can fail, in this order, and stop at the first fail
 
 The full suite runs once per wave on the integration branch (`relay worktrees merge --suite`), not in lanes.
 
-Never rerun a test command on unchanged code. Reuse the previous result. Relay's retest guard blocks repeated runs. If the test is genuinely flaky, prefix the command with `RELAY_RERUN=1`. State the reason in the report.
+Do not rerun a test command on unchanged code. Reuse the previous result. Relay's retest guard blocks repeated runs. If the test is genuinely flaky, prefix the command with `RELAY_RERUN=1`. State the reason in the report.
 
 ## Protected tests
 
-Acceptance tests written by the test-author from the spec are protected. Never edit, weaken, skip or delete them to get green. If one looks wrong, stop and report BLOCKED with evidence: the spec line, what the test expects, what the code does.
+Acceptance tests written by the test-author from the spec are protected. Do not edit, weaken, skip or delete them to get green: they encode the spec, and the protect-tests hook blocks the change. If one looks wrong, stop and report BLOCKED with evidence: the spec line, what the test expects, what the code does.
 
 ## High-risk extra: mutation on the diff
 
