@@ -151,6 +151,21 @@ In Claude Code, relay's **mod** (a small module that hooks into Claude Code itse
 - when the usage budget is tight, any helper headed for Opus is moved to Sonnet, except the architect;
 - when the budget is critical, new implementers are refused with a message telling the coordinator to wrap up.
 
+#### Routes by session model
+
+The mod also reads the model of your main session and picks a **route** from [config/model-profiles.json](config/model-profiles.json). A session on Opus, Sonnet or Haiku takes the `default` route: everything above, unchanged. A session on Fable 5.2 takes the `fable-lead` route, because Fable is strongest at judgment and costs twice as much as Opus per token:
+
+| What | `default` route | `fable-lead` route |
+|---|---|---|
+| Architect: plan and final review | Opus, high | **Fable, high** |
+| Conductor, implementers, test author, reviewer | their tier | their tier (unchanged) |
+| Scout, `Explore` | Haiku | Haiku |
+| A lane still open after round 5 | the conductor rules | **round 6 on Fable** (medium effort), then the conductor rules |
+| Text Relay adds | none | lead skills: finish-the-work text below high effort, subagent cost; agents on Fable: write for a reader who saw none of the work |
+| Above 50% of the 5-hour window, or a tight budget | — | Fable work moves to Opus |
+
+`/relay:profile` (or `relay profile`) shows the route, each role's model and effort, and advice such as setting `/effort high` before an unattended Fable run. Relay never changes the model or effort of your main session: a change mid-session reads the whole conversation again without the cache.
+
 ### 2. Plans that carry the decisions
 
 Everything that needs judgment is decided once, at plan time, by the strongest model. A plan is a markdown file for people plus one JSON block for tools:
@@ -307,10 +322,14 @@ flowchart TD
     rev -- "critical or important" --> f13["rounds 1 to 3:<br/>the same agent fixes,<br/>its context is still warm"]
     f13 --> rr1{"scoped re-review<br/>of the fix only"}
     rr1 -- addressed --> ok
-    rr1 -- "still open" --> f45["rounds 4 and 5:<br/>a fresh implementer-deep (Opus)<br/>reads what was tried and takes over"]
+    rr1 -- "still open" --> f45["rounds 4 and 5:<br/>a fresh implementer-deep (Opus)<br/>reads what was tried and takes over;<br/>medium effort, then high"]
     f45 --> rr2{"scoped re-review"}
     rr2 -- addressed --> ok
-    rr2 -- "still open after round 5" --> rule["the conductor rules on each finding<br/>and records why"]
+    rr2 -- "still open after round 5" --> r6{"fable-lead route?"}
+    r6 -- yes --> f6["round 6: implementer-deep on Fable"] --> rr3{"scoped re-review"}
+    rr3 -- addressed --> ok
+    rr3 -- "still open" --> rule
+    r6 -- no --> rule["the conductor rules on each finding<br/>and records why"]
     rule --> ok
 ```
 
@@ -318,7 +337,8 @@ Three rules keep this loop from eating the budget:
 
 - Re-reviews only look at the fix, so they cannot wander into new topics.
 - Minor findings never enter the loop. They are written down for the final review to triage.
-- After five rounds the loop stops. A loop that has not converged by then is a problem in the plan, and more rounds will not fix it.
+- After five rounds the loop stops (six on the `fable-lead` route). A loop that has not converged by then is a problem in the plan, and more rounds will not fix it.
+- Effort rises before the model does: round 4 runs at medium effort and round 5 at high.
 
 Every decision the conductor makes on your behalf is written to the ledger as `Ruling: what — why — what it costs if wrong`, and the final report lists all of them.
 
@@ -1067,6 +1087,7 @@ Claude Code provides the command wrappers, board UI command, and shared design a
 | `/relay:marathon status \| stop [now]` | Where a marathon is (leg, wait, last outcome, ledger tail), or end it. |
 | `/relay:calibrate [plan]` | Learns your account's real usage and speed from a finished run; without a plan, shows the current calibration. |
 | `/relay:budget` | The 5-hour and weekly level relay routes by: normal, tight or critical. |
+| `/relay:profile [--model <id>]` | The route for this session's model: each role's model and effort, the Fable fix round, and the text relay adds for the model. |
 | `/relay:checkpoint [task or destination]` | Saves the current chat and work state as a timestamped checkpoint for another person or agent. |
 | `/relay:quiz [base branch or focus]` | Before a pull request: shows what the checks did and did not cover, quizzes you on the change until you pass, then asks which evidence you want next. Does not open the pull request. |
 | `/relay:relay-teach <question>` | Uses the shared teaching skill to explain a topic from evidence in the current conversation. |
@@ -1174,6 +1195,8 @@ relay worktrees status | clean <plan>         what each lane is doing; remove th
 relay ledger <plan> ["line"] [--rulings]      the run's memory on disk
 relay protect add | remove | list <paths>     acceptance tests the implementers may not change
 relay budget [--codex] [--json]               5-hour and weekly level: normal, tight, critical
+relay profile [--model <id>] [--json]         the route for the session's model: each role's model and effort
+relay audit [paths…] [--json]                 lint relay prompts for habits written for older models
 relay build [--check]                         regenerate agents and hooks for both tools
 relay setup claude | codex                    project settings and discovery (--plugin: native Codex hooks)
 relay doctor --harness codex                  read-only executable, resource, discovery and hook diagnostics
@@ -1202,6 +1225,8 @@ Claude model tiers, Claude budget policy, lane limits and forecast weights live 
   "lanes": { "maxLaneTasks": 6, "maxParallelLanes": 4 }
 }
 ```
+
+What changes per session model lives in [config/model-profiles.json](config/model-profiles.json), with the texts in [profiles/overlays/](profiles/overlays/); see [profiles/README.md](profiles/README.md). `relay build` validates the profiles and embeds them in the mod.
 
 To change which tier a role uses, edit its file in `roles/`. After role or shared routing changes, run `node scripts/relay.mjs build`. It regenerates `agents/`, `codex/` and the marked routing block in `hooks/register.ts`. Edit the source files, then rebuild; do not edit those generated outputs by hand.
 

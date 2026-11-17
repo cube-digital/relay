@@ -64,6 +64,23 @@ These defaults backstop omitted spawn choices. They do not change the parent ses
 
 Codex may ignore the project `.codex/config.toml` (role registrations and `[agents]` defaults) until the project is trusted in `~/.codex/config.toml`; doctor warns about it. This is unconfirmed live.
 
+### Model profiles
+
+[`config/model-profiles.json`](../../config/model-profiles.json) changes Relay's routing by the model of the main Claude Code session. The mod reads the session model and uses the first profile with a `match` entry inside the model id or alias; no match is the `default` route, which is the tier routing above. Codex has no profiles.
+
+| Key | Meaning |
+|---|---|
+| `frontier.claude` | The model and effort of frontier work (`fable`, `high`). |
+| `profiles[].match` | Fragments of model ids or aliases (`fable`, `mythos`). |
+| `profiles[].route` | `fable-lead`: frontier roles and one extra fix round on the frontier model. |
+| `profiles[].frontierRoles` | Roles sent to the frontier model (`architect`). |
+| `profiles[].escalation` | `agentSuffix` of the extra fix round (`r6`: agent `lane-<id>-r6`) and its effort. |
+| `profiles[].frontierCap` | Percent of the 5-hour and weekly windows above which frontier work runs on the `strong` tier. A tight or critical budget also applies the caps of `budget`. |
+| `profiles[].lead` | Relay skills that get lead text when the main session expands them, the overlays (`belowEffort`: only while the session effort is lower), and the effort `relay marathon` gives Claude legs on this model. |
+| `profiles[].spawnOverlays` | Overlays added to the brief of an agent that runs on the frontier model (`frontier`) or in the extra fix round (`escalation`). |
+
+Overlay texts live in [`profiles/overlays/`](../../profiles/overlays/). `relay build` checks every role, skill, overlay and effort a profile names and embeds the profiles in `hooks/register.ts`. `relay profile [--model <id>]` prints the resulting route.
+
 ### Claude budget policy
 
 | Key | Default |
