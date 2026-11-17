@@ -1,0 +1,39 @@
+{
+  "$comment": "Model profiles: what Relay changes when the main Claude Code session runs on a given model. The first profile with a `match` entry inside the session's model id or alias applies; no match is the `default` route (Relay as before). Edit, then run `relay build`: it embeds the profiles and the texts in profiles/overlays/ in hooks/register.ts. Codex has no profiles.",
+  "frontier": {
+    "$comment": "The model behind the fable-lead route's judgment roles. Under a tight budget it falls back to the strong tier of config/routing.json.",
+    "claude": { "model": "fable", "effort": "high" }
+  },
+  "profiles": [
+    {
+      "id": "fable-5.2",
+      "match": ["fable", "mythos"],
+      "route": "fable-lead",
+      "frontierRoles": ["architect"],
+      "escalation": {
+        "$comment": "One fix round on the frontier model after implementer-deep's rounds, before the conductor adjudicates. The conductor dispatches implementer-deep named lane-<id>-<agentSuffix> with this effort.",
+        "agentSuffix": "r6",
+        "effort": "medium"
+      },
+      "frontierCap": {
+        "$comment": "Percent of the usage window above which frontier spawns fall back to the strong tier.",
+        "fiveHour": 50,
+        "sevenDay": 80
+      },
+      "lead": {
+        "$comment": "Text added to these Relay skills when the main session expands them. `belowEffort`: only while the session's effort is under that level.",
+        "skills": ["relay-design", "relay-plan", "relay-run", "relay-marathon"],
+        "overlays": [
+          { "id": "finishing-work", "belowEffort": "high" },
+          { "id": "subagent-cost" }
+        ],
+        "unattendedEffort": "high"
+      },
+      "spawnOverlays": {
+        "$comment": "Text added to the brief of a Relay agent that this profile sends to the frontier model.",
+        "frontier": ["communicating-clearly"],
+        "escalation": ["finishing-work", "communicating-clearly"]
+      }
+    }
+  ]
+}

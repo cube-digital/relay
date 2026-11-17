@@ -20,7 +20,8 @@
 //   --max-turns N          turns per leg before it ends and a new leg starts (default 400)
 //   --harness H            claude | codex (also --codex); defaults to the active harness
 //   --codex-bin PATH       Codex executable override
-//   --effort LEVEL         Codex conductor reasoning effort (routing mid tier default)
+//   --effort LEVEL         the conductor's effort (Codex: reasoning effort). Default: the mid tier's;
+//                          on a model with a profile (--model fable), the profile's unattended effort
 //   --model <alias>        the conductor's model (routing mid tier default)
 //   --permission-mode M    auto (default) | acceptEdits | bypassPermissions
 //   --allowed-tools "..."  extra --allowedTools rules (e.g. "Bash(pnpm test *)")
@@ -38,6 +39,7 @@ import { resolveCodexBin } from '../lib/codex-rpc.mjs';
 import { formatForecast } from '../lib/forecast.mjs';
 import { ensureExcluded, git, mainRoot } from '../lib/git.mjs';
 import { classifyLeg, decideNext, legPrompt, parseClaudeJson, parseCodexJson } from '../lib/marathon.mjs';
+import { loadProfiles, profileForModel } from '../lib/profiles.mjs';
 import { loadRouting, RELAY_ROOT } from '../lib/routing.mjs';
 import { formatForecast as formatCodexForecast } from '../codex-math/lib/forecast.mjs';
 import { forecastPlan } from './relay-forecast.mjs';
@@ -96,8 +98,17 @@ export function resolveClaudeBin(env = process.env) {
   return undefined;
 }
 
-export function legArgs({ prompt, model, permissionMode, maxTurns, allowedTools, pluginDir, sessionId = randomUUID() }) {
+// A leg is its own session, so its effort costs no cache. A Claude leg on a model with a
+// profile (config/model-profiles.json) runs at the profile's unattended effort: Fable 5.2
+// ends long turns early below `high`.
+export function legEffort(harness, model, fallback) {
+  if (harness === 'codex') return fallback;
+  return profileForModel(loadProfiles(), model)?.lead?.unattendedEffort ?? fallback;
+}
+
+export function legArgs({ prompt, model, effort, permissionMode, maxTurns, allowedTools, pluginDir, sessionId = randomUUID() }) {
   const args = ['-p', prompt, '--session-id', sessionId, '--output-format', 'json', '--model', model, '--permission-mode', permissionMode, '--permission-prompts', 'none', '--max-turns', String(maxTurns)];
+  if (effort) args.push('--effort', effort);
   if (permissionMode === 'bypassPermissions') args.push('--dangerously-skip-permissions');
   if (allowedTools) args.push('--allowedTools', allowedTools);
   if (pluginDir) args.push('--plugin-dir', pluginDir);
@@ -287,7 +298,7 @@ export async function main(argv) {
   const options = {
     harness,
     model: args.model ?? mid.model,
-    effort: args.effort ?? mid.effort,
+    effort: args.effort ?? legEffort(harness, args.model ?? mid.model, mid.effort),
     permissionMode: harness === 'codex' ? 'approve-for-me' : args['permission-mode'] ?? 'auto',
     maxTurns: Number(args['max-turns'] ?? 400),
     maxLegs: Number(args['max-legs'] ?? 24),

@@ -17,7 +17,7 @@ Record every event with `relay ledger <plan> "<line>"`. After compaction, trust 
 
 ## 0. Setup (once)
 
-1. `relay budget --harness <harness>`. If critical, stop and say so.
+1. `relay budget --harness <harness>`. If critical, stop and say so. In Claude Code, also run `relay profile`: its route decides fix round 6 (below).
 2. `relay lanes <plan> --write`. If it reports errors, the plan goes back to the plan-with-tiers skill. The command also prints the flow of the plan and the pieces that each lane can get.
 3. Read the plan once. Ledger: `start: <n> tasks, <lanes> lanes, <waves> waves` (this exact line; `relay calibrate` reads it).
 
@@ -35,9 +35,10 @@ Record every event with `relay ledger <plan> "<line>"`. After compaction, trust 
    - BLOCKED → decide: missing context (resume with it), too hard (escalate, below), plan wrong (rule, ledger the ruling, resume with it).
 5. **Fix loop** when the review has spec ❌ or Critical/Important findings, or when a blocking `lane.after` piece reported them. Minor findings go to the ledger as `deferred minor` and stay out of the loop.
    - Rounds 1–3: resume the same lane agent with the findings verbatim (from the reviewer and from the pieces). Its context is warm.
-   - Rounds 4–5: dispatch implementer-deep (named `lane-<id>-r<round>`) with brief, report and findings: "a previous implementer tried <n> times. You own it now".
+   - Rounds 4–5: dispatch implementer-deep (named `lane-<id>-r<round>`) with brief, report and findings: "a previous implementer tried <n> times. You own it now". Dispatch round 4 at effort `medium` and round 5 at effort `high`: more effort is a smaller step than a stronger model.
+   - Round 6, only when `relay profile` reports route `fable-lead` and the budget is normal: dispatch implementer-deep named `lane-<id>-r6` at effort `medium`, with the same inputs. Relay's mod runs it on the frontier model.
    - Each round: `relay worktrees pack <plan> <lane> --from <head the last review saw>` and a scoped re-review. The findings go to the `.findings.md` path of the new package. If a piece had findings in the round, run that piece again through the piece rule on the fixed lane.
-   - After round 5, adjudicate each open finding yourself: park it (`Ruling: ...`) or, if later work builds on it, rule the smallest change and carry it into the next wave's dispatches.
+   - After the last round, adjudicate each open finding yourself: park it (`Ruling: ...`) or, if later work builds on it, rule the smallest change and carry it into the next wave's dispatches.
 6. **Merge the wave** when every lane is clean or parked: `relay worktrees merge <plan> --wave N --suite`. The full suite runs here once. A conflict or a red suite: resume the responsible lane with the exact failure, then merge again.
 7. Ledger `wave N: merged @ <sha>, suite <pass/fail>` (this exact shape. It is a calibration sample). Run the piece rule at `wave.after`. `relay budget --harness <harness>`. Then the next wave.
 

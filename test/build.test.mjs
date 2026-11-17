@@ -111,7 +111,7 @@ test('build reports a codex number that has no source label', () => {
 
 test('build --check fails for a piece with an unknown role, a piece placed outside its slots, and a role without its profile, and a routine with an unknown check or a bad schedule', () => {
   const dir = mkdtempSync(join(tmpdir(), 'relay-flow-'));
-  for (const d of ['agents', 'scripts', 'codex', 'codex-math', 'config', 'flows', 'hooks', 'pieces', 'roles', 'skills']) cpSync(join(ROOT, d), join(dir, d), { recursive: true });
+  for (const d of ['agents', 'scripts', 'codex', 'codex-math', 'config', 'flows', 'hooks', 'pieces', 'profiles', 'roles', 'skills']) cpSync(join(ROOT, d), join(dir, d), { recursive: true });
   assert.equal(main(['--check'], dir), 0);
   const ghost = JSON.parse(readFileSync(join(dir, 'pieces', 'platform-review.json'), 'utf8'));
   writeFileSync(join(dir, 'pieces', 'ghost.json'), JSON.stringify({ ...ghost, id: 'ghost', role: 'no-such-role' }));
