@@ -11,7 +11,7 @@ Read `<absolute-relay-root>/skills/using-relay/references/language-guide.md` and
 
 # Relay setup
 
-Show the concrete project settings changes before applying them unless installation/setup is already authorized. Never change personal/global settings as part of project setup.
+Show the concrete project settings changes before applying them unless installation/setup is already authorized. Do not change personal or global settings as part of project setup: they affect every project of the user.
 
 ## Codex
 
@@ -31,4 +31,4 @@ For a local marketplace use `codex plugin marketplace add <absolute-relay-root>`
 
 ## Routing and long runs
 
-Edit `roles/`, `config/routing.json` (Claude) or `codex-math/config/codex-routing.json` (Codex), then run the bundled `build`. `build --check` fails when a Codex role tier disagrees with `roles/` or a Codex number has no source label. Never hand-edit generated agents or hooks. Use the shared relay-marathon skill for unattended runs and pass the active `--harness`. Keep the computer awake. Use an independent terminal when the session cannot own a background process.
+Edit `roles/`, `config/routing.json` (Claude) or `codex-math/config/codex-routing.json` (Codex), then run the bundled `build`. `build --check` fails when a Codex role tier disagrees with `roles/` or a Codex number has no source label. Do not hand-edit generated agents or hooks: the next build overwrites them. Use the shared relay-marathon skill for unattended runs and pass the active `--harness`. Keep the computer awake. Use an independent terminal when the session cannot own a background process.

@@ -1,0 +1,1 @@
+Write your report for a reader who saw none of the work. Start with the result and the decisions that the reader must make. Then give what changed and the evidence: each command that you ran and its result. Use plain words and complete sentences. Define a term the first time that you use it. Keep the format and line limits of your role's return.

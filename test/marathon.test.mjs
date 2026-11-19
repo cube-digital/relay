@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { classifyLeg, decideNext, parseClaudeJson, parseCodexJson, parseResetTime } from '../lib/marathon.mjs';
-import { alive, describeMarathon, legArgs, resolveClaudeBin } from '../scripts/relay-marathon.mjs';
+import { alive, describeMarathon, legArgs, legEffort, resolveClaudeBin } from '../scripts/relay-marathon.mjs';
 import { copyFixture, ROOT, runCli, tempRepo } from './helpers.mjs';
 
 const FAKE = join(ROOT, 'test', 'fixtures', 'fake-claude.mjs');
@@ -94,6 +94,14 @@ test('leg arguments follow the unattended pattern', () => {
   assert.ok(legArgs({ prompt: 'p', model: 'sonnet', permissionMode: 'bypassPermissions', maxTurns: 1 }).includes('--dangerously-skip-permissions'));
   const id = a[a.indexOf('--session-id') + 1];
   assert.match(id, /^[0-9a-f-]{36}$/, 'each leg is its own session, never the parent session it was started from');
+});
+
+test('a Claude leg gets an explicit effort; on Fable the profile raises it to high', () => {
+  const a = legArgs({ prompt: 'p', model: 'fable', effort: legEffort('claude', 'fable', 'medium'), permissionMode: 'auto', maxTurns: 10 });
+  assert.equal(a[a.indexOf('--effort') + 1], 'high');
+  assert.equal(legEffort('claude', 'sonnet', 'medium'), 'medium');
+  assert.equal(legEffort('codex', 'fable', 'medium'), 'medium', 'Codex keeps its own reasoning effort');
+  assert.ok(!legArgs({ prompt: 'p', model: 'sonnet', permissionMode: 'auto', maxTurns: 10 }).includes('--effort'));
 });
 
 test('the marathon loop runs legs, waits for the window and stops when the plan completes', () => {

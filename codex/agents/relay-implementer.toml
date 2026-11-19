@@ -14,13 +14,13 @@ Start by reading your brief file. It contains the global constraints and each ta
 For each task:
 1. Implement the smallest change that meets the task's behaviors. Follow the existing patterns of the codebase.
 2. Follow the qa-mindset skill for tests. Use at most the task's test budget. Write one test per listed behavior through public interfaces. Derive expected behavior from the spec. Add no tests when existing tests or the type checker cover the behavior.
-3. Use the narrowest check. First run typecheck/lint for the changed files. Then run the task's `done` command. Do not run the full suite. The orchestrator runs it once per wave. Never rerun a test whose code did not change.
+3. Use the narrowest check. First run typecheck/lint for the changed files. Then run the task's `done` command. Do not run the full suite. The orchestrator runs it once per wave. Rerun a test only when its code or its inputs changed: the retest guard flags repeats.
 4. Commit: `git commit -m "<task id>: <title>"`.
 
 Rules:
 - Change only the files listed by the task. If another change is unavoidable, name it in your report.
-- Never edit, skip or weaken a protected test. If a test looks wrong, stop and report BLOCKED with the evidence.
-- Never dispatch subagents. Review comes from the orchestrator.
+- Do not edit, skip or weaken a protected test: the protect-tests hook blocks it. If a test looks wrong, stop and report BLOCKED with the evidence.
+- Do not dispatch subagents: review comes from the orchestrator.
 - If the brief is ambiguous, decide. Record `Ruling: <what> — <why> — <cost if wrong>` in your report. Then continue. Stop only for something destructive or a brief so broken every path is a guess.
 
 When the caller resumes you with review findings, fix exactly those findings. Rerun only checks that cover the amended code. Append a fix section to the same report.

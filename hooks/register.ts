@@ -160,6 +160,60 @@ const ROUTING = {
     }
   }
 } as const satisfies Routing
+const PROFILES = {
+  "frontier": "fable",
+  "profiles": [
+    {
+      "id": "fable-5.2",
+      "match": [
+        "fable",
+        "mythos"
+      ],
+      "route": "fable-lead",
+      "frontierRoles": [
+        "architect"
+      ],
+      "escalation": {
+        "agentSuffix": "r6"
+      },
+      "frontierCap": {
+        "fiveHour": 50,
+        "sevenDay": 80
+      },
+      "lead": {
+        "skills": [
+          "relay-design",
+          "relay-plan",
+          "relay-run",
+          "relay-marathon"
+        ],
+        "overlays": [
+          {
+            "id": "finishing-work",
+            "belowEffort": "high"
+          },
+          {
+            "id": "subagent-cost"
+          }
+        ]
+      },
+      "spawnOverlays": {
+        "frontier": [
+          "communicating-clearly"
+        ],
+        "escalation": [
+          "finishing-work",
+          "communicating-clearly"
+        ]
+      }
+    }
+  ],
+  "overlays": {
+    "communicating-clearly": "Write your report for a reader who saw none of the work. Start with the result and the decisions that the reader must make. Then give what changed and the evidence: each command that you ran and its result. Use plain words and complete sentences. Define a term the first time that you use it. Keep the format and line limits of your role's return.",
+    "finishing-work": "Finish the work that you were given. Give a one-line progress note when it helps, then continue. Do not stop to ask whether to continue. Do not end a turn with a list of remaining steps that you can do yourself. Treat a failed command, a timeout, or an empty result as a problem to diagnose and work around. Stop only for a decision that belongs to the user, or for a deliberate block: a protected file, missing access, a safety rule, or a stop reason of this workflow. Then state what you found and what you need.",
+    "subagent-cost": "A subagent starts with an empty context and reads every file again. Its tokens count against the same usage window as yours. Dispatch one only when the work runs in parallel with other work, produces long output that would fill this context, or needs a reviewer that did not see how the work was done. Do the rest yourself. Give each subagent a complete brief: the goal, the files, the check that proves the work, and the report path."
+  }
+} as const satisfies Profiles
 // </relay:generated>
 
 type Tier = 'cheap' | 'mid' | 'strong'
@@ -177,12 +231,31 @@ type Routing = {
     critical: Cap & { denyNewSpawns: readonly string[]; hide: readonly string[] }
   }
 }
+type Profile = {
+  id: string
+  match: readonly string[]
+  route: string
+  frontierRoles: readonly string[]
+  escalation: { agentSuffix: string } | null
+  frontierCap: { fiveHour: number; sevenDay: number }
+  lead: { skills: readonly string[]; overlays: readonly { id: string; belowEffort?: string }[] }
+  spawnOverlays: { frontier: readonly string[]; escalation: readonly string[] }
+}
+type Profiles = { frontier: string; profiles: readonly Profile[]; overlays: Readonly<Record<string, string>> }
 type Level = 'normal' | 'tight' | 'critical' | 'unknown'
 type Window = { percentUsed: number; resetsAt?: string }
 type Limits = { kind: string; percentUsed: number; resetsAt?: string }[]
 
 const routing: Routing = ROUTING
+const profiles: Profiles = PROFILES
 const LANE_NAME = /^lane-([a-z]+)(?:-[\w-]+)?$/
+const EFFORTS = ['low', 'medium', 'high', 'xhigh', 'max']
+
+// The main session's model (read at session start and on each prompt) and effort (read on
+// each main-loop request). They choose the model profile (config/model-profiles.json).
+let sessionModel: string | undefined
+let sessionEffort: string | undefined
+let announcedProfile: string | undefined
 
 let fiveHour: Window | undefined
 let sevenDay: Window | undefined
@@ -224,16 +297,47 @@ export function tierOfModel(model: string | undefined): Tier | undefined {
   return undefined
 }
 
+// The profile of a model id or alias, or undefined for the default route.
+export function profileFor(model: string | undefined): Profile | undefined {
+  if (!model) return undefined
+  const m = model.toLowerCase()
+  return profiles.profiles.find(p => p.match.some(x => m.includes(x)))
+}
+
+export function effortBelow(effort: string | undefined, limit: string): boolean {
+  const a = effort === undefined ? -1 : EFFORTS.indexOf(effort)
+  return a !== -1 && a < EFFORTS.indexOf(limit)
+}
+
+// Above the profile's frontier cap (or at a tight or critical budget), frontier work falls back to the strong tier.
+export function frontierCapped(profile: Profile, level: Level): boolean {
+  if (level === 'tight' || level === 'critical') return true
+  return (fiveHour?.percentUsed ?? 0) >= profile.frontierCap.fiveHour || (sevenDay?.percentUsed ?? 0) >= profile.frontierCap.sevenDay
+}
+
+// 'frontier' for a role the profile sends to the frontier model, 'escalation' for its extra fix round, else undefined.
+export function frontierKind(profile: Profile | undefined, role: string | undefined, name?: string): 'frontier' | 'escalation' | undefined {
+  if (!profile || role === undefined) return undefined
+  if (profile.frontierRoles.includes(role)) return 'frontier'
+  const suffix = profile.escalation?.agentSuffix
+  if (suffix && role === 'implementer-deep' && name !== undefined && LANE_NAME.test(name) && name.endsWith(`-${suffix}`)) return 'escalation'
+  return undefined
+}
+
 // The model this spawn should get, or undefined to leave Claude Code's choice alone.
 export function routeModel(
-  input: { subagentType: string; model?: string; parentModel: string },
+  input: { subagentType: string; model?: string; parentModel: string; name?: string },
   level: Level,
+  profile?: Profile,
 ): string | undefined {
   const role = roleOf(input.subagentType)
   let model = input.model
   if (!model && !role) {
     const tier = routing.unrouted[input.subagentType]
     if (tier) model = routing.tiers[tier]
+  }
+  if (!input.model && frontierKind(profile, role, input.name)) {
+    model = frontierCapped(profile as Profile, level) ? routing.tiers.strong : profiles.frontier
   }
   const roleTier = role !== undefined ? routing.roles[role] : undefined
   const effective = model ?? (roleTier ? routing.tiers[roleTier] : input.parentModel)
@@ -243,6 +347,43 @@ export function routeModel(
     if (!exempt && tierOfModel(effective) === 'strong') model = routing.tiers[cap.capStrongTo]
   }
   return model === input.model ? undefined : model
+}
+
+function overlayBlock(profile: Profile, ids: readonly string[]): string {
+  const texts = ids.map(id => profiles.overlays[id]).filter((t): t is string => typeof t === 'string' && t.length > 0)
+  return texts.length ? `\n\n<relay-profile id="${profile.id}">\n${texts.join('\n\n')}\n</relay-profile>` : ''
+}
+
+// Text for the brief of a Relay agent that runs on the frontier model.
+export function spawnOverlay(profile: Profile | undefined, kind: 'frontier' | 'escalation' | undefined, model: string | undefined): string {
+  if (!profile || !kind || model !== profiles.frontier) return ''
+  return overlayBlock(profile, profile.spawnOverlays[kind])
+}
+
+// Text for a Relay skill that the main session expands; '' when the skill or session takes none.
+export function leadOverlay(profile: Profile | undefined, skill: string, effort: string | undefined): string {
+  if (!profile) return ''
+  const name = skill.startsWith('relay:') ? skill.slice('relay:'.length) : skill
+  if (!profile.lead.skills.includes(name)) return ''
+  const ids = profile.lead.overlays.filter(o => !o.belowEffort || effort === undefined || effortBelow(effort, o.belowEffort)).map(o => o.id)
+  return overlayBlock(profile, ids)
+}
+
+export function setSession(model: string | undefined, effort?: string): void {
+  if (model) sessionModel = model
+  if (effort !== undefined) sessionEffort = effort
+}
+
+export function sessionProfile(): Profile | undefined {
+  return profileFor(sessionModel)
+}
+
+export function profileLine(profile: Profile): string {
+  const esc = profile.escalation ? `; a fix round named lane-<id>-${profile.escalation.agentSuffix} runs on ${profiles.frontier} before adjudication` : ''
+  return (
+    `[relay profile] ${profile.id} (route ${profile.route}): ${profile.frontierRoles.join(', ') || 'no role'} on ${profiles.frontier}${esc}. ` +
+    'Set /effort high before an unattended run. `relay profile` shows every role.'
+  )
 }
 
 async function laneCwd($: EngineInterface, name?: string): Promise<string | undefined> {
@@ -265,6 +406,13 @@ async function snapshot($: EngineInterface): Promise<void> {
   await $.fs.write(`${home}/.relay/budget.json`, JSON.stringify(body, null, 2) + '\n')
 }
 
+// ~/.relay/claude-session.json: the main session's model and profile, for `relay profile`.
+async function writeSession($: EngineInterface): Promise<void> {
+  const home = await $.env.get('HOME')
+  if (!home || !sessionModel) return
+  const body = { source: 'claude-code', updatedAt: new Date().toISOString(), model: sessionModel, effort: sessionEffort, profile: sessionProfile()?.id ?? 'default' }
+  await $.fs.write(`${home}/.relay/claude-session.json`, JSON.stringify(body, null, 2) + '\n')
+}
 
 // ---- The board: a traffic light per task of the plan being run, drawn in a band
 // above the prompt while a run is going and in a pane (/relay-board). `relay board`,
@@ -492,6 +640,12 @@ export function teamRows(map: Map<string, TeamAgent>, b: Board | undefined, now:
 
 const tokenTotal = (t: Tokens): number => t.input + t.output + t.cacheWrite
 
+// Share of an agent's input tokens read from the prompt cache, as a whole percent; undefined before any reading.
+export function cacheShare(t: Tokens): number | undefined {
+  const all = t.input + t.cacheRead + t.cacheWrite
+  return all > 0 ? Math.round((100 * t.cacheRead) / all) : undefined
+}
+
 function touchTeam($: EngineInterface, now: number, force = false): void {
   if (!force && now - lastInvalidate < INVALIDATE_EVERY) return
   lastInvalidate = now
@@ -528,12 +682,19 @@ export const register: Register = on => {
           'and write a handoff (relay:handoff). Start no new implementation work until the window resets.',
       }
     }
-    const model = routeModel(e, level)
+    const profile = profileFor(sessionModel ?? (e.parentAgentId === undefined ? e.parentModel : undefined))
+    const model = routeModel(e, level, profile)
+    const extra = spawnOverlay(profile, frontierKind(profile, role, e.name), model ?? e.model)
     const cwd = e.cwd ?? (await laneCwd($, e.name))
     const res =
-      model === undefined && cwd === e.cwd
+      model === undefined && cwd === e.cwd && !extra
         ? await next(e)
-        : await next({ ...e, ...(model !== undefined ? { model } : {}), ...(cwd !== undefined ? { cwd } : {}) })
+        : await next({
+            ...e,
+            ...(model !== undefined ? { model } : {}),
+            ...(cwd !== undefined ? { cwd } : {}),
+            ...(extra ? { prompt: e.prompt + extra } : {}),
+          })
     try {
       const started = res as { agentId?: string; model?: string }
       if (role && typeof started.agentId === 'string') {
@@ -554,6 +715,14 @@ export const register: Register = on => {
       if (agentId) {
         trackStep(team, agentId, { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 })
         touchTeam($, Date.now())
+      } else {
+        // Only the effort: a step without an agent id can be a side request on another model.
+        // The model comes from $.session.model() at session start and on each prompt.
+        const effort = (e as { effort?: unknown }).effort
+        if (typeof effort === 'string' && effort !== sessionEffort) {
+          setSession(undefined, effort)
+          void writeSession($).catch(() => undefined)
+        }
       }
     } catch {
       // tracking is optional
@@ -606,20 +775,49 @@ export const register: Register = on => {
         // no reading yet
       }
     }
+    try {
+      const before = sessionModel
+      setSession(await $.session.model())
+      if (sessionModel !== before) void writeSession($).catch(() => undefined)
+    } catch {
+      // the model reading is optional; the default route applies
+    }
+    const lines: string[] = []
     const level = levelOf()
-    if (level === 'unknown' || level === announced) return next(e)
-    announced = level
-    const line =
-      `[relay budget] ${level}: ${describe()}. ` +
-      (level === 'normal'
-        ? 'Route by plan tier.'
-        : level === 'tight'
-          ? 'Opus only for the final review; prefer cheap tiers where the plan has complete code.'
-          : 'Finish the current wave, commit, write a handoff; start nothing new.')
-    return next({ ...e, context: [...(e.context ?? []), line] })
+    if (level !== 'unknown' && level !== announced) {
+      announced = level
+      lines.push(
+        `[relay budget] ${level}: ${describe()}. ` +
+          (level === 'normal'
+            ? 'Route by plan tier.'
+            : level === 'tight'
+              ? 'Opus only for the final review; prefer cheap tiers where the plan has complete code.'
+              : 'Finish the current wave, commit, write a handoff; start nothing new.'),
+      )
+    }
+    const profile = sessionProfile()
+    if (profile && profile.id !== announcedProfile) {
+      announcedProfile = profile.id
+      lines.push(profileLine(profile))
+    }
+    if (!lines.length) return next(e)
+    return next({ ...e, context: [...(e.context ?? []), ...lines] })
   }).catch(($, e, next) => next(e))
 
+  // Lead text for Relay's own skills when the session model has a profile (config/model-profiles.json).
+  on('skill.prompt', async ($, e, next) => {
+    const fromRelay = e.pluginName === 'relay' || e.skill.startsWith('relay:')
+    const extra = fromRelay ? leadOverlay(sessionProfile(), e.skill, sessionEffort) : ''
+    return extra ? next({ ...e, text: e.text + extra }) : next(e)
+  }).catch(($, e, next) => next(e)) // fail open: a relay bug must never change a skill
+
   on('session.start', async ($, e, next) => {
+    try {
+      setSession(await $.session.model())
+      await writeSession($)
+    } catch {
+      // the model reading is optional; the default route applies
+    }
     try {
       await $.command.register({ name: 'relay-board', description: "Open relay's board: a traffic light for every task of the plan being run" })
       try {
@@ -731,7 +929,7 @@ export const register: Register = on => {
               el(
                 Text,
                 { dimColor: true },
-                `${a.name}  ${task ?? '-'}  ${a.model}  ${formatTokens(tokenTotal(a.tokens))}  ${formatElapsed((a.endedAt ?? now) - a.startedAt)}  `,
+                `${a.name}  ${task ?? '-'}  ${a.model}  ${formatTokens(tokenTotal(a.tokens))}${cacheShare(a.tokens) === undefined ? '' : ` · cache ${cacheShare(a.tokens)}%`}  ${formatElapsed((a.endedAt ?? now) - a.startedAt)}  `,
               ),
               a.state,
             ),

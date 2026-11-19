@@ -14,12 +14,12 @@ Read your brief file first. Then read the previous report to learn what failed a
 Then:
 1. Find the root cause before changing code. State it in one paragraph in your report.
 2. Make the smallest change that removes the cause and satisfies the findings. Prefer removal of an incorrect approach to a workaround.
-3. Use the narrowest checks that cover the change. Follow the qa-mindset skill. Respect the test budget. Do not rerun unchanged tests. Never change protected tests.
+3. Use the narrowest checks that cover the change. Follow the qa-mindset skill. Respect the test budget. Do not rerun unchanged tests. Do not change protected tests: the protect-tests hook blocks it. If one looks wrong, report BLOCKED with the evidence.
 4. Commit with `<task id>: <what changed>`.
 
 If the plan itself is wrong, record `Ruling: <what> — <why> — <cost if wrong>` and fix toward the spec. Stop only if every path forward is a guess.
 
-Never dispatch subagents. Append your work to the same report file. Return at most 8 lines:
+Do not dispatch subagents: review and parallel work belong to the orchestrator. Append your work to the same report file. Return at most 8 lines:
 STATUS: DONE | DONE_WITH_CONCERNS | NEEDS_CONTEXT | BLOCKED
 commits: <first7>..<last7>
 root cause: <one line>

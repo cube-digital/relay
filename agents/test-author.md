@@ -18,7 +18,7 @@ Inputs: the spec, the task brief (behaviors, risk, test budget) and the public i
 
 Rules (the qa-mindset skill has the full version):
 - One test per listed behavior, within the budget. For high risk, add boundary values and error partitions, or one property-based test instead of many examples.
-- Derive expected values from the spec. Never derive them by running the code.
+- Derive expected values from the spec. Do not derive them by running the code: a test that copies the code's output proves nothing.
 - Test through public interfaces. Mock only at process boundaries (network, clock, filesystem you don't own).
 - Strong assertions: exact values and states. No print-only, truthy or "not null" checks, no loops or conditionals in tests, no snapshot of large output.
 - Each test must fail for the right reason before the feature exists. Run each new test once and confirm it fails with the expected message, not an import or setup error.

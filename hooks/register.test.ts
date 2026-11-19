@@ -1,5 +1,19 @@
 import { describe, expect, test } from 'claude-code/testing'
-import { boardSummary, routeModel, showsBand, tierOfModel, trackComplete, trackSpawn, trackStep, workingAgents } from './register.ts'
+import {
+  boardSummary,
+  cacheShare,
+  leadOverlay,
+  profileFor,
+  remember,
+  routeModel,
+  showsBand,
+  spawnOverlay,
+  tierOfModel,
+  trackComplete,
+  trackSpawn,
+  trackStep,
+  workingAgents,
+} from './register.ts'
 import type { Board } from './register.ts'
 
 const CONTEXT = { window: 200_000 }
@@ -200,5 +214,129 @@ describe('the team', () => {
     expect(await done.find({ type: 'Text', text: /done/ })).toBeTruthy()
     expect(await done.find({ type: 'Text', text: /working/ })).toBeUndefined()
     await done.unmount()
+  })
+})
+
+describe('model profiles', () => {
+  const fable = profileFor('claude-fable-5-2')
+  const calm = () => remember([{ kind: 'five_hour', percentUsed: 10 }, { kind: 'seven_day', percentUsed: 10 }])
+
+  test('a Fable session has the fable-lead profile; Opus, Sonnet and Haiku sessions have none', () => {
+    expect(fable?.route).toBe('fable-lead')
+    expect(profileFor('fable')?.id).toBe(fable?.id)
+    expect(profileFor('claude-opus-5-5')).toBeUndefined()
+    expect(profileFor('sonnet')).toBeUndefined()
+    expect(profileFor(undefined)).toBeUndefined()
+  })
+
+  test('fable-lead sends the architect and the round-6 fix agent to Fable and leaves the other roles alone', () => {
+    calm()
+    const spawn = (subagentType: string, name?: string) => routeModel({ subagentType, parentModel: 'claude-fable-5-2', name }, 'normal', fable)
+    expect(spawn('relay:architect')).toBe('fable')
+    expect(spawn('relay:implementer-deep', 'lane-a-r6')).toBe('fable')
+    expect(spawn('relay:implementer-deep', 'lane-a-r4')).toBeUndefined()
+    expect(spawn('relay:implementer', 'lane-a')).toBeUndefined()
+    expect(spawn('relay:conductor')).toBeUndefined()
+    expect(spawn('Explore')).toBe('haiku')
+  })
+
+  test('without a profile the architect keeps its own model, as before', () => {
+    calm()
+    expect(routeModel({ subagentType: 'relay:architect', parentModel: 'claude-opus-5-5' }, 'normal', undefined)).toBeUndefined()
+  })
+
+  test('Fable work falls back to Opus above the frontier cap and to Sonnet at a critical budget', () => {
+    remember([{ kind: 'five_hour', percentUsed: 55 }])
+    expect(routeModel({ subagentType: 'relay:architect', parentModel: 'fable' }, 'normal', fable)).toBe('opus')
+    expect(routeModel({ subagentType: 'relay:architect', parentModel: 'fable' }, 'tight', fable)).toBe('opus')
+    expect(routeModel({ subagentType: 'relay:architect', parentModel: 'fable' }, 'critical', fable)).toBe('sonnet')
+    calm()
+  })
+
+  test('a model the caller named explicitly is not replaced by the profile', () => {
+    calm()
+    expect(routeModel({ subagentType: 'relay:architect', model: 'opus', parentModel: 'fable' }, 'normal', fable)).toBeUndefined()
+  })
+
+  test('lead skills get the finishing text only below high effort; other skills get nothing', () => {
+    expect(leadOverlay(fable, 'relay:relay-run', 'medium')).toContain('Finish the work')
+    expect(leadOverlay(fable, 'relay:relay-run', 'medium')).toContain('subagent starts with an empty context')
+    expect(leadOverlay(fable, 'relay-plan', 'high')).not.toContain('Finish the work')
+    expect(leadOverlay(fable, 'relay-plan', 'high')).toContain('subagent starts with an empty context')
+    expect(leadOverlay(fable, 'relay:relay-budget', 'medium')).toBe('')
+    expect(leadOverlay(undefined, 'relay:relay-run', 'medium')).toBe('')
+  })
+
+  test('only an agent that actually runs on Fable gets the frontier text', () => {
+    expect(spawnOverlay(fable, 'frontier', 'fable')).toContain('a reader who saw none of the work')
+    expect(spawnOverlay(fable, 'escalation', 'fable')).toContain('Finish the work')
+    expect(spawnOverlay(fable, 'frontier', 'opus')).toBe('')
+    expect(spawnOverlay(undefined, 'frontier', 'fable')).toBe('')
+  })
+
+  test('cache share is the part of the input read from the cache', () => {
+    expect(cacheShare({ input: 100, output: 50, cacheRead: 300, cacheWrite: 100 })).toBe(60)
+    expect(cacheShare({ input: 0, output: 0, cacheRead: 0, cacheWrite: 0 })).toBeUndefined()
+  })
+})
+
+describe('model profiles through the engine', () => {
+  test('in a Fable session the architect spawns on Fable with the frontier text in its brief', async ($, on) => {
+    let brief = ''
+    on('agent.spawn', ($, e) => {
+      brief = e.prompt
+      return { model: e.model ?? 'inherited', agentId: 'arch-1' }
+    })
+    const started = await $.agent.spawn({ ...spawnInput('relay:architect'), parentModel: 'claude-fable-5-2' })
+    expect(started.model).toBe('fable')
+    expect(brief.startsWith('do the task')).toBe(true)
+    expect(brief).toContain('<relay-profile id="fable-5.2">')
+  })
+
+  test('in a Fable session a lead skill gets the profile text and an unrelated skill does not', async ($, on) => {
+    on('session.model', () => ({ value: 'claude-fable-5-2' }))
+    on('session.usage', () => ({ value: { startedAt: 0, context: { tokens: 0, window: 200_000, percent: 0 }, rateLimits: [], cost: 0 } }))
+    let context: readonly string[] = []
+    on('prompt.submit', ($, e) => {
+      context = e.context ?? []
+      return { text: e.text }
+    })
+    on('skill.prompt', ($, e) => ({ text: e.text }))
+    await $.prompt.submit({ text: 'run the plan' } as never)
+    expect(context.some(line => line.startsWith('[relay profile] fable-5.2 (route fable-lead)'))).toBe(true)
+    const lead = await $.skill.prompt({ skill: 'relay:relay-run', text: 'Run the plan.', pluginName: 'relay' } as never)
+    expect(lead.text.startsWith('Run the plan.')).toBe(true)
+    expect(lead.text).toContain('Finish the work')
+    const other = await $.skill.prompt({ skill: 'commit', text: 'Commit.' } as never)
+    expect(other.text).toBe('Commit.')
+  })
+
+  test('a main-loop step records its effort for relay profile and does not change the session model', async ($, on) => {
+    on('session.model', () => ({ value: 'claude-fable-5-2' }))
+    on('session.usage', () => ({ value: { startedAt: 0, context: { tokens: 0, window: 200_000, percent: 0 }, rateLimits: [], cost: 0 } }))
+    on('prompt.submit', ($, e) => ({ text: e.text }))
+    on('env.get', () => ({ value: '/home/dev' }))
+    const written: string[] = []
+    on('fs.write', ($, e) => {
+      written.push(String((e as { text?: unknown }).text ?? ''))
+      return { value: undefined }
+    })
+    on('turn.step', async function* ($, e) {
+      yield { kind: 'stop', stopReason: 'end_turn', usage: { input_tokens: 1, output_tokens: 1, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 } }
+      return { turnId: e.turnId, index: e.index, answer: '', toolUses: [] }
+    })
+    on('agent.spawn', ($, e) => ({ model: e.model ?? 'inherited', agentId: 'arch-2' }))
+    await $.prompt.submit({ text: 'plan it' } as never)
+    // a side request on Haiku, without an agent id, at the session's effort
+    for await (const _chunk of $.turn.step({ turnId: 't2', index: 0, messageCount: 1, model: 'claude-haiku-5-5', effort: 'xhigh' } as never)) {
+      // drain
+    }
+    await new Promise(resolve => setTimeout(resolve, 0))
+    const session = JSON.parse(written.at(-1) ?? '{}')
+    expect(session.effort).toBe('xhigh')
+    expect(session.model).toBe('claude-fable-5-2')
+    expect(session.profile).toBe('fable-5.2')
+    const started = await $.agent.spawn({ ...spawnInput('relay:architect'), parentModel: 'claude-opus-5-5' })
+    expect(started.model).toBe('fable')
   })
 })
