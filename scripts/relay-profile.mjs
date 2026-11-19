@@ -67,7 +67,11 @@ export function main(argv) {
   for (const x of report.rows) console.log(`  ${x.role.padEnd(w)}  ${x.tier.padEnd(6)}  ${x.model.padEnd(7)}  ${x.effort.padEnd(6)}  ${x.note ?? ''}`.trimEnd());
   if (report.escalation) {
     const e = report.escalation;
-    console.log(`\nfix round 6: ${e.agent} → ${e.role} on ${e.model}, effort ${e.effort}, after implementer-deep's rounds 4–5`);
+    console.log(
+      e.capped
+        ? `\nfix round 6: off while the budget is above the profile cap; adjudicate after round 5`
+        : `\nfix round 6: ${e.agent} → ${e.role} on ${e.model}, effort ${e.effort}, after implementer-deep's rounds 4–5`,
+    );
   }
   if (report.lead) {
     const ids = report.lead.overlays.map((o) => (o.belowEffort ? `${o.id} (below ${o.belowEffort} effort)` : o.id));

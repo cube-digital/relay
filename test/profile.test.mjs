@@ -41,6 +41,14 @@ test('above the frontier cap the architect falls back to Opus', () => {
   assert.equal(report.escalation.model, 'opus');
 });
 
+test('above the frontier cap at a normal budget, fix round 6 is off', () => {
+  const r = runCli(['profile', '--model', 'fable'], { env: { RELAY_HOME: home({ fiveHour: 55 }) } });
+  assert.equal(r.code, 0, r.stderr);
+  assert.match(r.stdout, /budget normal/);
+  assert.match(r.stdout, /fix round 6: off while the budget is above the profile cap/);
+  assert.doesNotMatch(r.stdout, /lane-<id>-r6 → implementer-deep on/);
+});
+
 test('without a session reading the default route applies and the output says how to get one', () => {
   const r = runCli(['profile'], { env: { RELAY_HOME: home() } });
   assert.equal(r.code, 0, r.stderr);

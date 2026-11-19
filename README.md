@@ -162,7 +162,7 @@ The mod also reads the model of your main session and picks a **route** from [co
 | Scout, `Explore` | Haiku | Haiku |
 | A lane still open after round 5 | the conductor rules | **round 6 on Fable** (medium effort), then the conductor rules |
 | Text Relay adds | none | lead skills: finish-the-work text below high effort, subagent cost; agents on Fable: write for a reader who saw none of the work |
-| Above 50% of the 5-hour window, or a tight budget | — | Fable work moves to Opus |
+| Above 50% of the 5-hour window, or a tight budget | — | Fable work moves to Opus; no round 6 |
 
 `/relay:profile` (or `relay profile`) shows the route, each role's model and effort, and advice such as setting `/effort high` before an unattended Fable run. Relay never changes the model or effort of your main session: a change mid-session reads the whole conversation again without the cache.
 
@@ -325,7 +325,7 @@ flowchart TD
     rr1 -- "still open" --> f45["rounds 4 and 5:<br/>a fresh implementer-deep (Opus)<br/>reads what was tried and takes over;<br/>medium effort, then high"]
     f45 --> rr2{"scoped re-review"}
     rr2 -- addressed --> ok
-    rr2 -- "still open after round 5" --> r6{"fable-lead route?"}
+    rr2 -- "still open after round 5" --> r6{"fable-lead route<br/>and Fable under its cap?"}
     r6 -- yes --> f6["round 6: implementer-deep on Fable"] --> rr3{"scoped re-review"}
     rr3 -- addressed --> ok
     rr3 -- "still open" --> rule

@@ -310,4 +310,33 @@ describe('model profiles through the engine', () => {
     const other = await $.skill.prompt({ skill: 'commit', text: 'Commit.' } as never)
     expect(other.text).toBe('Commit.')
   })
+
+  test('a main-loop step records its effort for relay profile and does not change the session model', async ($, on) => {
+    on('session.model', () => ({ value: 'claude-fable-5-2' }))
+    on('session.usage', () => ({ value: { startedAt: 0, context: { tokens: 0, window: 200_000, percent: 0 }, rateLimits: [], cost: 0 } }))
+    on('prompt.submit', ($, e) => ({ text: e.text }))
+    on('env.get', () => ({ value: '/home/dev' }))
+    const written: string[] = []
+    on('fs.write', ($, e) => {
+      written.push(String((e as { text?: unknown }).text ?? ''))
+      return { value: undefined }
+    })
+    on('turn.step', async function* ($, e) {
+      yield { kind: 'stop', stopReason: 'end_turn', usage: { input_tokens: 1, output_tokens: 1, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 } }
+      return { turnId: e.turnId, index: e.index, answer: '', toolUses: [] }
+    })
+    on('agent.spawn', ($, e) => ({ model: e.model ?? 'inherited', agentId: 'arch-2' }))
+    await $.prompt.submit({ text: 'plan it' } as never)
+    // a side request on Haiku, without an agent id, at the session's effort
+    for await (const _chunk of $.turn.step({ turnId: 't2', index: 0, messageCount: 1, model: 'claude-haiku-5-5', effort: 'xhigh' } as never)) {
+      // drain
+    }
+    await new Promise(resolve => setTimeout(resolve, 0))
+    const session = JSON.parse(written.at(-1) ?? '{}')
+    expect(session.effort).toBe('xhigh')
+    expect(session.model).toBe('claude-fable-5-2')
+    expect(session.profile).toBe('fable-5.2')
+    const started = await $.agent.spawn({ ...spawnInput('relay:architect'), parentModel: 'claude-opus-5-5' })
+    expect(started.model).toBe('fable')
+  })
 })

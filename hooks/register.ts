@@ -251,8 +251,8 @@ const profiles: Profiles = PROFILES
 const LANE_NAME = /^lane-([a-z]+)(?:-[\w-]+)?$/
 const EFFORTS = ['low', 'medium', 'high', 'xhigh', 'max']
 
-// The main session's model and effort, read at session start, on each prompt and on
-// each main-loop request. They choose the model profile (config/model-profiles.json).
+// The main session's model (read at session start and on each prompt) and effort (read on
+// each main-loop request). They choose the model profile (config/model-profiles.json).
 let sessionModel: string | undefined
 let sessionEffort: string | undefined
 let announcedProfile: string | undefined
@@ -716,8 +716,13 @@ export const register: Register = on => {
         trackStep(team, agentId, { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 })
         touchTeam($, Date.now())
       } else {
-        const step = e as { model?: string; effort?: unknown }
-        setSession(step.model, typeof step.effort === 'string' ? step.effort : undefined)
+        // Only the effort: a step without an agent id can be a side request on another model.
+        // The model comes from $.session.model() at session start and on each prompt.
+        const effort = (e as { effort?: unknown }).effort
+        if (typeof effort === 'string' && effort !== sessionEffort) {
+          setSession(undefined, effort)
+          void writeSession($).catch(() => undefined)
+        }
       }
     } catch {
       // tracking is optional
